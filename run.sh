@@ -1,8 +1,5 @@
 #!/bin/sh
 
-set -x
-set -e
-
 if [ $# != 1 ];
 then
 	echo "usage: $0 gcc_version"
