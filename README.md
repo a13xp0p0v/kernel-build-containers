@@ -11,6 +11,7 @@ Supported gcc versions (`x86_64`):
  - gcc-7
  - gcc-8
  - gcc-9
+ - gcc-10
 
 # Usage
 
