@@ -4,7 +4,7 @@ This project provides Docker containers for building the Linux kernel with many 
 
 It's very useful for testing gcc-plugins for the Linux kernel.
 
-Supported gcc versions (`x86_64`):
+Supported gcc versions (can build `x86_64` and `i386`):
  - gcc-4.8
  - gcc-5
  - gcc-6
@@ -38,6 +38,4 @@ $ sh clean.sh
 
 # TODO
 
-Ideas:
- - support building for `x86_32` and `arm64`
- - build kernel using GitHub Actions
+ - support `arm64` build target
