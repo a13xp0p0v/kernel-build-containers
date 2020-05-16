@@ -9,5 +9,6 @@ sudo docker rmi kernel-build-container:6
 sudo docker rmi kernel-build-container:7
 sudo docker rmi kernel-build-container:8
 sudo docker rmi kernel-build-container:9
+sudo docker rmi kernel-build-container:10
 sudo docker ps -a
 sudo docker images
