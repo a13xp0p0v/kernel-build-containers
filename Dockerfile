@@ -2,9 +2,11 @@ ARG UBUNTU_VERSION
 FROM ubuntu:${UBUNTU_VERSION} as base
 
 ARG GCC_VERSION
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    sudo aptitude flex bison libncurses5-dev make git exuberant-ctags bc libssl-dev \
-    gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev gcc g++ libelf-dev \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends apt-utils && \
+    apt-get install -y --no-install-recommends \
+      sudo aptitude flex bison libncurses5-dev make git exuberant-ctags bc libssl-dev \
+      gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev gcc g++ libelf-dev \
     && apt-get -y autoremove
 
 ARG UNAME
