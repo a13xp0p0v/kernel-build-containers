@@ -4,13 +4,13 @@ FROM ubuntu:${UBUNTU_VERSION} as base
 ARG GCC_VERSION
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
     apt-get update && \
-    apt-get install -y --no-install-recommends apt-utils dialog && \
-    apt-get install -y --no-install-recommends \
+    apt-get install -y -q apt-utils dialog && \
+    apt-get install -y -q \
       sudo aptitude flex bison libncurses5-dev make git exuberant-ctags bc libssl-dev \
       gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev gcc g++ libelf-dev && \
     if [ "$GCC_VERSION" != "4.8" ]; \
     then \
-      apt-get install -y --no-install-recommends \
+      apt-get install -y -q \
         gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
         gcc-${GCC_VERSION}-plugin-dev-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu; \
     fi
