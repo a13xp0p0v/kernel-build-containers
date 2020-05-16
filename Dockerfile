@@ -15,6 +15,7 @@ ARG GID
 RUN groupadd -g ${GID} -o ${UNAME} && \
     useradd -u $UID -g $GID -G sudo -ms /bin/bash ${UNAME} && \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    echo "Set disable_coredump false" >> /etc/sudo.conf && \
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCC_VERSION} 100 && \
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${GCC_VERSION} 100
 
