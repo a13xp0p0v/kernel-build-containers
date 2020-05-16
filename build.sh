@@ -12,6 +12,7 @@ build ()
   --build-arg UID=$(id -u) \
   --build-arg GID=$(id -g)  \
   -t kernel-build-container:${GCC_VERSION} .
+ echo -e "\n"
 }
 
 GCC_VERSION="4.8"
