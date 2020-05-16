@@ -30,9 +30,9 @@ Run a container (with interactive tty):
 
 ```bash
 $ sh run.sh
-usage: run.sh gcc_version
+usage: run.sh gcc_version src_dir
 
-$ sh run.sh 7
+$ sh run.sh 7 ~/linux/
 ```
 
 Remove created docker images:
