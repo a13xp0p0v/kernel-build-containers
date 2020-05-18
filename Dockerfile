@@ -32,3 +32,5 @@ RUN groupadd -g ${GID} -o ${UNAME} && \
 
 USER ${UNAME}
 WORKDIR /home/${UNAME}/src
+
+CMD ["bash"]

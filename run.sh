@@ -1,10 +1,36 @@
 #!/bin/bash
 
-if [ $# != 2 ];
+set -e
+
+if [ $# -lt 3 ]
 then
-	echo "usage: $0 gcc_version src_dir"
+	echo "usage: $0 gcc_version src_dir out_dir [cmd with args]"
+	echo "  if cmd is empty, we will start an interactive bash in the container"
 	exit 1
 fi
 
+GCC_VERSION=$1
+echo "Starting a container with GCC-$GCC_VERSION"
+
+SRC="$2"
+echo "Source code directory \"$SRC\" is mounted at \"~/src\""
+
+OUT="$3"
+echo "Build output directory \"$OUT\" is mounted at \"~/out\""
+
+shift
+shift
+shift
+
+if [ $# -gt 0 ]
+then
+	echo -e "Gonna run \"$@\"\n"
+else
+	echo -e "Gonna run interactive bash...\n"
+fi
+
 # Z for setting SELinux label
-sudo docker run --rm -v $2:/home/$(id -nu)/src:Z -it kernel-build-container:$1
+sudo docker run -it --rm \
+  -v $SRC:/home/$(id -nu)/src:Z \
+  -v $OUT:/home/$(id -nu)/out:Z \
+  kernel-build-container:$GCC_VERSION "$@"
