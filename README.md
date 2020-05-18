@@ -1,8 +1,8 @@
 # kernel-build-containers
 
-This project provides Docker containers for building the Linux kernel with many different compilers.
+This project provides Docker containers for building the Linux kernel (or other software) with many different compilers.
 
-It's very useful for testing gcc-plugins for the Linux kernel.
+It's very useful for testing gcc-plugins for the Linux kernel, for example.
 
 Supported gcc versions (with `--enable-plugin`):
  - gcc-4.8
@@ -40,3 +40,7 @@ Remove created docker images:
 ```bash
 $ sh clean.sh
 ```
+
+# TODO
+
+Add clang
