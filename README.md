@@ -24,21 +24,24 @@ __Idea for future:__ add Clang.
 
 # Usage
 
-Building all containers:
+### Building all containers
 
 ```console
 $ sh build_containers.sh
 ```
 
-Running a container:
- - get help
+### Running a container
+
+Get help:
+
 ```console
 $ sh run_container.sh
 usage: ./run_container.sh gcc_version src_dir out_dir [cmd with args]
   if cmd is empty, we will start an interactive bash in the container
 ```
 
- - run interactive bash in the container
+Run interactive bash in the container:
+
 ```console
 $ sh run_container.sh 8 ~/linux/linux/ ~/linux/build_out/
 Starting a container with GCC-8
@@ -47,7 +50,8 @@ Build output directory "/home/a13x/linux/build_out/" is mounted at "~/out"
 Gonna run interactive bash...
 ```
 
- - execute a command in the container
+Execute a command in the container:
+
 ```console
 $ sh run_container.sh 8 ~/linux/linux/ ~/linux/build_out/ gcc -v
 Starting a container with GCC-8
@@ -56,10 +60,9 @@ Build output directory "/home/a13x/linux/build_out/" is mounted at "~/out"
 Gonna run "gcc -v"
 ```
 
-Remove created docker images:
+### Remove created docker images
 
 ```console
 $ sh rm_containers.sh
 ```
-
 
