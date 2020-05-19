@@ -4,7 +4,7 @@ This project provides Docker containers for building the Linux kernel (or other 
 
 It's very useful for testing gcc-plugins for the Linux kernel, for example.
 
-__Supported gcc versions (with `--enable-plugin`):__
+__Supported gcc versions:__
  - gcc-4.8
  - gcc-5
  - gcc-6
@@ -16,9 +16,11 @@ __Supported gcc versions (with `--enable-plugin`):__
 __Supported build targets:__
  - `x86_64`
  - `i386`
- - `aarch64` (except gcc-4.8)
+ - `aarch64`
 
-Idea for future: add Clang.
+__Exception:__ `gcc-4.8` for `aarch64` doesn't support `gcc-plugins`.
+
+__Idea for future:__ add Clang.
 
 # Usage
 
