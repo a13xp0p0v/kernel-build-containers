@@ -4,13 +4,13 @@ set -e
 
 if [ $# -lt 3 ]
 then
-	echo "usage: $0 gcc_version src_dir out_dir [cmd with args]"
+	echo "usage: $0 compiler src_dir out_dir [cmd with args]"
 	echo "  if cmd is empty, we will start an interactive bash in the container"
 	exit 1
 fi
 
-GCC_VERSION=$1
-echo "Starting a container with GCC-$GCC_VERSION"
+COMPILER=$1
+echo "Starting a container with $COMPILER"
 
 SRC="$2"
 echo "Source code directory \"$SRC\" is mounted at \"~/src\""
@@ -33,4 +33,4 @@ fi
 sudo docker run -it --rm \
   -v $SRC:/home/$(id -nu)/src:Z \
   -v $OUT:/home/$(id -nu)/out:Z \
-  kernel-build-container:$GCC_VERSION "$@"
+  kernel-build-container:$COMPILER "$@"

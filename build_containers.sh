@@ -11,7 +11,7 @@ build ()
   --build-arg UNAME=$(id -nu) \
   --build-arg UID=$(id -u) \
   --build-arg GID=$(id -g)  \
-  -t kernel-build-container:${GCC_VERSION} .
+  -t kernel-build-container:gcc-${GCC_VERSION} .
  echo -e "\n"
 }
 

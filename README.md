@@ -36,15 +36,15 @@ Get help:
 
 ```console
 $ sh run_container.sh
-usage: ./run_container.sh gcc_version src_dir out_dir [cmd with args]
+usage: run_container.sh compiler src_dir out_dir [cmd with args]
   if cmd is empty, we will start an interactive bash in the container
 ```
 
 Run interactive bash in the container:
 
 ```console
-$ sh run_container.sh 8 ~/linux/linux/ ~/linux/build_out/
-Starting a container with GCC-8
+$ sh run_container.sh gcc-8 ~/linux/linux/ ~/linux/build_out/ 
+Starting a container with gcc-8
 Source code directory "/home/a13x/linux/linux/" is mounted at "~/src"
 Build output directory "/home/a13x/linux/build_out/" is mounted at "~/out"
 Gonna run interactive bash...
@@ -53,8 +53,8 @@ Gonna run interactive bash...
 Execute a command in the container:
 
 ```console
-$ sh run_container.sh 8 ~/linux/linux/ ~/linux/build_out/ gcc -v
-Starting a container with GCC-8
+$ sh run_container.sh gcc-8 ~/linux/linux/ ~/linux/build_out/ gcc -v
+Starting a container with gcc-8
 Source code directory "/home/a13x/linux/linux/" is mounted at "~/src"
 Build output directory "/home/a13x/linux/build_out/" is mounted at "~/out"
 Gonna run "gcc -v"
