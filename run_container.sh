@@ -10,7 +10,7 @@ then
 fi
 
 COMPILER=$1
-echo "Starting a container with $COMPILER"
+echo "Starting \"kernel-build-container:$COMPILER\""
 
 SRC="$2"
 echo "Source code directory \"$SRC\" is mounted at \"~/src\""
