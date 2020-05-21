@@ -1,5 +1,17 @@
 #!/bin/bash
 
+groups | grep docker
+NEED_SUDO=$?
+
+if [ $NEED_SUDO == 1 ]
+then
+	echo "Hey, we gonna use sudo for running docker"
+	SUDO_CMD="sudo"
+else
+	echo "Hey, you are in docker group, sudo is not needed"
+	SUDO_CMD=""
+fi
+
 set -e
 
 if [ $# -lt 3 ]
@@ -30,7 +42,7 @@ else
 fi
 
 # Z for setting SELinux label
-sudo docker run -it --rm \
+$SUDO_CMD docker run -it --rm \
   -v $SRC:/home/$(id -nu)/src:Z \
   -v $OUT:/home/$(id -nu)/out:Z \
   kernel-build-container:$COMPILER "$@"

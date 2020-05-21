@@ -57,7 +57,8 @@ Run interactive bash in the container:
 
 ```console
 $ sh run_container.sh gcc-8 ~/linux/linux/ ~/linux/build_out/ 
-Starting a container with gcc-8
+Hey, we gonna use sudo for running docker
+Starting "kernel-build-container:gcc-8"
 Source code directory "/home/a13x/linux/linux/" is mounted at "~/src"
 Build output directory "/home/a13x/linux/build_out/" is mounted at "~/out"
 Gonna run interactive bash...
@@ -67,7 +68,8 @@ Execute a command in the container:
 
 ```console
 $ sh run_container.sh gcc-8 ~/linux/linux/ ~/linux/build_out/ gcc -v
-Starting a container with gcc-8
+Hey, we gonna use sudo for running docker
+Starting "kernel-build-container:gcc-8"
 Source code directory "/home/a13x/linux/linux/" is mounted at "~/src"
 Build output directory "/home/a13x/linux/build_out/" is mounted at "~/out"
 Gonna run "gcc -v"
@@ -113,11 +115,12 @@ $ python3 make_linux.py -a aarch64 -k ~/linux/experiment.config -s ~/linux/linux
 
 === Building with gcc-8 ===
 Output subdirectory for this build: /home/a13x/linux/build_out/experiment__aarch64__gcc-8
-Output subdirectory already exists, use it (no cleaning!)
+Output subdirectory doesn't exist, create it
 Copy kconfig to output subdirectory as ".config"
 Going to save build log to "build_log.txt" in output subdirectory
 Create additional arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 Run the container: bash ./run_container.sh gcc-8 /home/a13x/linux/linux /home/a13x/linux/build_out/experiment__aarch64__gcc-8 make O=~/out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1 | tee ~/out/build_log.txt
+    Hey, we gonna use sudo for running docker
     Starting "kernel-build-container:gcc-8"
     Source code directory "/home/a13x/linux/linux" is mounted at "~/src"
     Build output directory "/home/a13x/linux/build_out/experiment__aarch64__gcc-8" is mounted at "~/out"
