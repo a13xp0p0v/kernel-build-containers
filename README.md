@@ -49,7 +49,8 @@ Get help:
 
 ```console
 $ sh run_container.sh
-usage: run_container.sh compiler src_dir out_dir [cmd with args]
+usage: run_container.sh compiler src_dir out_dir [-n] [cmd with args]
+  use '-n' for non-interactive session
   if cmd is empty, we will start an interactive bash in the container
 ```
 

@@ -46,7 +46,7 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
     build_log = 'build_log.txt'
     print('Going to save build log to "{}" in output subdirectory'.format(build_log))
 
-    run_container_cmd = ['bash', './run_container.sh', compiler, src, out_subdir, 'make', 'O=~/out/']
+    run_container_cmd = ['bash', './run_container.sh', compiler, src, out_subdir, '-n', 'make', 'O=~/out/']
 
     cross_compile_args = get_cross_compile_args(arch)
     if cross_compile_args:

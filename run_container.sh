@@ -16,7 +16,8 @@ set -e
 
 if [ $# -lt 3 ]
 then
-	echo "usage: $0 compiler src_dir out_dir [cmd with args]"
+	echo "usage: $0 compiler src_dir out_dir [-n] [cmd with args]"
+	echo "  use '-n' for non-interactive session"
 	echo "  if cmd is empty, we will start an interactive bash in the container"
 	exit 1
 fi
@@ -34,6 +35,16 @@ shift
 shift
 shift
 
+if [ $# -gt 0 -a "$1" == "-n" ]
+then
+	INTERACTIVE=""
+	echo "Run docker in NON-interactive mode"
+	shift
+else
+	INTERACTIVE="-it"
+	echo "Run docker in interactive mode"
+fi
+
 if [ $# -gt 0 ]
 then
 	echo -e "Gonna run \"$@\"\n"
@@ -42,7 +53,7 @@ else
 fi
 
 # Z for setting SELinux label
-$SUDO_CMD docker run -it --rm \
+$SUDO_CMD docker run $INTERACTIVE --rm \
   -v $SRC:/home/$(id -nu)/src:Z \
   -v $OUT:/home/$(id -nu)/out:Z \
   kernel-build-container:$COMPILER "$@"
