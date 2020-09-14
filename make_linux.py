@@ -43,8 +43,9 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
     print('Copy kconfig to output subdirectory as ".config"')
     shutil.copyfile(kconfig, out_subdir + '/.config')
 
-    build_log = 'build_log.txt'
-    print('Going to save build log to "{}" in output subdirectory'.format(build_log))
+    build_log = out_subdir + '/build_log.txt'
+    print('Going to save build log to "build_log.txt" in output subdirectory')
+    build_log_fd = open(build_log, "w")
 
     run_container_cmd = ['bash', './run_container.sh', compiler, src, out_subdir, '-n', 'make', 'O=~/out/']
 
@@ -55,16 +56,18 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
 
     run_container_cmd.extend(make_args)
 
-    run_container_cmd.extend(['2>&1', '|', 'tee', '~/out/' + build_log])
+    run_container_cmd.extend(['2>&1'])
 
     print('Run the container: {}'.format(' '.join(run_container_cmd)))
     with subprocess.Popen(run_container_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                           universal_newlines=True, bufsize=1) as process:
         for line in process.stdout:
             print('    {}'.format(line), end='\r')
+            build_log_fd.write(line)
         return_code = process.wait()
         print('Running the container returned {}'.format(return_code))
-    print('See build log: {}'.format(out_subdir + '/' + build_log))
+    print('See build log: {}'.format(build_log))
+    build_log_fd.close()
 
 
 def build_kernels(arch, kconfig, src, out, compilers, make_args):

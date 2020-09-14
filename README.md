@@ -120,12 +120,12 @@ Output subdirectory doesn't exist, create it
 Copy kconfig to output subdirectory as ".config"
 Going to save build log to "build_log.txt" in output subdirectory
 Create additional arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-Run the container: bash ./run_container.sh gcc-8 /home/a13x/linux/linux /home/a13x/linux/build_out/experiment__aarch64__gcc-8 make O=~/out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1 | tee ~/out/build_log.txt
+Run the container: bash ./run_container.sh gcc-8 /home/a13x/linux/linux /home/a13x/linux/build_out/experiment__aarch64__gcc-8 make O=~/out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1
     Hey, we gonna use sudo for running docker
     Starting "kernel-build-container:gcc-8"
     Source code directory "/home/a13x/linux/linux" is mounted at "~/src"
     Build output directory "/home/a13x/linux/build_out/experiment__aarch64__gcc-8" is mounted at "~/out"
-    Gonna run "make O=~/out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1 | tee ~/out/build_log.txt"
+    Gonna run "make O=~/out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1"
     
     make[1]: Entering directory '/home/a13x/out'
       GEN     Makefile
