@@ -22,6 +22,30 @@ def get_cross_compile_args(arch):
         return ['ARCH=arm64', 'CROSS_COMPILE=aarch64-linux-gnu-']
 
 
+def finish_building_kernel(out_dir, interrupt):
+    finish_container_cmd = ['bash', './finish_container.sh']
+    if interrupt:
+        print('Kill the container and remove the container id file:')
+        finish_container_cmd.extend(['kill'])
+    else:
+        print('Only remove the container id file:')
+        finish_container_cmd.extend(['nokill'])
+    finish_container_cmd.extend([out_dir])
+
+    with subprocess.Popen(finish_container_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                          universal_newlines=True, bufsize=1) as process:
+        for line in process.stdout:
+            print('    {}'.format(line), end='\r')
+        return_code = process.wait()
+
+    if return_code != 0:
+        print('[!] ERROR: failed to finish with the container')
+        return False
+    else:
+        print('Finished with the container')
+        return True
+
+
 def build_kernel(arch, kconfig, src, out, compiler, make_args):
     print('\n=== Building with {} ==='.format(compiler))
 
@@ -59,15 +83,22 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
     start_container_cmd.extend(['2>&1'])
 
     print('Run the container: {}'.format(' '.join(start_container_cmd)))
+    interrupt = False
     with subprocess.Popen(start_container_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                           universal_newlines=True, bufsize=1) as process:
-        for line in process.stdout:
-            print('    {}'.format(line), end='\r')
-            build_log_fd.write(line)
-        return_code = process.wait()
-        print('Running the container returned {}'.format(return_code))
-    print('See build log: {}'.format(build_log))
+        try:
+            for line in process.stdout:
+                print('    {}'.format(line), end='\r')
+                build_log_fd.write(line)
+            return_code = process.wait()
+            print('Running the container returned {}'.format(return_code))
+            print('See build log: {}'.format(build_log))
+        except KeyboardInterrupt:
+            print('[!] Got keyboard interrupt, stopping build process...')
+            interrupt = True
     build_log_fd.close()
+    if not finish_building_kernel(out_subdir, interrupt) or interrupt:
+        sys.exit('[!] Early exit')
 
 
 def build_kernels(arch, kconfig, src, out, compilers, make_args):

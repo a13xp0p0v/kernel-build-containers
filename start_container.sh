@@ -38,10 +38,12 @@ shift
 if [ $# -gt 0 -a "$1" = "-n" ]
 then
 	INTERACTIVE=""
+	CIDFILE="--cidfile $OUT/container.id"
 	echo "Run docker in NON-interactive mode"
 	shift
 else
 	INTERACTIVE="-it"
+	CIDFILE=""
 	echo "Run docker in interactive mode"
 fi
 
@@ -53,7 +55,7 @@ else
 fi
 
 # Z for setting SELinux label
-$SUDO_CMD docker run $INTERACTIVE --rm \
+exec $SUDO_CMD docker run $INTERACTIVE $CIDFILE --rm \
   -v $SRC:/home/$(id -nu)/src:Z \
   -v $OUT:/home/$(id -nu)/out:Z \
   kernel-build-container:$COMPILER "$@"
