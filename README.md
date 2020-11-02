@@ -48,8 +48,8 @@ kernel-build-container   gcc-4.8             bf3afaccb668        33 hours ago   
 Get help:
 
 ```console
-$ sh run_container.sh
-usage: run_container.sh compiler src_dir out_dir [-n] [cmd with args]
+$ sh ./start_container.sh
+usage: ./start_container.sh compiler src_dir out_dir [-n] [cmd with args]
   use '-n' for non-interactive session
   if cmd is empty, we will start an interactive bash in the container
 ```
@@ -57,7 +57,7 @@ usage: run_container.sh compiler src_dir out_dir [-n] [cmd with args]
 Run interactive bash in the container:
 
 ```console
-$ sh run_container.sh gcc-8 ~/linux/linux/ ~/linux/build_out/ 
+$ sh start_container.sh gcc-8 ~/linux/linux/ ~/linux/build_out/ 
 Hey, we gonna use sudo for running docker
 Starting "kernel-build-container:gcc-8"
 Source code directory "/home/a13x/linux/linux/" is mounted at "~/src"
@@ -68,7 +68,7 @@ Gonna run interactive bash...
 Execute a command in the container:
 
 ```console
-$ sh run_container.sh gcc-8 ~/linux/linux/ ~/linux/build_out/ gcc -v
+$ sh start_container.sh gcc-8 ~/linux/linux/ ~/linux/build_out/ gcc -v
 Hey, we gonna use sudo for running docker
 Starting "kernel-build-container:gcc-8"
 Source code directory "/home/a13x/linux/linux/" is mounted at "~/src"
@@ -120,11 +120,12 @@ Output subdirectory doesn't exist, create it
 Copy kconfig to output subdirectory as ".config"
 Going to save build log to "build_log.txt" in output subdirectory
 Create additional arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-Run the container: bash ./run_container.sh gcc-8 /home/a13x/linux/linux /home/a13x/linux/build_out/experiment__aarch64__gcc-8 make O=~/out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1
+Run the container: bash ./start_container.sh gcc-8 /home/a13x/linux/linux /home/a13x/linux/build_out/experiment__aarch64__gcc-8 -n make O=~/out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1
     Hey, we gonna use sudo for running docker
     Starting "kernel-build-container:gcc-8"
     Source code directory "/home/a13x/linux/linux" is mounted at "~/src"
     Build output directory "/home/a13x/linux/build_out/experiment__aarch64__gcc-8" is mounted at "~/out"
+    Run docker in NON-interactive mode
     Gonna run "make O=~/out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1"
     
     make[1]: Entering directory '/home/a13x/out'
@@ -136,6 +137,18 @@ Running the container returned 0
 See build log: /home/a13x/linux/build_out/experiment__aarch64__gcc-8/build_log.txt
 
 [+] Done, see the results
+```
+
+### Finishing with the container
+
+That tool is used by `make_linux.py` for fast stopping the kernel build.
+
+Get help:
+
+```console
+usage: ./finish_container.sh kill/nokill out_dir
+  kill/nokill -- what to do with this container
+  out_dir -- build output directory used by this container
 ```
 
 ### Removing created Docker images
