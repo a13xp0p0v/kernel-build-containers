@@ -47,19 +47,19 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
     print('Going to save build log to "build_log.txt" in output subdirectory')
     build_log_fd = open(build_log, "w")
 
-    run_container_cmd = ['bash', './run_container.sh', compiler, src, out_subdir, '-n', 'make', 'O=~/out/']
+    start_container_cmd = ['bash', './start_container.sh', compiler, src, out_subdir, '-n', 'make', 'O=~/out/']
 
     cross_compile_args = get_cross_compile_args(arch)
     if cross_compile_args:
         print("Create additional arguments for cross-compilation: {}".format(' '.join(cross_compile_args)))
-    run_container_cmd.extend(cross_compile_args)
+    start_container_cmd.extend(cross_compile_args)
 
-    run_container_cmd.extend(make_args)
+    start_container_cmd.extend(make_args)
 
-    run_container_cmd.extend(['2>&1'])
+    start_container_cmd.extend(['2>&1'])
 
-    print('Run the container: {}'.format(' '.join(run_container_cmd)))
-    with subprocess.Popen(run_container_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+    print('Run the container: {}'.format(' '.join(start_container_cmd)))
+    with subprocess.Popen(start_container_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                           universal_newlines=True, bufsize=1) as process:
         for line in process.stdout:
             print('    {}'.format(line), end='\r')
