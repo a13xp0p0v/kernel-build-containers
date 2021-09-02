@@ -12,6 +12,7 @@ __Supported gcc versions:__
  - gcc-8
  - gcc-9
  - gcc-10
+ - gcc-11
 
 __Supported build targets:__
  - `x86_64`
@@ -34,13 +35,14 @@ Created containers:
 
 ```console
 $ sudo docker image list | grep kernel-build-container
-kernel-build-container   gcc-10              fab3a069196e        32 hours ago        846MB
-kernel-build-container   gcc-9               d1b4c1b033e7        32 hours ago        558MB
-kernel-build-container   gcc-8               28312dbbe158        32 hours ago        761MB
-kernel-build-container   gcc-7               06df61161fbd        32 hours ago        518MB
-kernel-build-container   gcc-6               7672ffd9b861        33 hours ago        691MB
-kernel-build-container   gcc-5               e6f4e6385f9a        33 hours ago        535MB
-kernel-build-container   gcc-4.8             bf3afaccb668        33 hours ago        654MB
+kernel-build-container   gcc-11              aff1d980db1f        15 minutes ago      1.53GB
+kernel-build-container   gcc-10              923481cb3d94        2 months ago        852MB
+kernel-build-container   gcc-9               a15605755586        2 months ago        561MB
+kernel-build-container   gcc-8               44a10601240d        2 months ago        764MB
+kernel-build-container   gcc-7               f6fa0a1ece58        2 months ago        519MB
+kernel-build-container   gcc-6               242af7de9933        2 months ago        692MB
+kernel-build-container   gcc-5               ba9cd1de31f5        2 months ago        545MB
+kernel-build-container   gcc-4.8             5948f3cd8839        2 months ago        664MB
 ```
 
 ### Running a container
@@ -83,7 +85,7 @@ Get help:
 ```console
 $ python3 make_linux.py -h
 usage: make_linux.py [-h] -a {x86_64,i386,aarch64} -k kconfig -s src -o out -c
-                     {gcc-4.8,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,all}
+                     {gcc-4.8,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,all}
                      ...
 
 Build Linux kernel using kernel-build-containers
@@ -99,7 +101,7 @@ optional arguments:
   -k kconfig            path to kernel kconfig file
   -s src                Linux kernel sources directory
   -o out                Build output directory
-  -c {gcc-4.8,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,all}
+  -c {gcc-4.8,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,all}
                         building compiler ('all' to build with each of them)
 ```
 

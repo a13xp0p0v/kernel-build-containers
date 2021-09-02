@@ -8,7 +8,7 @@ import shutil
 
 
 supported_archs = ['x86_64', 'i386', 'aarch64']
-supported_compilers = ['gcc-4.8', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9', 'gcc-10', 'all']
+supported_compilers = ['gcc-4.8', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9', 'gcc-10', 'gcc-11', 'all']
 
 name_delimiter = '__'
 

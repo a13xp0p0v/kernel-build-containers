@@ -22,5 +22,6 @@ $SUDO_CMD docker rmi kernel-build-container:gcc-7
 $SUDO_CMD docker rmi kernel-build-container:gcc-8
 $SUDO_CMD docker rmi kernel-build-container:gcc-9
 $SUDO_CMD docker rmi kernel-build-container:gcc-10
+$SUDO_CMD docker rmi kernel-build-container:gcc-11
 $SUDO_CMD docker ps -a
 $SUDO_CMD docker image ls
