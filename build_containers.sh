@@ -14,7 +14,7 @@ fi
 
 set -e
 
-build ()
+build_gcc_container ()
 {
  echo -e "\nBuilding a container with GCC_VERSION=$1 from UBUNTU_VERSION=$2"
  $SUDO_CMD docker build \
@@ -28,32 +28,49 @@ build ()
 
 GCC_VERSION="4.8"
 UBUNTU_VERSION="16.04"
-build ${GCC_VERSION} ${UBUNTU_VERSION}
+build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
 
 GCC_VERSION="5"
 UBUNTU_VERSION="16.04"
-build ${GCC_VERSION} ${UBUNTU_VERSION}
+build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
 
 GCC_VERSION="6"
 UBUNTU_VERSION="18.04"
-build ${GCC_VERSION} ${UBUNTU_VERSION}
+build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
 
 GCC_VERSION="7"
 UBUNTU_VERSION="18.04"
-build ${GCC_VERSION} ${UBUNTU_VERSION}
+build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
 
 GCC_VERSION="8"
 UBUNTU_VERSION="20.04"
-build ${GCC_VERSION} ${UBUNTU_VERSION}
+build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
 
 GCC_VERSION="9"
 UBUNTU_VERSION="20.04"
-build ${GCC_VERSION} ${UBUNTU_VERSION}
+build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
 
 GCC_VERSION="10"
 UBUNTU_VERSION="20.04"
-build ${GCC_VERSION} ${UBUNTU_VERSION}
+build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
 
 GCC_VERSION="11"
 UBUNTU_VERSION="21.04"
-build ${GCC_VERSION} ${UBUNTU_VERSION}
+build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
+
+build_clang_container ()
+{
+ echo -e "\nBuilding a container with CLANG_VERSION=$1 from UBUNTU_VERSION=$2"
+ $SUDO_CMD docker build \
+  --build-arg CLANG_VERSION=$1 \
+  --build-arg UBUNTU_VERSION=$2 \
+  --build-arg UNAME=$(id -nu) \
+  --build-arg UID=$(id -u) \
+  --build-arg GID=$(id -g)  \
+  -t kernel-build-container:clang-${CLANG_VERSION} .
+}
+
+CLANG_VERSION="12"
+UBUNTU_VERSION="21.04"
+build_clang_container ${CLANG_VERSION} ${UBUNTU_VERSION}
+
