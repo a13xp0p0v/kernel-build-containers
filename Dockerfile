@@ -2,7 +2,7 @@ ARG UBUNTU_VERSION
 FROM ubuntu:${UBUNTU_VERSION} as base
 
 ARG GCC_VERSION
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
+RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
     apt-get update && \
     apt-get install -y -q apt-utils dialog && \
     apt-get install -y -q \
@@ -17,7 +17,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 ARG UNAME
 ARG UID
 ARG GID
-RUN groupadd -g ${GID} -o ${UNAME} && \
+RUN set -x && groupadd -g ${GID} -o ${UNAME} && \
     useradd -u $UID -g $GID -G sudo -ms /bin/bash ${UNAME} && \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     echo "Set disable_coredump false" >> /etc/sudo.conf && \
