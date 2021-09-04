@@ -60,10 +60,11 @@ build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
 
 build_clang_container ()
 {
- echo -e "\nBuilding a container with CLANG_VERSION=$1 from UBUNTU_VERSION=$2"
+ echo -e "\nBuilding a container with CLANG_VERSION=$1 and GCC_VERSION=$2 from UBUNTU_VERSION=$3"
  $SUDO_CMD docker build \
   --build-arg CLANG_VERSION=$1 \
-  --build-arg UBUNTU_VERSION=$2 \
+  --build-arg GCC_VERSION=$2 \
+  --build-arg UBUNTU_VERSION=$3 \
   --build-arg UNAME=$(id -nu) \
   --build-arg UID=$(id -u) \
   --build-arg GID=$(id -g)  \
@@ -71,6 +72,7 @@ build_clang_container ()
 }
 
 CLANG_VERSION="12"
+GCC_VERSION="10"
 UBUNTU_VERSION="21.04"
-build_clang_container ${CLANG_VERSION} ${UBUNTU_VERSION}
+build_clang_container ${CLANG_VERSION} ${GCC_VERSION} ${UBUNTU_VERSION}
 
