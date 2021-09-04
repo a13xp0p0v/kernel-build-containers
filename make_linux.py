@@ -8,7 +8,7 @@ import shutil
 
 
 supported_archs = ['x86_64', 'i386', 'aarch64']
-supported_compilers = ['gcc-4.8', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9', 'gcc-10', 'gcc-11', 'all']
+supported_compilers = ['gcc-4.8', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9', 'gcc-10', 'gcc-11', 'clang-12', 'all']
 
 name_delimiter = '__'
 
@@ -72,6 +72,10 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
     build_log_fd = open(build_log, "w")
 
     start_container_cmd = ['bash', './start_container.sh', compiler, src, out_subdir, '-n', 'make', 'O=~/out/']
+
+    if compiler.startswith('clang'):
+        print('Compiling with clang requires \'CC=clang\'')
+        start_container_cmd.extend(['CC=clang'])
 
     cross_compile_args = get_cross_compile_args(arch)
     if cross_compile_args:
@@ -156,6 +160,8 @@ def main():
                 sys.exit('[-] Don\'t specify "ARCH=", we will take care of that')
             if arg.startswith('CROSS_COMPILE='):
                 sys.exit('[-] Don\'t specify "CROSS_COMPILE=", we will take care of that')
+            if arg.startswith('CC='):
+                sys.exit('[-] Don\'t specify "CC=", we will take care of that')
 
     build_kernels(args.a, args.k, args.s, args.o, compilers, make_args)
 
