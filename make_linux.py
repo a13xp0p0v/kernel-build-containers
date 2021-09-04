@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+# pylint: disable=missing-module-docstring,missing-function-docstring
+
 import os
 import sys
 import argparse
@@ -8,18 +10,21 @@ import shutil
 
 
 supported_archs = ['x86_64', 'i386', 'aarch64']
-supported_compilers = ['gcc-4.8', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9', 'gcc-10', 'gcc-11', 'clang-12', 'all']
+supported_compilers = ['gcc-4.8', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9', 'gcc-10', 'gcc-11',
+                       'clang-12',
+                       'all']
 
-name_delimiter = '__'
+NAME_DELIMITER = '__'
 
 
 def get_cross_compile_args(arch):
-    if arch == 'x86_64':
-        return []
+    args_list = []
     if arch == 'i386':
-        return ['ARCH=i386']
-    if arch == 'aarch64':
-        return ['ARCH=arm64', 'CROSS_COMPILE=aarch64-linux-gnu-']
+        args_list.append('ARCH=i386')
+    elif arch == 'aarch64':
+        args_list.append('ARCH=arm64')
+        args_list.append('CROSS_COMPILE=aarch64-linux-gnu-')
+    return args_list
 
 
 def finish_building_kernel(out_dir, interrupt):
@@ -41,9 +46,9 @@ def finish_building_kernel(out_dir, interrupt):
     if return_code != 0:
         print('[!] ERROR: failed to finish with the container')
         return False
-    else:
-        print('Finished with the container')
-        return True
+
+    print('Finished with the container')
+    return True
 
 
 def build_kernel(arch, kconfig, src, out, compiler, make_args):
@@ -53,9 +58,9 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
 
     if arch in suffix:
         print('Arch name "{}" is already a part of kconfig name'.format(arch))
-        out_subdir = out + '/' + suffix + name_delimiter + compiler
+        out_subdir = out + '/' + suffix + NAME_DELIMITER + compiler
     else:
-        out_subdir = out + '/' + suffix + name_delimiter + arch + name_delimiter + compiler
+        out_subdir = out + '/' + suffix + NAME_DELIMITER + arch + NAME_DELIMITER + compiler
 
     print('Output subdirectory for this build: {}'.format(out_subdir))
     if os.path.isdir(out_subdir):
@@ -71,7 +76,8 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
     print('Going to save build log to "build_log.txt" in output subdirectory')
     build_log_fd = open(build_log, "w")
 
-    start_container_cmd = ['bash', './start_container.sh', compiler, src, out_subdir, '-n', 'make', 'O=~/out/']
+    start_container_cmd = ['bash', './start_container.sh', compiler, src, out_subdir, '-n',
+                           'make', 'O=~/out/']
 
     if compiler.startswith('clang'):
         print('Compiling with clang requires \'CC=clang\'')
@@ -79,7 +85,7 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
 
     cross_compile_args = get_cross_compile_args(arch)
     if cross_compile_args:
-        print("Create additional arguments for cross-compilation: {}".format(' '.join(cross_compile_args)))
+        print('Add arguments for cross-compilation: {}'.format(' '.join(cross_compile_args)))
     start_container_cmd.extend(cross_compile_args)
 
     start_container_cmd.extend(make_args)
@@ -95,7 +101,7 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
                 print('    {}'.format(line), end='\r')
                 build_log_fd.write(line)
             return_code = process.wait()
-            print('Running the container returned {}'.format(return_code))
+            print('The container returned {}'.format(return_code))
             print('See build log: {}'.format(build_log))
         except KeyboardInterrupt:
             print('[!] Got keyboard interrupt, stopping build process...')
@@ -123,7 +129,7 @@ def main():
     parser.add_argument('-c', choices=supported_compilers, required=True,
                         help='building compiler (\'all\' to build with each of them)')
     parser.add_argument('make_args', metavar='...', nargs=argparse.REMAINDER,
-                        help='additional arguments for \'make\', can be separated by \'--\' delimeter')
+                        help='additional arguments for \'make\', can be separated by -- delimiter')
     args = parser.parse_args()
 
     print('[+] Going to build the Linux kernel for {}'.format(args.a))
@@ -149,7 +155,7 @@ def main():
     print('[+] Going to build with: {}'.format(' '.join(compilers)))
 
     make_args = args.make_args[:]
-    if len(make_args):
+    if make_args:
         if make_args[0] == '--':
             make_args.pop(0)
         print('[+] Have additional arguments for \'make\': {}'.format(' '.join(make_args)))

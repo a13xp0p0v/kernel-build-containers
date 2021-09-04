@@ -53,12 +53,11 @@ then
 	fi
 	echo "Container $ID is killed"
 else
-	echo "Hope the docker container $ID doesn't run"
 	STATUS=`$SUDO_CMD docker container inspect -f '{{.State.Status}}' "$ID" 2>&1`
 	if [ "$STATUS" = "running" ]
 	then
-		echo "Something goes wrong, container $ID is running"
+		echo "Something goes wrong, container $ID is running!"
 		exit 4
 	fi
-	echo "Yes, fine, container $ID doesn't run"
+	echo "OK, container $ID doesn't run"
 fi
