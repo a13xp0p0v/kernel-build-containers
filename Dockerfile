@@ -16,7 +16,7 @@ RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-se
       fi \
     fi; \
     if [ "$CLANG_VERSION" ]; then \
-      apt-get install -y -q clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-${CLANG_VERSION} clang; \
+      apt-get install -y -q clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-${CLANG_VERSION} clang lld; \
     fi
 
 ARG UNAME
