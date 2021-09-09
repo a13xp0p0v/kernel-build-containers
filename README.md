@@ -86,7 +86,7 @@ Get help:
 
 ```console
 $ python3 make_linux.py -h
-usage: make_linux.py [-h] -a {x86_64,i386,aarch64} -k kconfig -s src -o out -c
+usage: make_linux.py [-h] -a {x86_64,i386,aarch64} [-k kconfig] -s src -o out -c
                      {gcc-4.8,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,clang-12,all}
                      ...
 

@@ -54,13 +54,15 @@ def finish_building_kernel(out_dir, interrupt):
 def build_kernel(arch, kconfig, src, out, compiler, make_args):
     print('\n=== Building with {} ==='.format(compiler))
 
-    suffix = os.path.splitext(os.path.basename(kconfig))[0]
-
-    if arch in suffix:
-        print('Arch name "{}" is already a part of kconfig name'.format(arch))
-        out_subdir = out + '/' + suffix + NAME_DELIMITER + compiler
+    if kconfig:
+        suffix = os.path.splitext(os.path.basename(kconfig))[0]
+        if arch in suffix:
+            print('Arch name "{}" is already a part of kconfig name'.format(arch))
+            out_subdir = out + '/' + suffix + NAME_DELIMITER + compiler
+        else:
+            out_subdir = out + '/' + suffix + NAME_DELIMITER + arch + NAME_DELIMITER + compiler
     else:
-        out_subdir = out + '/' + suffix + NAME_DELIMITER + arch + NAME_DELIMITER + compiler
+            out_subdir = out + '/' + arch + NAME_DELIMITER + compiler
 
     print('Output subdirectory for this build: {}'.format(out_subdir))
     if os.path.isdir(out_subdir):
@@ -69,8 +71,11 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
         print('Output subdirectory doesn\'t exist, create it')
         os.mkdir(out_subdir)
 
-    print('Copy kconfig to output subdirectory as ".config"')
-    shutil.copyfile(kconfig, out_subdir + '/.config')
+    if kconfig:
+        print('Copy kconfig to output subdirectory as ".config"')
+        shutil.copyfile(kconfig, out_subdir + '/.config')
+    else:
+        print('No kconfig to copy to output subdirectory')
 
     build_log = out_subdir + '/build_log.txt'
     print('Going to save build log to "build_log.txt" in output subdirectory')
@@ -120,7 +125,7 @@ def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
     parser.add_argument('-a', choices=supported_archs, required=True,
                         help='build target architecture')
-    parser.add_argument('-k', metavar='kconfig', required=True,
+    parser.add_argument('-k', metavar='kconfig',
                         help='path to kernel kconfig file')
     parser.add_argument('-s', metavar='src', required=True,
                         help='Linux kernel sources directory')
@@ -134,9 +139,10 @@ def main():
 
     print('[+] Going to build the Linux kernel for {}'.format(args.a))
 
-    if not os.path.isfile(args.k):
-        sys.exit('[!] ERROR: can\'t find the kernel config "{}"'.format(args.k))
-    print('[+] Using "{}" as kernel config'.format(args.k))
+    if args.k:
+        if not os.path.isfile(args.k):
+            sys.exit('[!] ERROR: can\'t find the kernel config "{}"'.format(args.k))
+        print('[+] Using "{}" as kernel config'.format(args.k))
 
     if not os.path.isdir(args.s):
         sys.exit('[!] ERROR: can\'t find the kernel sources directory "{}"'.format(args.s))
