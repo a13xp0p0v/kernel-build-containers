@@ -10,7 +10,7 @@ __Supported build targets:__
  - `aarch64`
 
 __Supported gcc versions:__
- - gcc-4.8 (doesn't support `gcc-plugins` for `aarch64`)
+ - gcc-4.9 (doesn't support `gcc-plugins` for `aarch64`)
  - gcc-5
  - gcc-6
  - gcc-7
@@ -34,15 +34,15 @@ Created containers:
 
 ```console
 $ sudo docker image list | grep kernel-build-container
-kernel-build-container   clang-12            c5ad7aa4a0fc        21 seconds ago      1.85GB
-kernel-build-container   gcc-11              e65b58c480f9        4 minutes ago       1.53GB
-kernel-build-container   gcc-10              2243b6eaf166        8 minutes ago       894MB
-kernel-build-container   gcc-9               068a717867f2        11 minutes ago      596MB
-kernel-build-container   gcc-8               df138141c4df        13 minutes ago      799MB
-kernel-build-container   gcc-7               cd561a018382        16 minutes ago      523MB
-kernel-build-container   gcc-6               78f4984bd3d1        18 minutes ago      697MB
-kernel-build-container   gcc-5               69697e5835e6        20 minutes ago      545MB
-kernel-build-container   gcc-4.8             8ee1148c1728        22 minutes ago      664MB
+kernel-build-container   clang-12            e181c0783a39        About a minute ago   2.55GB
+kernel-build-container   gcc-11              c0180b2255ee        19 minutes ago       2.36GB
+kernel-build-container   gcc-10              6856f6b0208a        24 minutes ago       1.17GB
+kernel-build-container   gcc-9               1a3e47ac817c        28 minutes ago       737MB
+kernel-build-container   gcc-8               68d7e5eb2719        30 minutes ago       1.03GB
+kernel-build-container   gcc-7               4366b8a2dc87        33 minutes ago       649MB
+kernel-build-container   gcc-6               7944ac6e862f        36 minutes ago       901MB
+kernel-build-container   gcc-5               9008f7e6b369        39 minutes ago       658MB
+kernel-build-container   gcc-4.9             16ccdc6b913b        41 minutes ago       851MB
 ```
 
 ### Running a container
@@ -87,7 +87,7 @@ Get help:
 ```console
 $ python3 make_linux.py -h
 usage: make_linux.py [-h] -a {x86_64,i386,aarch64} [-k kconfig] -s src -o out -c
-                     {gcc-4.8,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,clang-12,all}
+                     {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,clang-12,all}
                      ...
 
 Build Linux kernel using kernel-build-containers
@@ -102,7 +102,7 @@ optional arguments:
   -k kconfig            path to kernel kconfig file
   -s src                Linux kernel sources directory
   -o out                Build output directory
-  -c {gcc-4.8,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,clang-12,all}
+  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,clang-12,all}
                         building compiler ('all' to build with each of them)
 ```
 

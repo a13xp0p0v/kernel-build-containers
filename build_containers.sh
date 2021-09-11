@@ -26,7 +26,7 @@ build_gcc_container ()
   -t kernel-build-container:gcc-${GCC_VERSION} .
 }
 
-GCC_VERSION="4.8"
+GCC_VERSION="4.9"
 UBUNTU_VERSION="16.04"
 build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
 

@@ -15,7 +15,7 @@ fi
 set -x
 
 #$SUDO_CMD docker rm `sudo docker ps -a -q`
-$SUDO_CMD docker rmi kernel-build-container:gcc-4.8
+$SUDO_CMD docker rmi kernel-build-container:gcc-4.9
 $SUDO_CMD docker rmi kernel-build-container:gcc-5
 $SUDO_CMD docker rmi kernel-build-container:gcc-6
 $SUDO_CMD docker rmi kernel-build-container:gcc-7

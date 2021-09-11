@@ -11,7 +11,7 @@ RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-se
       apt-get install -y -q gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev gcc g++ \
         gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
         gcc-aarch64-linux-gnu g++-aarch64-linux-gnu && \
-      if [ "$GCC_VERSION" != "4.8" ]; then \
+      if [ "$GCC_VERSION" != "4.9" ]; then \
         apt-get install -y -q gcc-${GCC_VERSION}-plugin-dev-aarch64-linux-gnu; \
       fi \
     fi; \
