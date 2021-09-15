@@ -87,8 +87,8 @@ Get help:
 
 ```console
 $ python3 make_linux.py -h
-usage: make_linux.py [-h] -a {x86_64,i386,aarch64} [-k kconfig] -s src -o out -c
-                     {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,clang-12,all}
+usage: make_linux.py [-h] -a {x86_64,i386,arm64} [-k kconfig] -s src -o out
+                     -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,clang-12,all}
                      ...
 
 Build Linux kernel using kernel-build-containers
@@ -98,7 +98,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -a {x86_64,i386,aarch64}
+  -a {x86_64,i386,arm64}
                         build target architecture
   -k kconfig            path to kernel kconfig file
   -s src                Linux kernel sources directory
@@ -110,8 +110,8 @@ optional arguments:
 Kernel building example:
 
 ```console
-$ python3 make_linux.py -a aarch64 -k ~/linux/experiment.config -s ~/linux/linux -o ~/linux/build_out -c clang-12 -- -j5
-[+] Going to build the Linux kernel for aarch64
+$ python3 make_linux.py -a arm64 -k ~/linux/experiment.config -s ~/linux/linux -o ~/linux/build_out -c clang-12 -- -j5
+[+] Going to build the Linux kernel for arm64
 [+] Using "/home/a13x/linux/experiment.config" as kernel config
 [+] Using "/home/a13x/linux/linux" as Linux kernel sources directory
 [+] Using "/home/a13x/linux/build_out" as build output directory
@@ -119,17 +119,17 @@ $ python3 make_linux.py -a aarch64 -k ~/linux/experiment.config -s ~/linux/linux
 [+] Have additional arguments for 'make': -j5
 
 === Building with clang-12 ===
-Output subdirectory for this build: /home/a13x/linux/build_out/experiment__aarch64__clang-12
-Output subdirectory already exists, use it (no cleaning!)
+Output subdirectory for this build: /home/a13x/linux/build_out/experiment__arm64__clang-12
+Output subdirectory doesn't exist, create it
 Copy kconfig to output subdirectory as ".config"
 Going to save build log to "build_log.txt" in output subdirectory
 Compiling with clang requires 'CC=clang'
 Add arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-Run the container: bash ./start_container.sh clang-12 /home/a13x/linux/linux /home/a13x/linux/build_out/experiment__aarch64__clang-12 -n make O=~/out/ CC=clang ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1
+Run the container: bash ./start_container.sh clang-12 /home/a13x/linux/linux /home/a13x/linux/build_out/experiment__arm64__clang-12 -n make O=~/out/ CC=clang ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1
     Hey, we gonna use sudo for running docker
     Starting "kernel-build-container:clang-12"
     Source code directory "/home/a13x/linux/linux" is mounted at "~/src"
-    Build output directory "/home/a13x/linux/build_out/experiment__aarch64__clang-12" is mounted at "~/out"
+    Build output directory "/home/a13x/linux/build_out/experiment__arm64__clang-12" is mounted at "~/out"
     Run docker in NON-interactive mode
     Gonna run "make O=~/out/ CC=clang ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1"
     
@@ -139,12 +139,12 @@ Run the container: bash ./start_container.sh clang-12 /home/a13x/linux/linux /ho
 ...
     make[1]: Leaving directory '/home/a13x/out'
 The container returned 0
-See build log: /home/a13x/linux/build_out/experiment__aarch64__clang-12/build_log.txt
+See build log: /home/a13x/develop_local/linux-stable/build_out/experiment__arm64__clang-12/build_log.txt
 Only remove the container id file:
     Hey, we gonna use sudo for running docker
-    Search "container.id" file in build output directory "/home/a13x/linux/build_out/experiment__aarch64__clang-12"
+    Search "container.id" file in build output directory "/home/a13x/develop_local/linux-stable/build_out/experiment__arm64__clang-12"
     OK, "container.id" file exists, removing it
-    OK, container 48a25a340a1ceb3d1ee4baa4eafb1b44ad98c6a70bd105f0376cffb2ba21bd2e doesn't run
+    OK, container 99154aa0bc294a054585c89f71c09b07c0eafb19204e64e23ff22d6db2a9a637 doesn't run
 Finished with the container
 
 [+] Done, see the results

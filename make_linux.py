@@ -9,7 +9,7 @@ import subprocess
 import shutil
 
 
-supported_archs = ['x86_64', 'i386', 'aarch64']
+supported_archs = ['x86_64', 'i386', 'arm64']
 supported_compilers = ['gcc-4.9', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9', 'gcc-10', 'gcc-11',
                        'clang-12',
                        'all']
@@ -21,7 +21,7 @@ def get_cross_compile_args(arch):
     args_list = []
     if arch == 'i386':
         args_list.append('ARCH=i386')
-    elif arch == 'aarch64':
+    elif arch == 'arm64':
         args_list.append('ARCH=arm64')
         args_list.append('CROSS_COMPILE=aarch64-linux-gnu-')
     return args_list
