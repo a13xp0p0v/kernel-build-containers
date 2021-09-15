@@ -7,10 +7,11 @@ It's very useful for testing gcc-plugins for the Linux kernel, for example. Good
 __Supported build targets:__
  - `x86_64`
  - `i386`
- - `aarch64`
+ - `arm64` or `aarch64`
+ - `arm` or `aarch32`
 
 __Supported gcc versions:__
- - gcc-4.9 (doesn't support `gcc-plugins` for `aarch64`)
+ - gcc-4.9 (doesn't support `gcc-plugins` for `arm64` and `arm`)
  - gcc-5
  - gcc-6
  - gcc-7
