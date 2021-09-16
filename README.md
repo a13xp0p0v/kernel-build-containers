@@ -87,7 +87,7 @@ Get help:
 
 ```console
 $ python3 make_linux.py -h
-usage: make_linux.py [-h] -a {x86_64,i386,arm64} [-k kconfig] -s src -o out
+usage: make_linux.py [-h] -a {x86_64,i386,arm64,arm} [-k kconfig] -s src -o out
                      -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,clang-12,all}
                      ...
 
@@ -98,7 +98,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -a {x86_64,i386,arm64}
+  -a {x86_64,i386,arm64,arm}
                         build target architecture
   -k kconfig            path to kernel kconfig file
   -s src                Linux kernel sources directory
