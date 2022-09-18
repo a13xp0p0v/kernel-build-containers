@@ -55,7 +55,7 @@ UBUNTU_VERSION="20.04"
 build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
 
 GCC_VERSION="11"
-UBUNTU_VERSION="21.04"
+UBUNTU_VERSION="22.04"
 build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
 
 build_clang_container ()
@@ -73,6 +73,6 @@ build_clang_container ()
 
 CLANG_VERSION="12"
 GCC_VERSION="10"
-UBUNTU_VERSION="21.04"
+UBUNTU_VERSION="22.04"
 build_clang_container ${CLANG_VERSION} ${GCC_VERSION} ${UBUNTU_VERSION}
 
