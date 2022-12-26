@@ -4,6 +4,13 @@ This project provides Docker containers for building the Linux kernel (or other 
 
 It's very useful for testing gcc-plugins for the Linux kernel, for example. Goodbye headache!
 
+## Repository mirrors
+
+ - At Codeberg: [https://codeberg.org/a13xp0p0v/kernel-build-containers](https://codeberg.org/a13xp0p0v/kernel-build-containers)
+ - At GitFlic: [https://gitflic.ru/project/a13xp0p0v/kernel-build-containers](https://gitflic.ru/project/a13xp0p0v/kernel-build-containers)
+
+## Supported features
+
 __Supported build targets:__
  - `x86_64`
  - `i386`
@@ -23,7 +30,7 @@ __Supported gcc versions:__
 __Supported clang versions:__
  - clang-12
 
-# Usage
+## Usage
 
 ### Building all containers
 
