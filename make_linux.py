@@ -11,7 +11,7 @@ import shutil
 
 supported_archs = ['x86_64', 'i386', 'arm64', 'arm']
 supported_compilers = ['gcc-4.9', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9', 'gcc-10', 'gcc-11', 'gcc-12',
-                       'clang-12',
+                       'clang-12', 'clang-13', 'clang-14', 'clang-15',
                        'all']
 
 NAME_DELIMITER = '__'

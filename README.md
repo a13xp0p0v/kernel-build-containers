@@ -31,6 +31,9 @@ __Supported gcc versions:__
 
 __Supported clang versions:__
  - clang-12
+ - clang-13
+ - clang-14
+ - clang-15
 
 ## Usage
 
@@ -44,7 +47,10 @@ Created containers:
 
 ```console
 $ sudo docker image list | grep kernel-build-container
-kernel-build-container   gcc-12     283a273fa54d   11 minutes ago   3.03GB
+kernel-build-container   clang-15   317bcc9cbe7e   19 minutes ago   2.34GB
+kernel-build-container   clang-14   2801a41dc153   54 minutes ago   1.69GB
+kernel-build-container   clang-13   155ea2d3f4ad   2 hours ago      2.28GB
+kernel-build-container   gcc-12     283a273fa54d   3 hours ago      3.03GB
 kernel-build-container   clang-12   b4891e3c38aa   6 months ago     3.68GB
 kernel-build-container   gcc-11     443c02ccc2eb   6 months ago     1.01GB
 kernel-build-container   gcc-10     e1ad5c23c709   6 months ago     1.25GB
@@ -98,7 +104,7 @@ Get help:
 ```console
 $ python3 make_linux.py -h
 usage: make_linux.py [-h] -a {x86_64,i386,arm64,arm} [-k kconfig] -s src -o out
-                     -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,clang-12,all}
+                     -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,clang-12,clang-13,clang-14,clang-15,all}
                      ...
 
 Build Linux kernel using kernel-build-containers
@@ -113,7 +119,7 @@ options:
   -k kconfig            path to kernel kconfig file
   -s src                Linux kernel sources directory
   -o out                Build output directory
-  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,clang-12,all}
+  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,clang-12,clang-13,clang-14,clang-15,all}
                         building compiler ('all' to build with each of them)
 ```
 
