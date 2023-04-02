@@ -27,6 +27,7 @@ __Supported gcc versions:__
  - gcc-9
  - gcc-10
  - gcc-11
+ - gcc-12
 
 __Supported clang versions:__
  - clang-12
@@ -43,15 +44,16 @@ Created containers:
 
 ```console
 $ sudo docker image list | grep kernel-build-container
-kernel-build-container   clang-12            e181c0783a39        About a minute ago   2.55GB
-kernel-build-container   gcc-11              c0180b2255ee        19 minutes ago       2.36GB
-kernel-build-container   gcc-10              6856f6b0208a        24 minutes ago       1.17GB
-kernel-build-container   gcc-9               1a3e47ac817c        28 minutes ago       737MB
-kernel-build-container   gcc-8               68d7e5eb2719        30 minutes ago       1.03GB
-kernel-build-container   gcc-7               4366b8a2dc87        33 minutes ago       649MB
-kernel-build-container   gcc-6               7944ac6e862f        36 minutes ago       901MB
-kernel-build-container   gcc-5               9008f7e6b369        39 minutes ago       658MB
-kernel-build-container   gcc-4.9             16ccdc6b913b        41 minutes ago       851MB
+kernel-build-container   gcc-12     283a273fa54d   11 minutes ago   3.03GB
+kernel-build-container   clang-12   b4891e3c38aa   6 months ago     3.68GB
+kernel-build-container   gcc-11     443c02ccc2eb   6 months ago     1.01GB
+kernel-build-container   gcc-10     e1ad5c23c709   6 months ago     1.25GB
+kernel-build-container   gcc-9      7980321acf8e   6 months ago     816MB
+kernel-build-container   gcc-8      50fedf287444   6 months ago     1.11GB
+kernel-build-container   gcc-7      40d953aaef4a   6 months ago     736MB
+kernel-build-container   gcc-6      dcd304714792   6 months ago     988MB
+kernel-build-container   gcc-5      3bf57a4d2283   6 months ago     723MB
+kernel-build-container   gcc-4.9    8b7c32b723f1   6 months ago     916MB
 ```
 
 ### Running a container
@@ -96,7 +98,7 @@ Get help:
 ```console
 $ python3 make_linux.py -h
 usage: make_linux.py [-h] -a {x86_64,i386,arm64,arm} [-k kconfig] -s src -o out
-                     -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,clang-12,all}
+                     -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,clang-12,all}
                      ...
 
 Build Linux kernel using kernel-build-containers
@@ -104,14 +106,14 @@ Build Linux kernel using kernel-build-containers
 positional arguments:
   ...                   additional arguments for 'make', can be separated by -- delimiter
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -a {x86_64,i386,arm64,arm}
                         build target architecture
   -k kconfig            path to kernel kconfig file
   -s src                Linux kernel sources directory
   -o out                Build output directory
-  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,clang-12,all}
+  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,clang-12,all}
                         building compiler ('all' to build with each of them)
 ```
 
@@ -175,4 +177,3 @@ usage: ./finish_container.sh kill/nokill out_dir
 ```console
 $ sh rm_containers.sh
 ```
-

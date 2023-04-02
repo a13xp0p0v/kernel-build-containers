@@ -58,6 +58,10 @@ GCC_VERSION="11"
 UBUNTU_VERSION="22.04"
 build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
 
+GCC_VERSION="12"
+UBUNTU_VERSION="22.04"
+build_gcc_container ${GCC_VERSION} ${UBUNTU_VERSION}
+
 build_clang_container ()
 {
  echo -e "\nBuilding a container with CLANG_VERSION=$1 and GCC_VERSION=$2 from UBUNTU_VERSION=$3"
