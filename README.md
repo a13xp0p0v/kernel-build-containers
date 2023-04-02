@@ -168,7 +168,7 @@ Get help:
 
 ```console
 usage: ./finish_container.sh kill/nokill out_dir
-  kill/nokill -- what to do with this container
+  kill/nokill -- how to finish: kill the container and then clean up / only clean up
   out_dir -- build output directory used by this container (with container.id file)
 ```
 

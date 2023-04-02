@@ -15,7 +15,7 @@ fi
 if [ $# -ne 2 ]
 then
 	echo "usage: $0 kill/nokill out_dir"
-	echo "  kill/nokill -- what to do with this container"
+	echo "  kill/nokill -- how to finish: kill the container and then clean up / only clean up"
 	echo "  out_dir -- build output directory used by this container (with container.id file)"
 	exit 1
 fi
