@@ -24,6 +24,7 @@ $SUDO_CMD docker rmi kernel-build-container:gcc-9
 $SUDO_CMD docker rmi kernel-build-container:gcc-10
 $SUDO_CMD docker rmi kernel-build-container:gcc-11
 $SUDO_CMD docker rmi kernel-build-container:gcc-12
+$SUDO_CMD docker rmi kernel-build-container:gcc-13
 $SUDO_CMD docker rmi kernel-build-container:clang-12
 $SUDO_CMD docker rmi kernel-build-container:clang-13
 $SUDO_CMD docker rmi kernel-build-container:clang-14
