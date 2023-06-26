@@ -22,7 +22,10 @@ RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-se
 ARG UNAME
 ARG UID
 ARG GID
-RUN set -x && groupadd -g ${GID} -o ${UNAME} && \
+RUN set -x && \
+    userdel -r `getent passwd ${UID} | cut -d : -f 1` > /dev/null 2>&1; \
+    groupdel -f `getent group ${GID} | cut -d : -f 1` > /dev/null 2>&1; \
+    groupadd -g ${GID} -o ${UNAME} && \
     useradd -u $UID -g $GID -G sudo -ms /bin/bash ${UNAME} && \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     echo "Set disable_coredump false" >> /etc/sudo.conf && \
