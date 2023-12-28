@@ -31,6 +31,7 @@ def get_cross_compile_args(arch):
 
 
 def finish_building_kernel(out_dir, interrupt):
+    print('Finish building the kernel')
     finish_container_cmd = ['bash', './finish_container.sh']
     if interrupt:
         print('Kill the container and remove the container id file:')
@@ -46,12 +47,7 @@ def finish_building_kernel(out_dir, interrupt):
             print('    {}'.format(line), end='\r')
         return_code = process.wait()
 
-    if return_code != 0:
-        print('[!] ERROR: failed to finish with the container')
-        return False
-
-    print('Finished with the container')
-    return True
+    print('The finish_container.sh script returned {}'.format(return_code))
 
 
 def build_kernel(arch, kconfig, src, out, compiler, make_args):
@@ -80,12 +76,23 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
     else:
         print('No kconfig to copy to output subdirectory')
 
-    build_log = out_subdir + '/build_log.txt'
-    print('Going to save build log to "build_log.txt" in output subdirectory')
-    build_log_fd = open(build_log, "w")
+    start_container_cmd = ['bash', './start_container.sh', compiler, src, out_subdir]
 
-    start_container_cmd = ['bash', './start_container.sh', compiler, src, out_subdir, '-n',
-                           'make', 'O=~/out/']
+    noninteractive = True
+    if 'menuconfig' in make_args:
+        noninteractive = False
+
+    if noninteractive:
+        start_container_cmd.extend(['-n']) # start container in the non-interactive mode
+        build_log = out_subdir + '/build_log.txt'
+        print('Going to save build log to "build_log.txt" in output subdirectory')
+        build_log_fd = open(build_log, "w")
+        stdout_destination = subprocess.PIPE
+    else:
+        print('Going to run the container in the interactive mode (without build log)')
+        stdout_destination = None
+
+    start_container_cmd.extend(['make', 'O=~/out/'])
 
     if compiler.startswith('clang'):
         print('Compiling with clang requires \'CC=clang\'')
@@ -98,25 +105,29 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
 
     start_container_cmd.extend(make_args)
 
-    start_container_cmd.extend(['2>&1'])
+    if noninteractive:
+        start_container_cmd.extend(['2>&1'])
 
     print('Run the container: {}'.format(' '.join(start_container_cmd)))
     interrupt = False
-    with subprocess.Popen(start_container_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+    with subprocess.Popen(start_container_cmd, stdout=stdout_destination, stderr=subprocess.STDOUT,
                           universal_newlines=True, bufsize=1) as process:
         try:
-            for line in process.stdout:
-                print('    {}'.format(line), end='\r')
-                build_log_fd.write(line)
+            if noninteractive:
+                for line in process.stdout:
+                    print('    {}'.format(line), end='\r')
+                    build_log_fd.write(line)
             return_code = process.wait()
             print('The container returned {}'.format(return_code))
-            print('See build log: {}'.format(build_log))
         except KeyboardInterrupt:
             print('[!] Got keyboard interrupt, stopping build process...')
             interrupt = True
-    build_log_fd.close()
-    if not finish_building_kernel(out_subdir, interrupt) or interrupt:
-        sys.exit('[!] Early exit')
+    finish_building_kernel(out_subdir, interrupt)
+    if noninteractive:
+        print('See the build log: {}'.format(build_log))
+        build_log_fd.close()
+    if interrupt:
+        sys.exit('[!] Exit by interrupt')
 
 
 def build_kernels(arch, kconfig, src, out, compilers, make_args):
