@@ -70,6 +70,7 @@ Get help:
 
 ```console
 $ sh ./start_container.sh
+Hey, we gonna use sudo for running docker
 usage: ./start_container.sh compiler src_dir out_dir [-n] [cmd with args]
   use '-n' for non-interactive session
   if cmd is empty, we will start an interactive bash in the container
@@ -78,25 +79,30 @@ usage: ./start_container.sh compiler src_dir out_dir [-n] [cmd with args]
 Run interactive bash in the container:
 
 ```console
-$ sh start_container.sh gcc-10 ~/linux/linux/ ~/linux/build_out/
+$ sh start_container.sh gcc-12 ~/linux-stable/linux-stable/ ~/linux-stable/build_out/
 Hey, we gonna use sudo for running docker
-Starting "kernel-build-container:gcc-10"
-Source code directory "/home/a13x/linux/linux/" is mounted at "~/src"
-Build output directory "/home/a13x/linux/build_out/" is mounted at "~/out"
+Starting "kernel-build-container:gcc-12"
+Source code directory "/home/a13x/linux-stable/linux-stable/" is mounted at "~/src"
+Build output directory "/home/a13x/linux-stable/build_out/" is mounted at "~/out"
 Run docker in interactive mode
 Gonna run interactive bash...
+
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+a13x@969f6b1526a0:~/src$
 ```
 
 Execute a command in the container:
 
 ```console
-$ sh start_container.sh clang-12 ~/linux/linux/ ~/linux/build_out/ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC=clang defconfig
+$ sh start_container.sh clang-15 ~/linux-stable/linux-stable/ ~/linux-stable/build_out/ make defconfig
 Hey, we gonna use sudo for running docker
-Starting "kernel-build-container:clang-12"
-Source code directory "/home/a13x/linux/linux/" is mounted at "~/src"
-Build output directory "/home/a13x/linux/build_out/" is mounted at "~/out"
+Starting "kernel-build-container:clang-15"
+Source code directory "/home/a13x/linux-stable/linux-stable/" is mounted at "~/src"
+Build output directory "/home/a13x/linux-stable/build_out/" is mounted at "~/out"
 Run docker in interactive mode
-Gonna run "make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC=clang defconfig"
+Gonna run "make defconfig"
 ```
 
 ### Building Linux kernel
@@ -106,7 +112,8 @@ Get help:
 ```console
 $ python3 make_linux.py -h
 usage: make_linux.py [-h] -a {x86_64,i386,arm64,arm} [-k kconfig] -s src -o out -c
-                     {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,clang-12,clang-13,clang-14,clang-15,all}
+                     {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,
+                     gcc-13,clang-12,clang-13,clang-14,clang-15,all}
                      ...
 
 Build Linux kernel using kernel-build-containers
@@ -121,35 +128,35 @@ options:
   -k kconfig            path to kernel kconfig file
   -s src                Linux kernel sources directory
   -o out                Build output directory
-  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,clang-12,clang-13,clang-14,clang-15,all}
+  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,
+  clang-12,clang-13,clang-14,clang-15,all}
                         building compiler ('all' to build with each of them)
 ```
 
-Kernel building example:
+Build the Linux kernel in the needed container:
 
 ```console
-$ python3 make_linux.py -a arm64 -k ~/linux/experiment.config -s ~/linux/linux -o ~/linux/build_out -c clang-12 -- -j5
+$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13 -- -j9
 [+] Going to build the Linux kernel for arm64
-[+] Using "/home/a13x/linux/experiment.config" as kernel config
-[+] Using "/home/a13x/linux/linux" as Linux kernel sources directory
-[+] Using "/home/a13x/linux/build_out" as build output directory
-[+] Going to build with: clang-12
-[+] Have additional arguments for 'make': -j5
+[+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
+[+] Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
+[+] Using "/home/a13x/linux-stable/build_out" as build output directory
+[+] Going to build with: gcc-13
+[+] Have additional arguments for 'make': -j9
 
-=== Building with clang-12 ===
-Output subdirectory for this build: /home/a13x/linux/build_out/experiment__arm64__clang-12
+=== Building with gcc-13 ===
+Output subdirectory for this build: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13
 Output subdirectory doesn't exist, create it
 Copy kconfig to output subdirectory as ".config"
 Going to save build log to "build_log.txt" in output subdirectory
-Compiling with clang requires 'CC=clang'
 Add arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-Run the container: bash ./start_container.sh clang-12 /home/a13x/linux/linux /home/a13x/linux/build_out/experiment__arm64__clang-12 -n make O=~/out/ CC=clang ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1
+Run the container: bash ./start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -n make O=~/out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j9 2>&1
     Hey, we gonna use sudo for running docker
-    Starting "kernel-build-container:clang-12"
-    Source code directory "/home/a13x/linux/linux" is mounted at "~/src"
-    Build output directory "/home/a13x/linux/build_out/experiment__arm64__clang-12" is mounted at "~/out"
+    Starting "kernel-build-container:gcc-13"
+    Source code directory "/home/a13x/linux-stable/linux-stable" is mounted at "~/src"
+    Build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13" is mounted at "~/out"
     Run docker in NON-interactive mode
-    Gonna run "make O=~/out/ CC=clang ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j5 2>&1"
+    Gonna run "make O=~/out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j9 2>&1"
     
     make[1]: Entering directory '/home/a13x/out'
       SYNC    include/config/auto.conf.cmd
@@ -157,13 +164,57 @@ Run the container: bash ./start_container.sh clang-12 /home/a13x/linux/linux /ho
 ...
     make[1]: Leaving directory '/home/a13x/out'
 The container returned 0
-See build log: /home/a13x/develop_local/linux-stable/build_out/experiment__arm64__clang-12/build_log.txt
+Finish building the kernel
 Only remove the container id file:
     Hey, we gonna use sudo for running docker
-    Search "container.id" file in build output directory "/home/a13x/develop_local/linux-stable/build_out/experiment__arm64__clang-12"
+    Search "container.id" file in build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13"
     OK, "container.id" file exists, removing it
-    OK, container 99154aa0bc294a054585c89f71c09b07c0eafb19204e64e23ff22d6db2a9a637 doesn't run
-Finished with the container
+    OK, container e4cafed59083c4d7ca4b56d5e2473389d054cad595d0b2435f1c157b8f0c3303 doesn't run
+The finish_container.sh script returned 0
+See the build log: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/build_log.txt
+
+[+] Done, see the results
+```
+
+Configure the Linux kernel with `menuconfig` in the needed container:
+
+```console
+$ ./make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13 -- menuconfig
+[+] Going to build the Linux kernel for arm64
+[+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
+[+] Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
+[+] Using "/home/a13x/linux-stable/build_out" as build output directory
+[+] Going to build with: gcc-13
+[+] Have additional arguments for 'make': menuconfig
+
+=== Building with gcc-13 ===
+Output subdirectory for this build: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13
+Output subdirectory already exists, use it (no cleaning!)
+Copy kconfig to output subdirectory as ".config"
+Going to run the container in the interactive mode (without build log)
+Add arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+Run the container: bash ./start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 make O=~/out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig
+Hey, we gonna use sudo for running docker
+Starting "kernel-build-container:gcc-13"
+Source code directory "/home/a13x/linux-stable/linux-stable" is mounted at "~/src"
+Build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13" is mounted at "~/out"
+Run docker in interactive mode
+Gonna run "make O=~/out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig"
+
+make[1]: Entering directory '/home/a13x/out'
+  GEN     Makefile
+...
+*** End of the configuration.
+*** Execute 'make' to start the build or try 'make help'.
+
+make[1]: Leaving directory '/home/a13x/out'
+The container returned 0
+Finish building the kernel
+Only remove the container id file:
+    Hey, we gonna use sudo for running docker
+    Search "container.id" file in build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13"
+    NO such file, nothing to do, exit
+The finish_container.sh script returned 2
 
 [+] Done, see the results
 ```
@@ -175,6 +226,8 @@ That tool is used by `make_linux.py` for fast stopping the kernel build.
 Get help:
 
 ```console
+$ sh ./finish_container.sh 
+Hey, we gonna use sudo for running docker
 usage: ./finish_container.sh kill/nokill out_dir
   kill/nokill -- how to finish: kill the container and then clean up / only clean up
   out_dir -- build output directory used by this container (with container.id file)
