@@ -70,7 +70,7 @@ while [[ $# -gt 0 ]]; do
 		shift
 		break
 		;;
-	-* | --*)
+	*)
 		echo "Unknown option $1"
 		print_help
 		exit 1
