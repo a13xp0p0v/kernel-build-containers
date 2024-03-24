@@ -1,10 +1,10 @@
 #!/bin/bash
 
 function print_help {
-	echo "usage: $0 compiler src_dir out_dir [-e VAR] [-h] [-n] [-v] [-- cmd with args]"
+	echo "usage: $0 compiler src_dir out_dir [-n] [-e VAR] [-h] [-v] [-- cmd with args]"
+	echo "  -n    launch container in non-interactive mode"
 	echo "  -e    add environment variable in the container (may be used multiple times)"
 	echo "  -h    print this help"
-	echo "  -n    launch container in non-interactive mode"
 	echo "  -v    enable debug output"
 	echo ""
 	echo "  If cmd is empty, we will start an interactive bash in the container."
@@ -29,14 +29,8 @@ if [ $# -lt 3 ]; then
 fi
 
 COMPILER=$1
-echo "Starting \"kernel-build-container:$COMPILER\""
-
 SRC="$2"
-echo "Source code directory \"$SRC\" is mounted at \"~/src\""
-
 OUT="$3"
-echo "Build output directory \"$OUT\" is mounted at \"~/out\""
-
 shift 3
 
 # defaults
@@ -77,18 +71,23 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
+echo "Starting \"kernel-build-container:$COMPILER\""
+
 if [ ! -z "$ENV" ]; then
 	echo "Container environment arguments: $ENV"
 fi
 
 if [ ! -z $INTERACTIVE ]; then
-	echo "Run docker in interactive mode"
+	echo "Gonna run docker in interactive mode"
 fi
 
+echo "Mount source code directory \"$SRC\" at \"/home/$(id -nu)/src\""
+echo "Mount build output directory \"$OUT\" at \"/home/$(id -nu)/out\""
+
 if [ $# -gt 0 ]; then
-	echo -e "Gonna run \"$@\"\n"
+	echo -e "Gonna run command \"$@\"\n"
 else
-	echo -e "Gonna run interactive bash...\n"
+	echo -e "Gonna run bash\n"
 fi
 
 # Z for setting SELinux label
