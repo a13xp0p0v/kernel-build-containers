@@ -1,8 +1,8 @@
 #!/bin/bash
 
 function print_help {
-	echo "usage: $0 compiler src_dir out_dir [-n] [-h] [-e] [-- cmd with args]"
-	echo "  -e    space-separated list of environment variables"
+	echo "usage: $0 compiler src_dir out_dir [-e VAR] [-h] [-n] [-v] [-- cmd with args]"
+	echo "  -e    add environment variable in the container (may be used multiple times)"
 	echo "  -h    print this help"
 	echo "  -n    launch container in non-interactive mode"
 	echo "  -v    enable debug output"
@@ -53,9 +53,8 @@ while [[ $# -gt 0 ]]; do
 		shift
 		;;
 	-e | --env)
-		for var in $2; do
-			ENV="$ENV -e $var"
-		done
+		# `set -eu` will prevent out-of-bounds access
+		ENV="$ENV -e $2"
 		shift 2
 		;;
 	-v | --verbose)
@@ -78,7 +77,9 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-echo "Container environment: $ENV"
+if [ ! -z "$ENV" ]; then
+	echo "Container environment arguments: $ENV"
+fi
 
 if [ ! -z $INTERACTIVE ]; then
 	echo "Run docker in interactive mode"
