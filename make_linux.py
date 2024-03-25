@@ -153,7 +153,7 @@ def main():
     parser.add_argument('-s', metavar='src', required=True,
                         help='Linux kernel sources directory')
     parser.add_argument('-o', metavar='out', required=True,
-                        help='Build output directory')
+                        help='build output directory')
     parser.add_argument('-c', choices=supported_compilers, required=True,
                         help='building compiler (\'all\' to build with each of them)')
     parser.add_argument('make_args', metavar='...', nargs=argparse.REMAINDER,

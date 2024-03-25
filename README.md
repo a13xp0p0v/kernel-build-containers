@@ -109,9 +109,7 @@ Mount build output directory "/home/a13x/linux-stable/build_out/" at "/home/a13x
 Gonna run command "make defconfig"
 
 *** Default configuration is based on 'x86_64_defconfig'
-#
-# No change to .config
-#
+...
 ```
 
 ### Building Linux kernel
@@ -136,7 +134,7 @@ options:
                         build target architecture
   -k kconfig            path to kernel kconfig file
   -s src                Linux kernel sources directory
-  -o out                Build output directory
+  -o out                build output directory
   -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,
   clang-12,clang-13,clang-14,clang-15,all}
                         building compiler ('all' to build with each of them)
@@ -169,7 +167,9 @@ Gonna run command "make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- me
 
 make[1]: Entering directory '/home/a13x/out'
   GEN     Makefile
+
 ...
+
 *** End of the configuration.
 *** Execute 'make' to start the build or try 'make help'.
 
@@ -230,7 +230,7 @@ See the build log: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/b
 
 The tool returns an error if the kconfig file specified with `-k` differs from the `.config` in the build output directory:
 
-```
+```console
 $ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13 -- -j12
 [+] Going to build the Linux kernel for arm64
 [+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
@@ -248,7 +248,7 @@ kconfig files "/home/a13x/linux-stable/experiment.config" and "/home/a13x/linux-
 
 In that case please check the diff and synchronize the kconfig files:
 
-```
+```console
 $ diff ~/linux-stable/experiment.config ~/linux-stable/build_out/experiment__arm64__gcc-13/.config
 1622,1623c1622
 < CONFIG_NFC_S3FWRN5=m
