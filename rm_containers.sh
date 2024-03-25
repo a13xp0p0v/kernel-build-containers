@@ -3,8 +3,7 @@
 groups | grep docker
 NEED_SUDO=$?
 
-if [ $NEED_SUDO -eq 1 ]
-then
+if [ $NEED_SUDO -eq 1 ]; then
 	echo "Hey, we gonna use sudo for running docker"
 	SUDO_CMD="sudo"
 else

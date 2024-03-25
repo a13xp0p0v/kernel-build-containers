@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function print_help {
+print_help() {
 	echo "usage: $0 compiler src_dir out_dir [-n] [-e VAR] [-h] [-v] [-- cmd with args]"
 	echo "  -n    launch container in non-interactive mode"
 	echo "  -e    add environment variable in the container (may be used multiple times)"
