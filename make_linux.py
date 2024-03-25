@@ -7,6 +7,7 @@ import sys
 import argparse
 import subprocess
 import shutil
+import filecmp
 
 
 supported_archs = ['x86_64', 'i386', 'arm64', 'arm']
@@ -71,8 +72,16 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
         os.mkdir(out_subdir)
 
     if kconfig:
-        print('Copy kconfig to output subdirectory as ".config"')
-        shutil.copyfile(kconfig, out_subdir + '/.config')
+        current_config = out_subdir + '/.config'
+        if not os.path.isfile(current_config):
+            print('No ".config", copy "{}" to "{}"'.format(kconfig, current_config))
+            shutil.copyfile(kconfig, current_config)
+        else:
+            if filecmp.cmp(kconfig, current_config):
+                print('kconfig files "{}" and "{}" are identical, proceed'.format(kconfig, current_config))
+            else:
+                print('kconfig files "{}" and "{}" differ, stop'.format(kconfig, current_config))
+                sys.exit('[!] ERROR: kconfig files are different, check the diff and consider copying')
     else:
         print('No kconfig to copy to output subdirectory')
 
