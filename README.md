@@ -142,49 +142,6 @@ options:
                         building compiler ('all' to build with each of them)
 ```
 
-Build the Linux kernel in the needed container:
-
-```console
-$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13 -- -j9
-[+] Going to build the Linux kernel for arm64
-[+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
-[+] Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
-[+] Using "/home/a13x/linux-stable/build_out" as build output directory
-[+] Going to build with: gcc-13
-[+] Have additional arguments for 'make': -j9
-
-=== Building with gcc-13 ===
-Output subdirectory for this build: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13
-Output subdirectory doesn't exist, create it
-Copy kconfig to output subdirectory as ".config"
-Going to save build log to "build_log.txt" in output subdirectory
-Add arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-Run the container: bash ./start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -n -- make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j9 2>&1
-    Hey, we gonna use sudo for running docker
-    Run docker in NON-interactive mode
-    Starting "kernel-build-container:gcc-13"
-    Mount source code directory "/home/a13x/linux-stable/linux-stable" at "/home/a13x/src"
-    Mount build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13" at "/home/a13x/out"
-    Gonna run command "make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j9 2>&1"
-    
-    make[1]: Entering directory '/home/a13x/out'
-      SYNC    include/config/auto.conf.cmd
-      GEN     Makefile
-...
-    make[1]: Leaving directory '/home/a13x/out'
-The container returned 0
-Finish building the kernel
-Only remove the container id file:
-    Hey, we gonna use sudo for running docker
-    Search "container.id" file in build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13"
-    OK, "container.id" file exists, removing it
-    OK, container 6f8807e453ee9f5e53274518e48e7f1df362b0b91b34f4be12b26ba2fd832f5f doesn't run
-The finish_container.sh script returned 0
-See the build log: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/build_log.txt
-
-[+] Done, see the results
-```
-
 Configure the Linux kernel with `menuconfig` in the needed container:
 
 ```console
@@ -225,6 +182,49 @@ Only remove the container id file:
     Search "container.id" file in build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13"
     NO such file, nothing to do, exit
 The finish_container.sh script returned 2
+
+[+] Done, see the results
+```
+
+Build the Linux kernel in the needed container:
+
+```console
+$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13 -- -j9
+[+] Going to build the Linux kernel for arm64
+[+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
+[+] Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
+[+] Using "/home/a13x/linux-stable/build_out" as build output directory
+[+] Going to build with: gcc-13
+[+] Have additional arguments for 'make': -j9
+
+=== Building with gcc-13 ===
+Output subdirectory for this build: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13
+Output subdirectory doesn't exist, create it
+Copy kconfig to output subdirectory as ".config"
+Going to save build log to "build_log.txt" in output subdirectory
+Add arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+Run the container: bash ./start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -n -- make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j9 2>&1
+    Hey, we gonna use sudo for running docker
+    Run docker in NON-interactive mode
+    Starting "kernel-build-container:gcc-13"
+    Mount source code directory "/home/a13x/linux-stable/linux-stable" at "/home/a13x/src"
+    Mount build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13" at "/home/a13x/out"
+    Gonna run command "make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j9 2>&1"
+    
+    make[1]: Entering directory '/home/a13x/out'
+      SYNC    include/config/auto.conf.cmd
+      GEN     Makefile
+...
+    make[1]: Leaving directory '/home/a13x/out'
+The container returned 0
+Finish building the kernel
+Only remove the container id file:
+    Hey, we gonna use sudo for running docker
+    Search "container.id" file in build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13"
+    OK, "container.id" file exists, removing it
+    OK, container 6f8807e453ee9f5e53274518e48e7f1df362b0b91b34f4be12b26ba2fd832f5f doesn't run
+The finish_container.sh script returned 0
+See the build log: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/build_log.txt
 
 [+] Done, see the results
 ```
