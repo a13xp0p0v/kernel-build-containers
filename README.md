@@ -31,12 +31,15 @@ __Supported gcc versions:__
  - gcc-11
  - gcc-12
  - gcc-13
+ - gcc-14
 
 __Supported clang versions:__
  - clang-12
  - clang-13
  - clang-14
  - clang-15
+ - clang-16
+ - clang-17
 
 ## Usage
 
