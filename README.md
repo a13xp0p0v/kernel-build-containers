@@ -53,20 +53,23 @@ Created containers:
 
 ```console
 $ sudo docker image list | grep kernel-build-container
-kernel-build-container   clang-15   d4f4cf00a72e   8 minutes ago    2.89GB
-kernel-build-container   clang-14   936d0ba7b3be   14 minutes ago   2.24GB
-kernel-build-container   clang-13   48b2be56f16e   20 minutes ago   2.3GB
-kernel-build-container   clang-12   59375a367e1c   24 minutes ago   2.24GB
-kernel-build-container   gcc-13     984309a9530b   30 minutes ago   3.16GB
-kernel-build-container   gcc-12     beaa29ee4f70   35 minutes ago   1.58GB
-kernel-build-container   gcc-11     281b64f99202   38 minutes ago   1.06GB
-kernel-build-container   gcc-10     5c2e53ad97ab   41 minutes ago   1.29GB
-kernel-build-container   gcc-9      8a5fc6ae1efd   44 minutes ago   858MB
-kernel-build-container   gcc-8      6df704a622bb   46 minutes ago   1.15GB
-kernel-build-container   gcc-7      0fde86ef5daa   48 minutes ago   751MB
-kernel-build-container   gcc-6      1873e65687a0   50 minutes ago   1GB
-kernel-build-container   gcc-5      7ce77323fe88   53 minutes ago   720MB
-kernel-build-container   gcc-4.9    59a288b6f07a   55 minutes ago   913MB
+kernel-build-container   clang-17   c24d2754f36d   About a minute ago   6.01GB
+kernel-build-container   clang-16   9b3f7dce5f5b   12 minutes ago       6.01GB
+kernel-build-container   clang-15   9f62c82c4826   24 minutes ago       3.83GB
+kernel-build-container   clang-14   83523b7c7241   41 minutes ago       2.21GB
+kernel-build-container   clang-13   8c0f0e68075a   46 minutes ago       2.27GB
+kernel-build-container   clang-12   ac2cea3e0e97   51 minutes ago       2.21GB
+kernel-build-container   gcc-14     ff56932d9a3e   7 hours ago          4.36GB
+kernel-build-container   gcc-13     b05623469193   7 hours ago          3.14GB
+kernel-build-container   gcc-12     63562d1fbb5e   7 hours ago          1.55GB
+kernel-build-container   gcc-11     c4b2e14874f2   7 hours ago          1.03GB
+kernel-build-container   gcc-10     bcbfb78c4a6c   7 hours ago          1.27GB
+kernel-build-container   gcc-9      76f580f18759   7 hours ago          833MB
+kernel-build-container   gcc-8      e22bee633dff   8 hours ago          1.12GB
+kernel-build-container   gcc-7      e79708f81b84   8 hours ago          740MB
+kernel-build-container   gcc-6      61f40d3e3e58   8 hours ago          992MB
+kernel-build-container   gcc-5      ed6270a767c6   8 hours ago          720MB
+kernel-build-container   gcc-4.9    408db89527ec   8 hours ago          913MB
 ```
 
 ### Running a container
@@ -74,9 +77,9 @@ kernel-build-container   gcc-4.9    59a288b6f07a   55 minutes ago   913MB
 Get help:
 
 ```console
-$ bash ./start_container.sh
+$ bash start_container.sh
 Hey, we gonna use sudo for running docker
-usage: ./start_container.sh compiler src_dir out_dir [-n] [-e VAR] [-h] [-v] [-- cmd with args]
+usage: start_container.sh compiler src_dir out_dir [-n] [-e VAR] [-h] [-v] [-- cmd with args]
   -n    launch container in non-interactive mode
   -e    add environment variable in the container (may be used multiple times)
   -h    print this help
@@ -122,10 +125,10 @@ Gonna run command "make defconfig"
 Get help:
 
 ```console
-$ python3 make_linux.py -h
+$ python3 make_linux.py --help
 usage: make_linux.py [-h] -a {x86_64,i386,arm64,arm} [-k kconfig] -s src -o out -c
-                     {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,
-                     gcc-13,clang-12,clang-13,clang-14,clang-15,all}
+                     {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,gcc-14,
+                     clang-12,clang-13,clang-14,clang-15,clang-16,clang-17,all}
                      ...
 
 Build Linux kernel using kernel-build-containers
@@ -140,8 +143,8 @@ options:
   -k kconfig            path to kernel kconfig file
   -s src                Linux kernel sources directory
   -o out                build output directory
-  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,
-  clang-12,clang-13,clang-14,clang-15,all}
+  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,gcc-14,
+  clang-12,clang-13,clang-14,clang-15,clang-16,clang-17,all}
                         building compiler ('all' to build with each of them)
 ```
 
@@ -271,9 +274,9 @@ That tool is used by `make_linux.py` for fast stopping the kernel build.
 Get help:
 
 ```console
-$ bash ./finish_container.sh
+$ bash finish_container.sh
 Hey, we gonna use sudo for running docker
-usage: ./finish_container.sh kill/nokill out_dir
+usage: finish_container.sh kill/nokill out_dir
   kill/nokill -- how to finish: kill the container and then clean up / only clean up
   out_dir -- build output directory used by this container (with container.id file)
 ```
