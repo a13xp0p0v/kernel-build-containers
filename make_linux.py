@@ -101,7 +101,8 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
         print('Going to run the container in the interactive mode (without build log)')
         stdout_destination = None
 
-    start_container_cmd.extend(['--', 'make', 'O=../out/'])
+    ocpus = os.sysconf('SC_NPROCESSORS_ONLN')
+    start_container_cmd.extend(['--', 'make',  '-s', '-j',  str(ocpus), 'O=../out/'])
 
     if compiler.startswith('clang'):
         print('Compiling with clang requires \'CC=clang\'')
