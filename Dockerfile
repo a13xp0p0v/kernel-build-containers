@@ -8,15 +8,19 @@ RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-se
     apt-get install -y -q apt-utils dialog && \
     apt-get install -y -q sudo aptitude flex bison libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils && \
     if [ "$GCC_VERSION" ]; then \
-      apt-get install -y -q gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev gcc g++ \
-        gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-        gcc-${GCC_VERSION}-arm-linux-gnueabi g++-${GCC_VERSION}-arm-linux-gnueabi gcc-arm-linux-gnueabi g++-arm-linux-gnueabi && \
+      apt-get install -y -q gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev \
+        gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
+        gcc-${GCC_VERSION}-arm-linux-gnueabi g++-${GCC_VERSION}-arm-linux-gnueabi && \
       if [ "$GCC_VERSION" != "4.9" ]; then \
         apt-get install -y -q gcc-${GCC_VERSION}-plugin-dev-aarch64-linux-gnu gcc-${GCC_VERSION}-plugin-dev-arm-linux-gnueabi; \
       fi \
     fi; \
     if [ "$CLANG_VERSION" ]; then \
-      apt-get install -y -q clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-${CLANG_VERSION} clang lld; \
+      if [ "$CLANG_VERSION" != "5.0" ] && [ "$CLANG_VERSION" != "6.0" ]; then \
+        apt-get install -y -q clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-${CLANG_VERSION}; \
+        else \
+        apt-get install -y -q clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-6.0; \
+      fi \
     fi
 
 ARG UNAME
