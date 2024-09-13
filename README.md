@@ -44,6 +44,15 @@ __Supported clang versions:__
  - clang-16
  - clang-17
 
+__Additional supported clang versions (only for manage_containers.py):__
+ - clang-5.0
+ - clang-6.0
+ - clang-7
+ - clang-8
+ - clang-9
+ - clang-10
+ - clang-11
+
 ## Usage
 
 ### Building all containers
@@ -73,6 +82,40 @@ kernel-build-container   gcc-7      e79708f81b84   8 hours ago          740MB
 kernel-build-container   gcc-6      61f40d3e3e58   8 hours ago          992MB
 kernel-build-container   gcc-5      ed6270a767c6   8 hours ago          720MB
 kernel-build-container   gcc-4.9    408db89527ec   8 hours ago          913MB
+```
+
+### Building all containers (manage_containers.py compact alternative):
+
+```console
+python manage_containers.py -a all -q
+```
+
+```console
+$ sudo docker image list | grep kernel-build-container
+kernel-build-container   clang-11    74a578657e62   16 minutes ago   1.61GB
+kernel-build-container   gcc-10      74a578657e62   16 minutes ago   1.61GB
+kernel-build-container   clang-10    263ee1e4fc8d   22 minutes ago   1.38GB
+kernel-build-container   gcc-9       263ee1e4fc8d   22 minutes ago   1.38GB
+kernel-build-container   clang-17    03fd650dd3aa   2 hours ago      4.89GB
+kernel-build-container   gcc-14      03fd650dd3aa   2 hours ago      4.89GB
+kernel-build-container   clang-16    7ab93bb72791   2 hours ago      4.91GB
+kernel-build-container   clang-15    facb48b532e9   2 hours ago      3.49GB
+kernel-build-container   gcc-13      facb48b532e9   2 hours ago      3.49GB
+kernel-build-container   clang-14    9124988381f6   2 hours ago      1.88GB
+kernel-build-container   gcc-12      9124988381f6   2 hours ago      1.88GB
+kernel-build-container   clang-13    f626ccc36d6c   2 hours ago      1.96GB
+kernel-build-container   clang-12    a5e924ab9747   2 hours ago      1.72GB
+kernel-build-container   gcc-11      a5e924ab9747   2 hours ago      1.72GB
+kernel-build-container   clang-8     f49bf1f61aa2   2 hours ago      1.4GB
+kernel-build-container   gcc-7       f49bf1f61aa2   2 hours ago      1.4GB
+kernel-build-container   clang-7     516f49cd9c44   2 hours ago      1.49GB
+kernel-build-container   gcc-6       516f49cd9c44   2 hours ago      1.49GB
+kernel-build-container   clang-6.0   15936947b922   2 hours ago      1.33GB
+kernel-build-container   gcc-5       15936947b922   2 hours ago      1.33GB
+kernel-build-container   clang-5.0   d8ffc4d4f609   2 hours ago      1.87GB
+kernel-build-container   gcc-4.9     d8ffc4d4f609   2 hours ago      1.87GB
+kernel-build-container   clang-9     73a92cc0fbfb   25 hours ago     1.55GB
+kernel-build-container   gcc-8       73a92cc0fbfb   25 hours ago     1.55GB
 ```
 
 ### Running a container
@@ -291,3 +334,17 @@ usage: finish_container.sh kill/nokill out_dir
 ```console
 $ bash rm_containers.sh
 ```
+
+### Removing created Docker images (manage_containers.py alternative with warning for running containers):
+
+```console
+python manage_containers.py -r all
+```
+
+### Running tets for manage_containers.py:
+
+```console
+./cov.sh
+```
+
+Results will be stored in htmlcov/index.html
