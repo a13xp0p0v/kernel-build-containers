@@ -98,6 +98,9 @@ def add_handler(needed_compiler, containers):
             if not c.id:
                 print(f'Adding ubuntu-{c.ubuntu} container with gcc-{c.gcc} and clang-{c.clang}')
                 c.add()
+            else:
+                print(f'[!] WARNING: Ubuntu-{c.ubuntu} container with gcc-{c.gcc}'
+                    f' and clang-{c.clang} exists, skipping!')
         return
     for c in containers:
         if 'gcc-' + c.gcc == needed_compiler:
@@ -118,7 +121,7 @@ def remove_handler(containers) -> None:
     out = ''
     for c in containers:
         if c.id:
-            print(f'Removing container on {c.ubuntu} with gcc {c.gcc} and clang {c.clang}')
+            print(f'Removing container on ubuntu-{c.ubuntu} with gcc-{c.gcc} and clang-{c.clang}')
             out = out + c.rm()
     if out:
         print('\nYou still have running containers, that can\'t be removed:\n', out)
@@ -127,9 +130,9 @@ def list_containers(containers):
     """Print built containers"""
     for c in containers:
         if c.id:
-            print(f'Container with gcc {c.gcc} and clang {c.clang} on ubuntu {c.ubuntu}: [+]')
+            print(f'Ubuntu-{c.ubuntu} with gcc-{c.gcc} and clang-{c.clang}: [+]')
         else:
-            print(f'Container with gcc {c.gcc} and clang {c.clang} on ubuntu {c.ubuntu}: [-]')
+            print(f'Ubuntu-{c.ubuntu} with gcc-{c.gcc} and clang {c.clang}: [-]')
     sys.exit(0)
 
 def main():
