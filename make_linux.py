@@ -102,7 +102,7 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
         stdout_destination = None
 
     ocpus = os.sysconf('SC_NPROCESSORS_ONLN')
-    start_container_cmd.extend(['--', 'make',  '-s', '-j',  str(ocpus), 'O=../out/'])
+    start_container_cmd.extend(['--', 'make', '-j', str(ocpus), 'O=../out/'])
 
     if compiler.startswith('clang'):
         print('Compiling with clang requires \'CC=clang\'')
@@ -157,6 +157,8 @@ def main():
                         help='build output directory')
     parser.add_argument('-c', choices=supported_compilers, required=True,
                         help='building compiler (\'all\' to build with each of them)')
+    parser.add_argument('-q', action='store_true',
+                        help='for running `make` in quiet mode')
     parser.add_argument('make_args', metavar='...', nargs=argparse.REMAINDER,
                         help='additional arguments for \'make\', can be separated by -- delimiter')
     args = parser.parse_args()
@@ -198,6 +200,10 @@ def main():
                 sys.exit('[-] Don\'t specify "CROSS_COMPILE=", we will take care of that')
             if arg.startswith('CC='):
                 sys.exit('[-] Don\'t specify "CC=", we will take care of that')
+
+    if args.q:
+        print('[+] Going to run make in quiet mode')
+        make_args.insert(0, '-s')
 
     build_kernels(args.a, args.k, args.s, args.o, compilers, make_args)
 
