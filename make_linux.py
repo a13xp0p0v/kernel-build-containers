@@ -147,16 +147,16 @@ def build_kernels(arch, kconfig, src, out, compilers, make_args):
 
 def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
+    parser.add_argument('-c', choices=supported_compilers, required=True,
+                        help='building compiler (\'all\' to build with each of them)')
     parser.add_argument('-a', choices=supported_archs, required=True,
                         help='build target architecture')
-    parser.add_argument('-k', metavar='kconfig',
-                        help='path to kernel kconfig file')
     parser.add_argument('-s', metavar='src', required=True,
                         help='Linux kernel sources directory')
     parser.add_argument('-o', metavar='out', required=True,
                         help='build output directory')
-    parser.add_argument('-c', choices=supported_compilers, required=True,
-                        help='building compiler (\'all\' to build with each of them)')
+    parser.add_argument('-k', metavar='kconfig',
+                        help='path to kernel kconfig file')
     parser.add_argument('-q', action='store_true',
                         help='for running `make` in quiet mode')
     parser.add_argument('make_args', metavar='...', nargs=argparse.REMAINDER,
