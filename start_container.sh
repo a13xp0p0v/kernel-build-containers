@@ -10,7 +10,7 @@ print_help() {
 	echo "  If cmd is empty, we will start an interactive bash in the container."
 }
 
-groups | grep docker
+groups | grep docker > /dev/null
 NEED_SUDO=$?
 
 set -eu
