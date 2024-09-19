@@ -101,8 +101,7 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
         print('Going to run the container in the interactive mode (without build log)')
         stdout_destination = None
 
-    ocpus = os.sysconf('SC_NPROCESSORS_ONLN')
-    start_container_cmd.extend(['--', 'make', '-j', str(ocpus), 'O=../out/'])
+    start_container_cmd.extend(['--', 'make', 'O=../out/'])
 
     if compiler.startswith('clang'):
         print('Compiling with clang requires \'CC=clang\'')
@@ -159,6 +158,8 @@ def main():
                         help='path to kernel kconfig file')
     parser.add_argument('-q', action='store_true',
                         help='for running `make` in quiet mode')
+    parser.add_argument('-t', action='store_true',
+                        help='for running `make` in single-threaded mode (multi-threaded by default)')
     parser.add_argument('make_args', metavar='...', nargs=argparse.REMAINDER,
                         help='additional arguments for \'make\', can be separated by -- delimiter')
     args = parser.parse_args()
@@ -200,10 +201,19 @@ def main():
                 sys.exit('[-] Don\'t specify "CROSS_COMPILE=", we will take care of that')
             if arg.startswith('CC='):
                 sys.exit('[-] Don\'t specify "CC=", we will take care of that')
+            if arg.startswith('-j'):
+                sys.exit('[-] Don\'t specify "-j", by default we run \'make\' in parallel on all CPUs')
 
     if args.q:
-        print('[+] Going to run make in quiet mode')
+        print('[+] Going to run \'make\' in quiet mode')
         make_args.insert(0, '-s')
+
+    if not args.t:
+        cpu_count = os.sysconf('SC_NPROCESSORS_ONLN')
+        print(f'[+] Going to run \'make\' on {cpu_count} CPUs')
+        make_args = ['-j', str(cpu_count)] + make_args
+    else:
+        print(f'[+] Going to run \'make\' in single-threaded mode')
 
     build_kernels(args.a, args.k, args.s, args.o, compilers, make_args)
 
