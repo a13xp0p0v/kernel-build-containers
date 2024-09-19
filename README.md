@@ -126,9 +126,9 @@ Get help:
 
 ```console
 $ python3 make_linux.py --help
-usage: make_linux.py [-h] -a {x86_64,i386,arm64,arm} [-k kconfig] -s src -o out -c
-                     {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,gcc-14,
-                     clang-12,clang-13,clang-14,clang-15,clang-16,clang-17,all}
+usage: make_linux.py [-h] -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,gcc-14,
+                     clang-12,clang-13,clang-14,clang-15,clang-16,clang-17,all} -a {x86_64,i386,arm64,arm}
+                     -s src -o out [-k kconfig] [-q] [-t]
                      ...
 
 Build Linux kernel using kernel-build-containers
@@ -138,14 +138,16 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
+  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,gcc-14,
+      clang-12,clang-13,clang-14,clang-15,clang-16,clang-17,all}
+                        building compiler ('all' to build with each of them)
   -a {x86_64,i386,arm64,arm}
                         build target architecture
-  -k kconfig            path to kernel kconfig file
   -s src                Linux kernel sources directory
   -o out                build output directory
-  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,gcc-14,
-  clang-12,clang-13,clang-14,clang-15,clang-16,clang-17,all}
-                        building compiler ('all' to build with each of them)
+  -k kconfig            path to kernel kconfig file
+  -q                    for running `make` in quiet mode
+  -t                    for running `make` in single-threaded mode (multi-threaded by default)
 ```
 
 Configure the Linux kernel with `menuconfig` in the needed container:
@@ -158,20 +160,21 @@ $ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-
 [+] Using "/home/a13x/linux-stable/build_out" as build output directory
 [+] Going to build with: gcc-13
 [+] Have additional arguments for 'make': menuconfig
+[+] Going to run 'make' on 8 CPUs
 
 === Building with gcc-13 ===
 Output subdirectory for this build: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13
-Output subdirectory doesn't exist, create it
-No ".config", copy "/home/a13x/linux-stable/experiment.config" to "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/.config"
+Output subdirectory already exists, use it (no cleaning!)
+kconfig files "/home/a13x/linux-stable/experiment.config" and "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/.config" are identical, proceed
 Going to run the container in the interactive mode (without build log)
 Add arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-Run the container: bash ./start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -- make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig
+Run the container: bash ./start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -- make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j 8 menuconfig
 Hey, we gonna use sudo for running docker
 Starting "kernel-build-container:gcc-13"
 Gonna run docker in interactive mode
 Mount source code directory "/home/a13x/linux-stable/linux-stable" at "/home/a13x/src"
 Mount build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13" at "/home/a13x/out"
-Gonna run command "make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig"
+Gonna run command "make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j 8 menuconfig"
 
 make[1]: Entering directory '/home/a13x/out'
   GEN     Makefile
@@ -196,13 +199,13 @@ The finish_container.sh script returned 2
 Build the Linux kernel in the needed container:
 
 ```console
-$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13 -- -j12
+$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
 [+] Going to build the Linux kernel for arm64
 [+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
 [+] Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
 [+] Using "/home/a13x/linux-stable/build_out" as build output directory
 [+] Going to build with: gcc-13
-[+] Have additional arguments for 'make': -j12
+[+] Going to run 'make' on 8 CPUs
 
 === Building with gcc-13 ===
 Output subdirectory for this build: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13
@@ -210,13 +213,13 @@ Output subdirectory already exists, use it (no cleaning!)
 kconfig files "/home/a13x/linux-stable/experiment.config" and "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/.config" are identical, proceed
 Going to save build log to "build_log.txt" in output subdirectory
 Add arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-Run the container: bash ./start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -n -- make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j12 2>&1
+Run the container: bash ./start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -n -- make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j 8 2>&1
     Hey, we gonna use sudo for running docker
     Run docker in NON-interactive mode
     Starting "kernel-build-container:gcc-13"
     Mount source code directory "/home/a13x/linux-stable/linux-stable" at "/home/a13x/src"
     Mount build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13" at "/home/a13x/out"
-    Gonna run command "make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j12 2>&1"
+    Gonna run command "make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j 8 2>&1"
     
     make[1]: Entering directory '/home/a13x/out'
       SYNC    include/config/auto.conf.cmd
@@ -239,13 +242,13 @@ See the build log: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/b
 The tool returns an error if the kconfig file specified with `-k` differs from the `.config` in the build output directory:
 
 ```console
-$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13 -- -j12
+$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
 [+] Going to build the Linux kernel for arm64
 [+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
 [+] Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
 [+] Using "/home/a13x/linux-stable/build_out" as build output directory
 [+] Going to build with: gcc-13
-[+] Have additional arguments for 'make': -j12
+[+] Going to run 'make' on 8 CPUs
 
 === Building with gcc-13 ===
 Output subdirectory for this build: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13
@@ -264,7 +267,7 @@ $ diff ~/linux-stable/experiment.config ~/linux-stable/build_out/experiment__arm
 ---
 > # CONFIG_NFC_S3FWRN5_I2C is not set
 $ cp ~/linux-stable/build_out/experiment__arm64__gcc-13/.config ~/linux-stable/experiment.config
-$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13 -- -j12
+$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
 ```
 
 ### Finishing with the container
