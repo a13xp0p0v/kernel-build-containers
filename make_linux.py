@@ -146,16 +146,20 @@ def build_kernels(arch, kconfig, src, out, compilers, make_args):
 
 def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
+    parser.add_argument('-c', choices=supported_compilers, required=True,
+                        help='building compiler (\'all\' to build with each of them)')
     parser.add_argument('-a', choices=supported_archs, required=True,
                         help='build target architecture')
-    parser.add_argument('-k', metavar='kconfig',
-                        help='path to kernel kconfig file')
     parser.add_argument('-s', metavar='src', required=True,
                         help='Linux kernel sources directory')
     parser.add_argument('-o', metavar='out', required=True,
                         help='build output directory')
-    parser.add_argument('-c', choices=supported_compilers, required=True,
-                        help='building compiler (\'all\' to build with each of them)')
+    parser.add_argument('-k', metavar='kconfig',
+                        help='path to kernel kconfig file')
+    parser.add_argument('-q', action='store_true',
+                        help='for running `make` in quiet mode')
+    parser.add_argument('-t', action='store_true',
+                        help='for running `make` in single-threaded mode (multi-threaded by default)')
     parser.add_argument('make_args', metavar='...', nargs=argparse.REMAINDER,
                         help='additional arguments for \'make\', can be separated by -- delimiter')
     args = parser.parse_args()
@@ -197,6 +201,19 @@ def main():
                 sys.exit('[-] Don\'t specify "CROSS_COMPILE=", we will take care of that')
             if arg.startswith('CC='):
                 sys.exit('[-] Don\'t specify "CC=", we will take care of that')
+            if arg.startswith('-j'):
+                sys.exit('[-] Don\'t specify "-j", by default we run \'make\' in parallel on all CPUs')
+
+    if args.q:
+        print('[+] Going to run \'make\' in quiet mode')
+        make_args.insert(0, '-s')
+
+    if not args.t:
+        cpu_count = os.sysconf('SC_NPROCESSORS_ONLN')
+        print(f'[+] Going to run \'make\' on {cpu_count} CPUs')
+        make_args = ['-j', str(cpu_count)] + make_args
+    else:
+        print(f'[+] Going to run \'make\' in single-threaded mode')
 
     build_kernels(args.a, args.k, args.s, args.o, compilers, make_args)
 
