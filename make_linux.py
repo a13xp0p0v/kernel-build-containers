@@ -11,7 +11,8 @@ import filecmp
 
 
 supported_archs = ['x86_64', 'i386', 'arm64', 'arm']
-supported_compilers = ['gcc-4.9', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9', 'gcc-10', 'gcc-11', 'gcc-12', 'gcc-13', 'gcc-14',
+supported_compilers = ['gcc-4.9', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9',
+                       'gcc-10', 'gcc-11', 'gcc-12', 'gcc-13', 'gcc-14',
                        'clang-12', 'clang-13', 'clang-14', 'clang-15', 'clang-16', 'clang-17',
                        'all']
 
@@ -45,26 +46,26 @@ def finish_building_kernel(out_dir, interrupt):
     with subprocess.Popen(finish_container_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                           universal_newlines=True, bufsize=1) as process:
         for line in process.stdout:
-            print('    {}'.format(line), end='\r')
+            print(f'    {line}', end='\r')
         return_code = process.wait()
 
-    print('The finish_container.sh script returned {}'.format(return_code))
+    print(f'The finish_container.sh script returned {return_code}')
 
 
 def build_kernel(arch, kconfig, src, out, compiler, make_args):
-    print('\n=== Building with {} ==='.format(compiler))
+    print(f'\n=== Building with {compiler} ===')
 
     if kconfig:
         suffix = os.path.splitext(os.path.basename(kconfig))[0]
         if arch in suffix:
-            print('Arch name "{}" is already a part of kconfig name'.format(arch))
+            print(f'Arch name "{arch}" is already a part of kconfig name')
             out_subdir = out + '/' + suffix + NAME_DELIMITER + compiler
         else:
             out_subdir = out + '/' + suffix + NAME_DELIMITER + arch + NAME_DELIMITER + compiler
     else:
-            out_subdir = out + '/' + arch + NAME_DELIMITER + compiler
+        out_subdir = out + '/' + arch + NAME_DELIMITER + compiler
 
-    print('Output subdirectory for this build: {}'.format(out_subdir))
+    print(f'Output subdirectory for this build: {out_subdir}')
     if os.path.isdir(out_subdir):
         print('Output subdirectory already exists, use it (no cleaning!)')
     else:
@@ -74,13 +75,13 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
     if kconfig:
         current_config = out_subdir + '/.config'
         if not os.path.isfile(current_config):
-            print('No ".config", copy "{}" to "{}"'.format(kconfig, current_config))
+            print(f'No ".config", copy "{kconfig}" to "{current_config}"')
             shutil.copyfile(kconfig, current_config)
         else:
             if filecmp.cmp(kconfig, current_config):
-                print('kconfig files "{}" and "{}" are identical, proceed'.format(kconfig, current_config))
+                print(f'kconfig files "{kconfig}" and "{current_config}" are identical, proceed')
             else:
-                print('kconfig files "{}" and "{}" differ, stop'.format(kconfig, current_config))
+                print(f'kconfig files "{kconfig}" and "{current_config}" differ, stop')
                 sys.exit('[!] ERROR: kconfig files are different, check the diff and consider copying')
     else:
         print('No kconfig to copy to output subdirectory')
@@ -96,7 +97,7 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
         start_container_cmd.extend(['-n']) # start container in the non-interactive mode
         build_log = out_subdir + '/build_log.txt'
         print('Going to save build log to "build_log.txt" in output subdirectory')
-        build_log_fd = open(build_log, "w")
+        build_log_fd = open(build_log, "w", encoding='utf-8')
         stdout_destination = subprocess.PIPE
     else:
         print('Going to run the container in the interactive mode (without build log)')
@@ -110,7 +111,7 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
 
     cross_compile_args = get_cross_compile_args(arch)
     if cross_compile_args:
-        print('Add arguments for cross-compilation: {}'.format(' '.join(cross_compile_args)))
+        print(f'Add arguments for cross-compilation: {" ".join(cross_compile_args)}')
     start_container_cmd.extend(cross_compile_args)
 
     start_container_cmd.extend(make_args)
@@ -118,23 +119,23 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
     if noninteractive:
         start_container_cmd.extend(['2>&1'])
 
-    print('Run the container: {}'.format(' '.join(start_container_cmd)))
+    print(f'Run the container: {" ".join(start_container_cmd)}')
     interrupt = False
     with subprocess.Popen(start_container_cmd, stdout=stdout_destination, stderr=subprocess.STDOUT,
                           universal_newlines=True, bufsize=1) as process:
         try:
             if noninteractive:
                 for line in process.stdout:
-                    print('    {}'.format(line), end='\r')
+                    print(f'    {line}', end='\r')
                     build_log_fd.write(line)
             return_code = process.wait()
-            print('The container returned {}'.format(return_code))
+            print(f'The container returned {return_code}')
         except KeyboardInterrupt:
             print('[!] Got keyboard interrupt, stopping build process...')
             interrupt = True
     finish_building_kernel(out_subdir, interrupt)
     if noninteractive:
-        print('See the build log: {}'.format(build_log))
+        print(f'See the build log: {build_log}')
         build_log_fd.close()
     if interrupt:
         sys.exit('[!] Exit by interrupt')
@@ -165,20 +166,20 @@ def main():
                         help='additional arguments for \'make\', can be separated by -- delimiter')
     args = parser.parse_args()
 
-    print('[+] Going to build the Linux kernel for {}'.format(args.a))
+    print(f'[+] Going to build the Linux kernel for {args.a}')
 
     if args.k:
         if not os.path.isfile(args.k):
-            sys.exit('[!] ERROR: can\'t find the kernel config "{}"'.format(args.k))
-        print('[+] Using "{}" as kernel config'.format(args.k))
+            sys.exit(f'[!] ERROR: can\'t find the kernel config "{args.k}"')
+        print(f'[+] Using "{args.k}" as kernel config')
 
     if not os.path.isdir(args.s):
-        sys.exit('[!] ERROR: can\'t find the kernel sources directory "{}"'.format(args.s))
-    print('[+] Using "{}" as Linux kernel sources directory'.format(args.s))
+        sys.exit(f'[!] ERROR: can\'t find the kernel sources directory "{args.s}"')
+    print(f'[+] Using "{args.s}" as Linux kernel sources directory')
 
     if not os.path.isdir(args.o):
-        sys.exit('[!] ERROR: can\'t find the build output directory "{}"'.format(args.o))
-    print('[+] Using "{}" as build output directory'.format(args.o))
+        sys.exit(f'[!] ERROR: can\'t find the build output directory "{args.o}"')
+    print(f'[+] Using "{args.o}" as build output directory')
 
     compilers = []
     if args.c != 'all':
@@ -186,13 +187,13 @@ def main():
     else:
         compilers = supported_compilers[:]
         compilers.remove('all')
-    print('[+] Going to build with: {}'.format(' '.join(compilers)))
+    print(f'[+] Going to build with: {" ".join(compilers)}')
 
     make_args = args.make_args[:]
     if make_args:
         if make_args[0] == '--':
             make_args.pop(0)
-        print('[+] Have additional arguments for \'make\': {}'.format(' '.join(make_args)))
+        print(f'[+] Have additional arguments for \'make\': {" ".join(make_args)}')
         for arg in make_args:
             if arg.startswith('O='):
                 sys.exit('[-] Don\'t specify "O=", we will take care of that')
@@ -214,7 +215,7 @@ def main():
         print(f'[+] Going to run \'make\' on {cpu_count} CPUs')
         make_args = ['-j', str(cpu_count)] + make_args
     else:
-        print(f'[+] Going to run \'make\' in single-threaded mode')
+        print('[+] Going to run \'make\' in single-threaded mode')
 
     build_kernels(args.a, args.k, args.s, args.o, compilers, make_args)
 
