@@ -123,7 +123,7 @@ Gonna run command "make defconfig"
 ...
 ```
 
-### Building Linux kernel
+### Building the Linux kernel
 
 Get help:
 
@@ -134,7 +134,7 @@ usage: make_linux.py [-h] -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-1
                      -s src -o out [-k kconfig] [-q] [-t]
                      ...
 
-Build Linux kernel using kernel-build-containers
+Build the Linux kernel using kernel-build-containers
 
 positional arguments:
   ...                   additional arguments for 'make', can be separated by -- delimiter
@@ -171,7 +171,7 @@ Output subdirectory already exists, use it (no cleaning!)
 kconfig files "/home/a13x/linux-stable/experiment.config" and "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/.config" are identical, proceed
 Going to run the container in the interactive mode (without build log)
 Add arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-Run the container: bash ./start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -- make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j 8 menuconfig
+Run the container: bash /home/a13x/kernel-build-containers/start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -- make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j 8 menuconfig
 Hey, we gonna use sudo for running docker
 Starting "kernel-build-container:gcc-13"
 Gonna run docker in interactive mode
@@ -216,7 +216,7 @@ Output subdirectory already exists, use it (no cleaning!)
 kconfig files "/home/a13x/linux-stable/experiment.config" and "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/.config" are identical, proceed
 Going to save build log to "build_log.txt" in output subdirectory
 Add arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-Run the container: bash ./start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -n -- make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j 8 2>&1
+Run the container: bash /home/a13x/kernel-build-containers/start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -n -- make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j 8 2>&1
     Hey, we gonna use sudo for running docker
     Run docker in NON-interactive mode
     Starting "kernel-build-container:gcc-13"
@@ -225,7 +225,6 @@ Run the container: bash ./start_container.sh gcc-13 /home/a13x/linux-stable/linu
     Gonna run command "make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j 8 2>&1"
     
     make[1]: Entering directory '/home/a13x/out'
-      SYNC    include/config/auto.conf.cmd
       GEN     Makefile
 ...
     make[1]: Leaving directory '/home/a13x/out'
