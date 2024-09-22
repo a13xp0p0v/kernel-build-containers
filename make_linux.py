@@ -33,7 +33,7 @@ def get_cross_compile_args(arch):
 
 def finish_building_kernel(out_dir, interrupt):
     print('Finish building the kernel')
-    finish_container_cmd = ['bash', './finish_container.sh']
+    finish_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/finish_container.sh']
     if interrupt:
         print('Kill the container and remove the container id file:')
         finish_container_cmd.extend(['kill'])
@@ -85,7 +85,8 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
     else:
         print('No kconfig to copy to output subdirectory')
 
-    start_container_cmd = ['bash', './start_container.sh', compiler, src, out_subdir]
+    start_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/start_container.sh',
+                                   compiler, src, out_subdir]
 
     noninteractive = True
     if 'menuconfig' in make_args:
