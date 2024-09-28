@@ -210,7 +210,7 @@ else
 	exit -1
 fi
 
-groups | grep docker
+groups | grep docker > /dev/null
 NEED_SUDO=$?
 
 if [ $NEED_SUDO -eq 1 ]; then
