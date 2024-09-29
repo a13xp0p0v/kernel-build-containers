@@ -192,35 +192,33 @@ set -e
 
 # Check if the user has provided an argument
 if [ $# -ne 1 ]; then
-	echo "Building all gcc and clang version containers"
+	echo "Building all gcc and clang containers"
 	build_all_containers
+	exit 0
 fi
 
 # Extract the compiler and version from the argument
 if [[ $1 =~ ^(gcc|clang)-([0-9]+)$ ]]; then
 	COMPILER=${BASH_REMATCH[1]}
 	VERSION=${BASH_REMATCH[2]}
-
-    # Validate GCC versions
-    if [ "$COMPILER" = "gcc" ] && [ "$VERSION" -ge 4 ] && [ "$VERSION" -le 14 ]; then
-	    GCC_VERSION=$VERSION
-	    echo "GCC_VERSION is set to: $GCC_VERSION"
-
-    # Validate Clang versions
-elif [ "$COMPILER" = "clang" ] && [ "$VERSION" -ge 14 ] && [ "$VERSION" -le 17 ]; then
-	CLANG_VERSION=$VERSION
-	echo "CLANG_VERSION is set to: $CLANG_VERSION"
-
-else
-	echo "Error: For gcc, version must be between 4 and 14; for clang, version must be between 14 and 17."
-	show_help
-	exit -1
-    fi
+	# Validate GCC versions
+	if [ "$COMPILER" = "gcc" ] && [ "$VERSION" -ge 4 ] && [ "$VERSION" -le 14 ]; then
+		GCC_VERSION=$VERSION
+		echo "GCC_VERSION is set to: $GCC_VERSION"
+	# Validate Clang versions
+	elif [ "$COMPILER" = "clang" ] && [ "$VERSION" -ge 14 ] && [ "$VERSION" -le 17 ]; then
+		CLANG_VERSION=$VERSION
+		echo "CLANG_VERSION is set to: $CLANG_VERSION"
+	else
+		echo "Error: For gcc, version must be between 4 and 14; for clang, version must be between 14 and 17."
+		show_help
+		exit 1
+	fi
 else
 	echo "Error: Invalid compiler version format. Valid formats are"
 	echo "gcc-<version> (5 to 14) or clang-<version> (14 to 17)."
 	show_help
-	exit -1
+	exit 1
 fi
 
 # Check and handle GCC_VERSION
