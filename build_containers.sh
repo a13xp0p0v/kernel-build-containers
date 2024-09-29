@@ -177,6 +177,19 @@ show_help() {
 	echo "the format is incorrect."
 }
 
+groups | grep docker > /dev/null
+NEED_SUDO=$?
+
+if [ $NEED_SUDO -eq 1 ]; then
+	echo "Hey, we gonna use sudo for running docker"
+	SUDO_CMD="sudo"
+else
+	echo "Hey, you are in docker group, sudo is not needed"
+	SUDO_CMD=""
+fi
+
+set -e
+
 # Check if the user has provided an argument
 if [ $# -ne 1 ]; then
 	echo "Building all gcc and clang version containers"
@@ -209,19 +222,6 @@ else
 	show_help
 	exit -1
 fi
-
-groups | grep docker > /dev/null
-NEED_SUDO=$?
-
-if [ $NEED_SUDO -eq 1 ]; then
-	echo "Hey, we gonna use sudo for running docker"
-	SUDO_CMD="sudo"
-else
-	echo "Hey, you are in docker group, sudo is not needed"
-	SUDO_CMD=""
-fi
-
-set -e
 
 # Check and handle GCC_VERSION
 if [ -n "$GCC_VERSION" ]; then
