@@ -162,19 +162,18 @@ show_help() {
 	echo ""
 	echo "Usage: $0 [compiler-version]"
 	echo
-	echo "Build containers for different compiler versions."
+	echo "Build containers for different compiler versions"
 	echo
 	echo "Arguments:"
-	echo "  gcc-<version>   Set GCC_VERSION if <version> is between $MIN_GCC_VERSION and $MAX_GCC_VERSION."
-	echo "  clang-<version> Set CLANG_VERSION if <version> is between $MIN_CLANG_VERSION and $MAX_CLANG_VERSION."
+	echo "  gcc-<version>    where <version> is between $MIN_GCC_VERSION and $MAX_GCC_VERSION"
+	echo "  clang-<version>  where <version> is between $MIN_CLANG_VERSION and $MAX_CLANG_VERSION"
 	echo
 	echo "Examples:"
-	echo "  $0 gcc-8       # Validates and sets GCC_VERSION to 8."
-	echo "  $0 clang-15    # Validates and sets CLANG_VERSION to 15."
-	echo "  $0             # No compiler version specified. Build all containers"
+	echo "  $0 gcc-8       # build \"kernel-build-container:gcc-8\""
+	echo "  $0 clang-15    # build \"kernel-build-container:clang-15\""
+	echo "  $0             # no compiler specified, build all the containers"
 	echo
-	echo "The script will exit with an error if the version is out of range or"
-	echo "the format is incorrect."
+	echo "The script will exit with an error if the version is out of range or the format is incorrect"
 }
 
 groups | grep docker > /dev/null
@@ -202,28 +201,29 @@ if [[ $1 =~ ^(gcc|clang)-([0-9]+)$ ]]; then
 	COMPILER=${BASH_REMATCH[1]}
 	VERSION=${BASH_REMATCH[2]}
 	# Validate GCC versions
-	if [ "$COMPILER" = "gcc" ] && [ "$VERSION" -ge 4 ] && [ "$VERSION" -le 14 ]; then
+	if [ "$COMPILER" = "gcc" ] && [ "$VERSION" -ge $MIN_GCC_VERSION ] && [ "$VERSION" -le $MAX_GCC_VERSION ]; then
 		GCC_VERSION=$VERSION
 		echo "GCC_VERSION is set to: $GCC_VERSION"
 	# Validate Clang versions
-	elif [ "$COMPILER" = "clang" ] && [ "$VERSION" -ge 14 ] && [ "$VERSION" -le 17 ]; then
+	elif [ "$COMPILER" = "clang" ] && [ "$VERSION" -ge $MIN_CLANG_VERSION ] && [ "$VERSION" -le $MAX_CLANG_VERSION ]; then
 		CLANG_VERSION=$VERSION
 		echo "CLANG_VERSION is set to: $CLANG_VERSION"
 	else
-		echo "Error: For gcc, version must be between 4 and 14; for clang, version must be between 14 and 17."
+		echo "Error: For gcc, version must be between $MIN_GCC_VERSION and $MAX_GCC_VERSION; for clang, version must be between $MIN_CLANG_VERSION and $MAX_CLANG_VERSION"
 		show_help
 		exit 1
 	fi
 else
-	echo "Error: Invalid compiler version format. Valid formats are"
-	echo "gcc-<version> (5 to 14) or clang-<version> (14 to 17)."
+	echo "Error: Invalid compiler version format. Valid formats are:"
+	echo "  gcc-<version> ($MIN_GCC_VERSION to $MAX_GCC_VERSION) or clang-<version> ($MIN_CLANG_VERSION to $MAX_CLANG_VERSION)"
 	show_help
 	exit 1
 fi
 
-# Check and handle GCC_VERSION
 if [ -n "$GCC_VERSION" ]; then
 	build_gcc_$GCC_VERSION
-else
+fi
+
+if [ -n "$CLANG_VERSION" ]; then
 	build_clang_$CLANG_VERSION
 fi
