@@ -343,7 +343,7 @@ python3 manage_containers.py -r all
 ### Running tets for manage_containers.py:
 
 ```console
-./cov.sh
+bash cov.sh
 ```
 
 Results will be stored in htmlcov/index.html
