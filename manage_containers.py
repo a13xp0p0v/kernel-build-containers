@@ -92,22 +92,14 @@ def check_group():
 
 def add_containers(needed_compiler, containers):
     """Add the specified container(s) based on the provided compiler or add all of them"""
-    if needed_compiler == 'all':
-        for c in containers:
+    for c in containers:
+        if needed_compiler == 'all':
             print(f'Adding ubuntu-{c.ubuntu} container with gcc-{c.gcc} and clang-{c.clang}')
             if not c.id:
                 c.add()
             else:
                 print('[!] WARNING: exists, skipping!')
-        return
-    for c in containers:
-        if 'gcc-' + c.gcc == needed_compiler:
-            if c.id:
-                sys.exit(f'[!] ERROR: container with {needed_compiler} already exists!')
-            print(f'Adding ubuntu-{c.ubuntu} container with gcc-{c.gcc} and clang-{c.clang}')
-            c.add()
-            return
-        if c.clang and 'clang-' + c.clang == needed_compiler:
+        if needed_compiler in ('gcc-' + c.gcc, 'clang-' + c.clang):
             if c.id:
                 sys.exit(f'[!] ERROR: container with {needed_compiler} already exists!')
             print(f'Adding ubuntu-{c.ubuntu} container with gcc-{c.gcc} and clang-{c.clang}')
