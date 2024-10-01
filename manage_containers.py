@@ -141,7 +141,7 @@ def main():
     parser.add_argument('-a', '--add', choices = supported_compilers, metavar = 'compiler',
                         help=f'build a container with: ({", ".join(supported_compilers)},'
                               'where "all" for all of the compilers)')
-    parser.add_argument('-r', '--remove', choices = ['all'], metavar = 'all',
+    parser.add_argument('-r', '--remove', action='store_true',
                         help = 'remove all created containers')
     parser.add_argument('-q','--quiet', action = 'store_true',
                         help = 'suppress container build output')
