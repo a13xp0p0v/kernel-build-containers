@@ -37,14 +37,6 @@ __Supported gcc versions:__
  - gcc-14
 
 __Supported clang versions:__
- - clang-12
- - clang-13
- - clang-14
- - clang-15
- - clang-16
- - clang-17
-
-__Additional supported clang versions (only for manage_containers.py):__
  - clang-5
  - clang-6
  - clang-7
@@ -52,6 +44,12 @@ __Additional supported clang versions (only for manage_containers.py):__
  - clang-9
  - clang-10
  - clang-11
+ - clang-12
+ - clang-13
+ - clang-14
+ - clang-15
+ - clang-16
+ - clang-17
 
 ## Usage
 
