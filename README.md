@@ -45,8 +45,8 @@ __Supported clang versions:__
  - clang-17
 
 __Additional supported clang versions (only for manage_containers.py):__
- - clang-5.0
- - clang-6.0
+ - clang-5
+ - clang-6
  - clang-7
  - clang-8
  - clang-9
