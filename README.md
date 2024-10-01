@@ -85,7 +85,7 @@ kernel-build-container   gcc-4.9    408db89527ec   8 hours ago          913MB
 ### Building all containers (manage_containers.py compact alternative):
 
 ```console
-python manage_containers.py -a all -q
+python3 manage_containers.py -a all -q
 ```
 
 ```console
@@ -337,7 +337,7 @@ $ bash rm_containers.sh
 ### Removing created Docker images (manage_containers.py alternative with warning for running containers):
 
 ```console
-python manage_containers.py -r all
+python3 manage_containers.py -r all
 ```
 
 ### Running tets for manage_containers.py:
