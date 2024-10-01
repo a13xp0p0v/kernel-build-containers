@@ -337,7 +337,7 @@ $ bash rm_containers.sh
 ### Removing created Docker images (manage_containers.py alternative with warning for running containers):
 
 ```console
-python3 manage_containers.py -r all
+python3 manage_containers.py -r
 ```
 
 ### Running tets for manage_containers.py:
