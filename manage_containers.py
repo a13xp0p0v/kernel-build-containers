@@ -90,7 +90,7 @@ def check_group():
     print('We need to use sudo to run the docker')
     return 'sudo'
 
-def add_handler(needed_compiler, containers):
+def add_containers(needed_compiler, containers):
     """Add the specified container(s) based on the provided compiler or add all of them"""
     if needed_compiler == 'all':
         for c in containers:
@@ -114,7 +114,7 @@ def add_handler(needed_compiler, containers):
             c.add()
             return
 
-def remove_handler(containers) -> None:
+def remove_containers(containers) -> None:
     """Remove Docker container images"""
     out = ''
     for c in containers:
@@ -176,11 +176,11 @@ def main():
         list_containers(containers)
 
     if args.add:
-        add_handler(args.add, containers)
+        add_containers(args.add, containers)
         list_containers(containers)
 
     if args.remove:
-        remove_handler(containers)
+        remove_containers(containers)
         list_containers(containers)
 
 if __name__ == '__main__':
