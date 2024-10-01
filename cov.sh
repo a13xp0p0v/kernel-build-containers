@@ -88,7 +88,7 @@ echo "Testing adding an existing container..."
 coverage run -a --branch manage_containers.py -a gcc-10
 coverage run -a --branch manage_containers.py -a gcc-10 && exit 1
 coverage run -a --branch manage_containers.py -a gcc-12
-coverage run -a --branch manage_containers.py -a clang-13 && exit 1
+coverage run -a --branch manage_containers.py -a clang-13 && exit 1 #it's the same container as gcc-12
 coverage run -a --branch manage_containers.py -r all
 
 echo "Testing invalid GCC/Clang version..."
