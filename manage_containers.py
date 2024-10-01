@@ -126,11 +126,11 @@ def remove_containers(containers) -> None:
 
 def list_containers(containers):
     """Print built containers"""
+    print(f'\n{"Ubuntu":<6} | {"GCC":<6} | {"Clang":<6} | {"Status":<6}')
+    print('-' * 34)
     for c in containers:
-        if c.id:
-            print(f'Ubuntu-{c.ubuntu} container with gcc-{c.gcc} and clang-{c.clang}: [+]')
-        else:
-            print(f'Ubuntu-{c.ubuntu} container with gcc-{c.gcc} and clang {c.clang}: [-]')
+        status = '[+]' if c.id else '[-]'
+        print(f'{c.ubuntu:<6} | {c.gcc:<6} | {c.clang:<6} | {status:<6}')
     sys.exit(0)
 
 def main():
