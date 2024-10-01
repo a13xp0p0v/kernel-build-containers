@@ -95,12 +95,11 @@ def add_handler(needed_compiler, containers):
     """Adds the specified container(s) based on the provided compiler or add all of them"""
     if needed_compiler == 'all':
         for c in containers:
+            print(f'Adding ubuntu-{c.ubuntu} container with gcc-{c.gcc} and clang-{c.clang}')
             if not c.id:
-                print(f'Adding ubuntu-{c.ubuntu} container with gcc-{c.gcc} and clang-{c.clang}')
                 c.add()
             else:
-                print(f'[!] WARNING: Ubuntu-{c.ubuntu} container with gcc-{c.gcc}'
-                    f' and clang-{c.clang} exists, skipping!')
+                print('[!] WARNING: exists, skipping!)
         return
     for c in containers:
         if 'gcc-' + c.gcc == needed_compiler:
