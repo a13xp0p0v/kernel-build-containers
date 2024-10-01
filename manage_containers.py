@@ -61,9 +61,9 @@ class Container:
 
     def rm(self):
         """Remove the Docker container if it exists and not running"""
-        running = subprocess.run(f"{Container.sudo_wrapper} docker ps | "
-                                 f"grep -E 'kernel-build-container:"
-                                 f"(gcc-{self.gcc}|clang-{self.clang})' || true",
+        running = subprocess.run(f'{Container.sudo_wrapper} docker ps | '
+                                 f'grep -E "kernel-build-container:'
+                                 f'(gcc-{self.gcc}|clang-{self.clang})" || true',
                                  shell=True, text=True, check=True, stdout=subprocess.PIPE).stdout
         if not running:
             subprocess.run([self.sudo_wrapper, 'docker', 'rmi', '-f', self.id],
@@ -126,7 +126,7 @@ def remove_containers(containers) -> None:
 
 def list_containers(containers):
     """Print built containers"""
-    print(f'\n{"Ubuntu":<6} | {"GCC":<6} | {"Clang":<6} | {"Status":<6}')
+    print(f'\n{'Ubuntu':<6} | {'GCC':<6} | {'Clang':<6} | {'Status':<6}')
     print('-' * 34)
     for c in containers:
         status = '[+]' if c.id else '[-]'
