@@ -3,21 +3,21 @@
 set -x
 set -e
 
-echo "Cleaning coverage cache"
+echo "Clearing coverage cache"
 coverage erase
 
-echo "Testing help command..."
+echo "Testing the help flag..."
 coverage run -a --branch manage_containers.py -h
 
-echo "Testing adding..."
+echo "Testing addition..."
 coverage run -a --branch manage_containers.py -a gcc-5
 coverage run -a --branch manage_containers.py -a gcc-6
 
-echo "Testing quiet adding..."
+echo "Testing quiet addition..."
 coverage run -a --branch manage_containers.py -a gcc-7 -q
 coverage run -a --branch manage_containers.py -a gcc-8 -q
 
-echo "Testing emoving..."
+echo "Testing removal..."
 coverage run -a --branch manage_containers.py -r all
 coverage run -a --branch manage_containers.py -a gcc-4.9
 coverage run -a --branch manage_containers.py -a gcc-5
@@ -48,7 +48,7 @@ coverage run -a --branch manage_containers.py -r all
 coverage run -a --branch manage_containers.py -a all -q
 coverage run -a --branch manage_containers.py -r all
 
-echo "Testing list option..."
+echo "Testing the list option..."
 coverage run -a --branch manage_containers.py -a gcc-12
 coverage run -a --branch manage_containers.py -l
 coverage run -a --branch manage_containers.py -r all
@@ -65,16 +65,10 @@ coverage run -a --branch manage_containers.py -r all
 sudo docker stop test-running
 coverage run -a --branch manage_containers.py -r all
 
-echo "Collect coverage for error handling"
+echo "Collecting coverage for error handling"
 
-echo "Testing without options..."
+echo "Testing without any options..."
 coverage run -a --branch manage_containers.py && exit 1
-
-echo "Testing list option with add and write..."
-coverage run -a --branch manage_containers.py -a all -l && exit 1
-coverage run -a --branch manage_containers.py -r all -l && exit 1
-coverage run -a --branch manage_containers.py -a all -r all -l && exit 1
-coverage run -a --branch manage_containers.py -a all -r all -l -q && exit 1
 
 echo "Testing invalid arguments..."
 coverage run -a --branch manage_containers.py -a non-existent-compiler && exit 1
@@ -85,15 +79,19 @@ coverage run -a --branch manage_containers.py -a gcc-10 -r all && exit 1
 coverage run -a --branch manage_containers.py -a gcc-10 -r gcc-10 && exit 1
 coverage run -a --branch manage_containers.py -r gcc-10 && exit 1 
 coverage run -a --branch manage_containers.py -a all -r all && exit 1
+coverage run -a --branch manage_containers.py -a all -l && exit 1
+coverage run -a --branch manage_containers.py -r all -l && exit 1
+coverage run -a --branch manage_containers.py -a all -r all -l && exit 1
+coverage run -a --branch manage_containers.py -a all -r all -l -q && exit 1
 
-echo "Testing adding existing container..."
+echo "Testing adding an existing container..."
 coverage run -a --branch manage_containers.py -a gcc-10
 coverage run -a --branch manage_containers.py -a gcc-10 && exit 1
 coverage run -a --branch manage_containers.py -a gcc-12
 coverage run -a --branch manage_containers.py -a clang-13 && exit 1
 coverage run -a --branch manage_containers.py -r all
 
-echo "Testing invalid GCC/Clang versions..."
+echo "Testing invalid GCC/Clang version..."
 coverage run -a --branch manage_containers.py -a gcc-invalid && exit 1 
 coverage run -a --branch manage_containers.py -a clang-invalid && exit 1 
 
