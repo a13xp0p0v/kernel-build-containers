@@ -22,7 +22,7 @@ class Container:
 
 
     Class Attributes:
-        sudo (str): represents sudo command
+        sudo_wrapper (str): wrap commands with sudo (if needed)
         quiet (bool): enable quiet option in Docker build
 
     Instance Attributes:
@@ -32,7 +32,7 @@ class Container:
         id (str): Docker image ID
     """
 
-    sudo = ''
+    sudo_wrapper = ''
     quiet = False
 
     def __init__(self, gcc_version, clang_version, ubuntu_version):
@@ -55,18 +55,18 @@ class Container:
 
         if self.quiet:
             build_args += ['-q']
-        subprocess.run([self.sudo, 'docker', 'build', *build_args, '.'],
+        subprocess.run([self.sudo_wrapper, 'docker', 'build', *build_args, '.'],
                         text=True, check=True)
         self.check()
 
     def rm(self):
         """Remove the Docker container if it exists and not running"""
-        running = subprocess.run(f"{Container.sudo} docker ps | "
+        running = subprocess.run(f"{Container.sudo_wrapper} docker ps | "
                                  f"grep -E 'kernel-build-container:"
                                  f"(gcc-{self.gcc}|clang-{self.clang})' || true",
                                  shell=True, text=True, check=True, stdout=subprocess.PIPE).stdout
         if not running:
-            subprocess.run([self.sudo, 'docker', 'rmi', '-f', self.id],
+            subprocess.run([self.sudo_wrapper, 'docker', 'rmi', '-f', self.id],
                             text=True, check=True)
             self.check()
             return ''
@@ -74,7 +74,7 @@ class Container:
 
     def check(self):
         """Check if the Docker container built and parses the image ID"""
-        cmd = subprocess.run([self.sudo, 'docker', 'images',
+        cmd = subprocess.run([self.sudo_wrapper, 'docker', 'images',
                               f'kernel-build-container:clang-{self.clang}', '--format', '{{.ID}}'],
                               stdout=subprocess.PIPE,
                               text=True, check=True)
@@ -153,7 +153,7 @@ def main():
     if bool(args.list) + bool(args.add) + bool(args.remove) > 1:
         sys.exit("Combining these options doesn't make sense!")
 
-    Container.sudo = check_group()
+    Container.sudo_wrapper = check_group()
     if args.quiet:
         Container.quiet = True
 
