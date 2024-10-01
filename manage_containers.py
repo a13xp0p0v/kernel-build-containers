@@ -99,7 +99,7 @@ def add_handler(needed_compiler, containers):
             if not c.id:
                 c.add()
             else:
-                print('[!] WARNING: exists, skipping!)
+                print('[!] WARNING: exists, skipping!')
         return
     for c in containers:
         if 'gcc-' + c.gcc == needed_compiler:
