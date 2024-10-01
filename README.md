@@ -90,30 +90,31 @@ python manage_containers.py -a all -q
 
 ```console
 $ sudo docker image list | grep kernel-build-container
-kernel-build-container   clang-11    74a578657e62   16 minutes ago   1.61GB
-kernel-build-container   gcc-10      74a578657e62   16 minutes ago   1.61GB
-kernel-build-container   clang-10    263ee1e4fc8d   22 minutes ago   1.38GB
-kernel-build-container   gcc-9       263ee1e4fc8d   22 minutes ago   1.38GB
-kernel-build-container   clang-17    03fd650dd3aa   2 hours ago      4.89GB
-kernel-build-container   gcc-14      03fd650dd3aa   2 hours ago      4.89GB
-kernel-build-container   clang-16    7ab93bb72791   2 hours ago      4.91GB
-kernel-build-container   clang-15    facb48b532e9   2 hours ago      3.49GB
-kernel-build-container   gcc-13      facb48b532e9   2 hours ago      3.49GB
-kernel-build-container   clang-14    9124988381f6   2 hours ago      1.88GB
-kernel-build-container   gcc-12      9124988381f6   2 hours ago      1.88GB
-kernel-build-container   clang-13    f626ccc36d6c   2 hours ago      1.96GB
-kernel-build-container   clang-12    a5e924ab9747   2 hours ago      1.72GB
-kernel-build-container   gcc-11      a5e924ab9747   2 hours ago      1.72GB
-kernel-build-container   clang-8     f49bf1f61aa2   2 hours ago      1.4GB
-kernel-build-container   gcc-7       f49bf1f61aa2   2 hours ago      1.4GB
-kernel-build-container   clang-7     516f49cd9c44   2 hours ago      1.49GB
-kernel-build-container   gcc-6       516f49cd9c44   2 hours ago      1.49GB
-kernel-build-container   clang-6.0   15936947b922   2 hours ago      1.33GB
-kernel-build-container   gcc-5       15936947b922   2 hours ago      1.33GB
-kernel-build-container   clang-5.0   d8ffc4d4f609   2 hours ago      1.87GB
-kernel-build-container   gcc-4.9     d8ffc4d4f609   2 hours ago      1.87GB
-kernel-build-container   clang-9     73a92cc0fbfb   25 hours ago     1.55GB
-kernel-build-container   gcc-8       73a92cc0fbfb   25 hours ago     1.55GB
+REPOSITORY               TAG         IMAGE ID       CREATED          SIZE
+kernel-build-container   clang-17    f82a39f4f536   10 seconds ago   4.87GB
+kernel-build-container   gcc-14      f82a39f4f536   10 seconds ago   4.87GB
+kernel-build-container   clang-16    debeffa0b306   2 minutes ago    4.89GB
+kernel-build-container   clang-15    282ee1c70ef4   5 minutes ago    3.49GB
+kernel-build-container   gcc-13      282ee1c70ef4   5 minutes ago    3.49GB
+kernel-build-container   clang-14    65e5a9bfec0f   7 minutes ago    1.88GB
+kernel-build-container   gcc-12      65e5a9bfec0f   7 minutes ago    1.88GB
+kernel-build-container   clang-13    57e0584fe0d3   12 minutes ago   1.96GB
+kernel-build-container   clang-12    fbb06aca13c9   13 minutes ago   1.71GB
+kernel-build-container   gcc-11      fbb06aca13c9   13 minutes ago   1.71GB
+kernel-build-container   clang-11    b3a75c3fd9ad   14 minutes ago   1.62GB
+kernel-build-container   gcc-10      b3a75c3fd9ad   14 minutes ago   1.62GB
+kernel-build-container   clang-10    6401372cf5aa   15 minutes ago   1.39GB
+kernel-build-container   gcc-9       6401372cf5aa   15 minutes ago   1.39GB
+kernel-build-container   clang-9     6668ffd11788   17 minutes ago   1.55GB
+kernel-build-container   gcc-8       6668ffd11788   17 minutes ago   1.55GB
+kernel-build-container   clang-8     23935b3308af   18 minutes ago   1.4GB
+kernel-build-container   gcc-7       23935b3308af   18 minutes ago   1.4GB
+kernel-build-container   clang-7     a9cc66b33f3e   19 minutes ago   1.5GB
+kernel-build-container   gcc-6       a9cc66b33f3e   19 minutes ago   1.5GB
+kernel-build-container   clang-6     8485509afe41   21 minutes ago   1.33GB
+kernel-build-container   gcc-5       8485509afe41   21 minutes ago   1.33GB
+kernel-build-container   clang-5     939c94215f80   22 minutes ago   1.87GB
+kernel-build-container   gcc-4.9     939c94215f80   22 minutes ago   1.87GB
 ```
 
 ### Running a container
