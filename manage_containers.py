@@ -87,14 +87,14 @@ def check_group():
                             text = True, check = True)
     if 'docker' in result.stdout:
         return ''
-    print('We need to use sudo to run the docker')
+    print('We need to use sudo to run the Docker')
     return 'sudo'
 
 def add_containers(needed_compiler, containers):
     """Add the specified container(s) based on the provided compiler or add all of them"""
     for c in containers:
         if needed_compiler == 'all':
-            print(f'Adding ubuntu-{c.ubuntu} container with gcc-{c.gcc} and clang-{c.clang}')
+            print(f'Adding Ubuntu-{c.ubuntu} container with GCC-{c.gcc} and Clang-{c.clang}')
             if not c.id:
                 c.add()
             else:
@@ -102,7 +102,7 @@ def add_containers(needed_compiler, containers):
         if needed_compiler in ('gcc-' + c.gcc, 'clang-' + c.clang):
             if c.id:
                 sys.exit(f'[!] ERROR: container with {needed_compiler} already exists!')
-            print(f'Adding ubuntu-{c.ubuntu} container with gcc-{c.gcc} and clang-{c.clang}')
+            print(f'Adding Ubuntu-{c.ubuntu} container with GCC-{c.gcc} and Clang-{c.clang}')
             c.add()
             return
 
@@ -111,7 +111,7 @@ def remove_containers(containers) -> None:
     out = ''
     for c in containers:
         if c.id:
-            print(f'Removing ubuntu-{c.ubuntu} container with gcc-{c.gcc} and clang-{c.clang}')
+            print(f'Removing Ubuntu-{c.ubuntu} container with GCC-{c.gcc} and Clang-{c.clang}')
             out = out + c.rm()
     if out:
         print('\nYou still have running containers, that can\'t be removed:\n', out)
