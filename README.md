@@ -37,6 +37,13 @@ __Supported gcc versions:__
  - gcc-14
 
 __Supported clang versions:__
+ - clang-5
+ - clang-6
+ - clang-7
+ - clang-8
+ - clang-9
+ - clang-10
+ - clang-11
  - clang-12
  - clang-13
  - clang-14
@@ -73,6 +80,125 @@ kernel-build-container   gcc-7      e79708f81b84   8 hours ago          740MB
 kernel-build-container   gcc-6      61f40d3e3e58   8 hours ago          992MB
 kernel-build-container   gcc-5      ed6270a767c6   8 hours ago          720MB
 kernel-build-container   gcc-4.9    408db89527ec   8 hours ago          913MB
+```
+
+### Building containers with manage_containers.py:
+
+Get help:
+
+```console
+$ python manage_containers.py -h
+usage: manage_containers.py [-h] [-l] [-a compiler] [-r] [-q]
+
+Manage the kernel-build-containers
+
+options:
+  -h, --help            show this help message and exit
+  -l, --list            show the kernel build containers
+  -a compiler, --add compiler
+                        build a container with: (gcc-4.9, gcc-5, gcc-6, gcc-7, gcc-8, gcc-9, gcc-10, gcc-11, gcc-12, gcc-13, gcc-14, clang-5, clang-6, clang-7, clang-8, clang-9,
+                        clang-10, clang-11, clang-12, clang-13, clang-14, clang-15, clang-16, clang-17, all,where 'all' for all of the compilers)
+  -r, --remove          remove all created containers
+  -q, --quiet           suppress container build output
+```
+
+Building all containers:
+
+```console
+$ python3 manage_containers.py -a all
+```
+
+Created containers:
+
+```console
+$ sudo docker image list | grep kernel-build-container
+REPOSITORY               TAG         IMAGE ID       CREATED          SIZE
+kernel-build-container   clang-17    f82a39f4f536   10 seconds ago   4.87GB
+kernel-build-container   gcc-14      f82a39f4f536   10 seconds ago   4.87GB
+kernel-build-container   clang-16    debeffa0b306   2 minutes ago    4.89GB
+kernel-build-container   clang-15    282ee1c70ef4   5 minutes ago    3.49GB
+kernel-build-container   gcc-13      282ee1c70ef4   5 minutes ago    3.49GB
+kernel-build-container   clang-14    65e5a9bfec0f   7 minutes ago    1.88GB
+kernel-build-container   gcc-12      65e5a9bfec0f   7 minutes ago    1.88GB
+kernel-build-container   clang-13    57e0584fe0d3   12 minutes ago   1.96GB
+kernel-build-container   clang-12    fbb06aca13c9   13 minutes ago   1.71GB
+kernel-build-container   gcc-11      fbb06aca13c9   13 minutes ago   1.71GB
+kernel-build-container   clang-11    b3a75c3fd9ad   14 minutes ago   1.62GB
+kernel-build-container   gcc-10      b3a75c3fd9ad   14 minutes ago   1.62GB
+kernel-build-container   clang-10    6401372cf5aa   15 minutes ago   1.39GB
+kernel-build-container   gcc-9       6401372cf5aa   15 minutes ago   1.39GB
+kernel-build-container   clang-9     6668ffd11788   17 minutes ago   1.55GB
+kernel-build-container   gcc-8       6668ffd11788   17 minutes ago   1.55GB
+kernel-build-container   clang-8     23935b3308af   18 minutes ago   1.4GB
+kernel-build-container   gcc-7       23935b3308af   18 minutes ago   1.4GB
+kernel-build-container   clang-7     a9cc66b33f3e   19 minutes ago   1.5GB
+kernel-build-container   gcc-6       a9cc66b33f3e   19 minutes ago   1.5GB
+kernel-build-container   clang-6     8485509afe41   21 minutes ago   1.33GB
+kernel-build-container   gcc-5       8485509afe41   21 minutes ago   1.33GB
+kernel-build-container   clang-5     939c94215f80   22 minutes ago   1.87GB
+kernel-build-container   gcc-4.9     939c94215f80   22 minutes ago   1.87GB
+```
+
+Building all containers quietly:
+
+```console
+$ python3 manage_containers.py -a all -q
+```
+
+last part of expected output:
+
+```console
+Ubuntu | GCC    | Clang  | Status
+----------------------------------
+16.04  | 4.9    | 5      | [+]   
+16.04  | 5      | 6      | [+]   
+18.04  | 6      | 7      | [+]   
+18.04  | 7      | 8      | [+]   
+20.04  | 8      | 9      | [+]   
+20.04  | 9      | 10     | [+]   
+20.04  | 10     | 11     | [+]   
+22.04  | 11     | 12     | [+]   
+22.04  | 12     | 13     | [+]   
+22.04  | 12     | 14     | [+]   
+23.04  | 13     | 15     | [+]   
+24.04  | 14     | 16     | [+]   
+24.04  | 14     | 17     | [+] 
+```
+
+Building the specified container:
+
+```console
+$ python3 manage_containers.py -a clang-10
+```
+
+Building the specified container quietly:
+
+```console
+$ python manage_containers.py -a clang-10 -q
+```
+
+expected output:
+
+```console
+We need to use sudo to run the Docker
+Adding Ubuntu-20.04 container with GCC-9 and Clang-10
+sha256:cc53be032fc2e7ed3942cf399c68e3bc91284d3362a280673afd94be4b2455b5
+
+Ubuntu | GCC    | Clang  | Status
+----------------------------------
+16.04  | 4.9    | 5      | [-]   
+16.04  | 5      | 6      | [-]   
+18.04  | 6      | 7      | [-]   
+18.04  | 7      | 8      | [-]   
+20.04  | 8      | 9      | [-]   
+20.04  | 9      | 10     | [+]   
+20.04  | 10     | 11     | [-]   
+22.04  | 11     | 12     | [-]   
+22.04  | 12     | 13     | [-]   
+22.04  | 12     | 14     | [-]   
+23.04  | 13     | 15     | [-]   
+24.04  | 14     | 16     | [-]   
+24.04  | 14     | 17     | [-]
 ```
 
 ### Running a container
@@ -291,3 +417,63 @@ usage: finish_container.sh kill/nokill out_dir
 ```console
 $ bash rm_containers.sh
 ```
+
+### Removing created Docker images (manage_containers.py alternative with warning for running containers):
+
+```console
+$ python3 manage_containers.py -r
+```
+
+last part of expected output without running containers:
+
+```console
+$ python manage_containers.py -r
+We need to use sudo to run the Docker
+
+Ubuntu | GCC    | Clang  | Status
+----------------------------------
+16.04  | 4.9    | 5      | [-]   
+16.04  | 5      | 6      | [-]   
+18.04  | 6      | 7      | [-]   
+18.04  | 7      | 8      | [-]   
+20.04  | 8      | 9      | [-]   
+20.04  | 9      | 10     | [-]   
+20.04  | 10     | 11     | [-]   
+22.04  | 11     | 12     | [-]   
+22.04  | 12     | 13     | [-]   
+22.04  | 12     | 14     | [-]   
+23.04  | 13     | 15     | [-]   
+24.04  | 14     | 16     | [-]   
+24.04  | 14     | 17     | [-]
+```
+
+last part of expected output with running clang-12 container:
+```consoler
+You still have running containers, that can't be removed:
+ 148254296e5d   kernel-build-container:clang-12   "/bin/bash"   14 seconds ago   Up 14 seconds             determined_grothendieck
+
+
+Ubuntu | GCC    | Clang  | Status
+----------------------------------
+16.04  | 4.9    | 5      | [-]   
+16.04  | 5      | 6      | [-]   
+18.04  | 6      | 7      | [-]   
+18.04  | 7      | 8      | [-]   
+20.04  | 8      | 9      | [-]   
+20.04  | 9      | 10     | [-]   
+20.04  | 10     | 11     | [-]   
+22.04  | 11     | 12     | [+]   
+22.04  | 12     | 13     | [-]   
+22.04  | 12     | 14     | [-]   
+23.04  | 13     | 15     | [-]   
+24.04  | 14     | 16     | [-]   
+24.04  | 14     | 17     | [-]
+```
+
+### Running tets for manage_containers.py:
+
+```console
+$ bash cov.sh
+```
+
+Results will be stored in htmlcov/index.html
