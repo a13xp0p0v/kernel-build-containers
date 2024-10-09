@@ -38,7 +38,7 @@ RUN set -ex; \
     groupadd -g ${GID} -o ${UNAME}; \
     useradd -u $UID -g $GID -G sudo -ms /bin/bash ${UNAME}; \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers; \
-    echo "Set disable_coredump false" >> /etc/sudo.conf; \
+    echo "Set disable_coredump false" >> /etc/sudo.conf;
 
 USER ${UNAME}
 WORKDIR /home/${UNAME}/src
