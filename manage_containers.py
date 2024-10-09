@@ -131,8 +131,8 @@ def main():
     parser.add_argument('-l','--list', action = 'store_true',
                         help = 'show the kernel build containers')
     parser.add_argument('-a', '--add', choices = supported_compilers, metavar = 'compiler',
-                        help=f'build a container with: ({", ".join(supported_compilers)},'
-                              'where "all" for all of the compilers)')
+                        help=f'build a container with: ({', '.join(supported_compilers)},'
+                              'where \'all\' for all of the compilers)')
     parser.add_argument('-r', '--remove', action='store_true',
                         help = 'remove all created containers')
     parser.add_argument('-q','--quiet', action = 'store_true',
@@ -143,26 +143,26 @@ def main():
         parser.print_help()
         sys.exit(1)
     if bool(args.list) + bool(args.add) + bool(args.remove) > 1:
-        sys.exit("Combining these options doesn't make sense!")
+        sys.exit('Combining these options doesn\'t make sense!')
 
     Container.sudo_wrapper = check_group()
     if args.quiet:
         Container.quiet = True
 
     containers = []
-    containers += [Container("4.9", "5", "16.04")]
-    containers += [Container("5", "6", "16.04")]
-    containers += [Container("6", "7", "18.04")]
-    containers += [Container("7", "8", "18.04")]
-    containers += [Container("8", "9", "20.04")]
-    containers += [Container("9", "10", "20.04")]
-    containers += [Container("10", "11", "20.04")]
-    containers += [Container("11", "12", "22.04")]
-    containers += [Container("12", "13", "22.04")]
-    containers += [Container("12", "14", "22.04")]
-    containers += [Container("13", "15", "23.04")]
-    containers += [Container("14", "16", "24.04")]
-    containers += [Container("14", "17", "24.04")]
+    containers += [Container('4.9', '5', '16.04')]
+    containers += [Container('5', '6', '16.04')]
+    containers += [Container('6', '7', '18.04')]
+    containers += [Container('7', '8', '18.04')]
+    containers += [Container('8', '9', '20.04')]
+    containers += [Container('9', '10', '20.04')]
+    containers += [Container('10', '11', '20.04')]
+    containers += [Container('11', '12', '22.04')]
+    containers += [Container('12', '13', '22.04')]
+    containers += [Container('12', '14', '22.04')]
+    containers += [Container('13', '15', '23.04')]
+    containers += [Container('14', '16', '24.04')]
+    containers += [Container('14', '17', '24.04')]
 
     if args.list:
         list_containers(containers)
