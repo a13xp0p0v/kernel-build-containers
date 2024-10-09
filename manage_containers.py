@@ -32,10 +32,12 @@ class Container:
         id (str): Docker image ID
     """
 
-    sudo_wrapper = ''
+    sudo_wrapper = None
     quiet = False
 
     def __init__(self, gcc_version, clang_version, ubuntu_version):
+        if not Container.sudo_wrapper:
+            Container.sudo_wrapper = self.check_group()
         self.gcc = gcc_version
         self.clang = clang_version
         self.ubuntu = ubuntu_version
@@ -81,14 +83,14 @@ class Container:
         self.id = cmd.stdout.strip()
         return self.id
 
-def check_group():
-    """Check if the user is in the Docker group, return 'sudo' if not"""
-    result = subprocess.run(['groups'], capture_output = True,
-                            text = True, check = True)
-    if 'docker' in result.stdout:
-        return ''
-    print('We need to use sudo to run the Docker')
-    return 'sudo'
+    def check_group(self):
+        """Check if the user is in the Docker group, return 'sudo' if not"""
+        result = subprocess.run(['groups'], capture_output = True,
+                                text = True, check = True)
+        if 'docker' in result.stdout:
+            return ''
+        print('We need to use sudo to run the Docker')
+        return 'sudo'
 
 def add_containers(needed_compiler, containers):
     """Add the specified container(s) based on the provided compiler or add all of them"""
@@ -145,7 +147,7 @@ def main():
     if bool(args.list) + bool(args.add) + bool(args.remove) > 1:
         sys.exit('Combining these options doesn\'t make sense!')
 
-    Container.sudo_wrapper = check_group()
+
     if args.quiet:
         Container.quiet = True
 
