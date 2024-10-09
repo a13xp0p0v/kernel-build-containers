@@ -32,9 +32,10 @@ RUN set -ex; \
 ARG UNAME
 ARG UID
 ARG GID
-RUN set -ex; \
+RUN set -x; \
     userdel -r `getent passwd ${UID} | cut -d : -f 1` > /dev/null 2>&1; \
     groupdel -f `getent group ${GID} | cut -d : -f 1` > /dev/null 2>&1; \
+    set -e; \
     groupadd -g ${GID} -o ${UNAME}; \
     useradd -u $UID -g $GID -G sudo -ms /bin/bash ${UNAME}; \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers; \
