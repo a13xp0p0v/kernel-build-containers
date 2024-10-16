@@ -87,7 +87,7 @@ kernel-build-container   gcc-4.9    408db89527ec   8 hours ago          913MB
 Get help:
 
 ```console
-$ python manage_containers.py -h
+$ python3 manage_containers.py -h
 usage: manage_containers.py [-h] [-l] [-a compiler] [-r] [-q]
 
 Manage the kernel-build-containers
@@ -174,7 +174,7 @@ $ python3 manage_containers.py -a clang-10
 Building the specified container quietly:
 
 ```console
-$ python manage_containers.py -a clang-10 -q
+$ python3 manage_containers.py -a clang-10 -q
 ```
 
 expected output:
@@ -427,7 +427,7 @@ $ python3 manage_containers.py -r
 last part of expected output without running containers:
 
 ```console
-$ python manage_containers.py -r
+$ python3 manage_containers.py -r
 We need to use sudo to run the Docker
 
 Ubuntu | GCC    | Clang  | Status
