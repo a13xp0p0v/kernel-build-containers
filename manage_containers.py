@@ -108,7 +108,7 @@ def add_containers(needed_compiler, containers):
             c.add()
             return
 
-def remove_containers(containers) -> None:
+def remove_containers(containers):
     """Remove Docker container images"""
     out = ''
     for c in containers:
