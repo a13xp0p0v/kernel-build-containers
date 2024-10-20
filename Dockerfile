@@ -31,17 +31,16 @@ RUN set -ex; \
 
 ARG UNAME
 ARG UID
+ARG GNAME
 ARG GID
 RUN set -x; \
     userdel -r `getent passwd ${UID} | cut -d : -f 1` > /dev/null 2>&1; \
     groupdel -f `getent group ${GID} | cut -d : -f 1` > /dev/null 2>&1; \
-    set -e; \
-    groupadd -g ${GID} -o ${UNAME}; \
+    groupadd -g ${GID} ${GNAME}; \
     useradd -u $UID -g $GID -G sudo -ms /bin/bash ${UNAME}; \
-    echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers; \
-    echo "Set disable_coredump false" >> /etc/sudo.conf;
+    echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers;
 
-USER ${UNAME}
+USER ${UNAME}:${GNAME}
 WORKDIR /home/${UNAME}/src
 
 CMD ["bash"]

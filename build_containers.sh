@@ -13,6 +13,7 @@ build_gcc_container() {
 		--build-arg UBUNTU_VERSION=$2 \
 		--build-arg UNAME=$(id -nu) \
 		--build-arg UID=$(id -u) \
+		--build-arg GNAME=$(id -ng) \
 		--build-arg GID=$(id -g) \
 		-t kernel-build-container:gcc-${GCC_VERSION} .
 }
@@ -25,6 +26,7 @@ build_clang_container() {
 		--build-arg UBUNTU_VERSION=$3 \
 		--build-arg UNAME=$(id -nu) \
 		--build-arg UID=$(id -u) \
+		--build-arg GNAME=$(id -ng) \
 		--build-arg GID=$(id -g) \
 		-t kernel-build-container:clang-${CLANG_VERSION} .
 }
