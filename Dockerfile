@@ -34,13 +34,21 @@ ARG UID
 ARG GNAME
 ARG GID
 RUN set -x; \
+    # These commands are allowed to fail (it happens for root, for example).
+    # The result will be checked in the next RUN.
     userdel -r `getent passwd ${UID} | cut -d : -f 1` > /dev/null 2>&1; \
     groupdel -f `getent group ${GID} | cut -d : -f 1` > /dev/null 2>&1; \
     groupadd -g ${GID} ${GNAME}; \
     useradd -u $UID -g $GID -G sudo -ms /bin/bash ${UNAME}; \
+    mkdir /home/${UNAME}; \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers;
 
 USER ${UNAME}:${GNAME}
 WORKDIR /home/${UNAME}/src
+
+RUN set -ex; \
+    id | grep "uid=${UID}(${UNAME}) gid=${GID}(${GNAME})"; \
+    sudo ls; \
+    pwd | grep "/home/${UNAME}/src";
 
 CMD ["bash"]
