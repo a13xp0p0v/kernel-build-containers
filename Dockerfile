@@ -40,15 +40,22 @@ RUN set -x; \
     groupdel -f `getent group ${GID} | cut -d : -f 1` > /dev/null 2>&1; \
     groupadd -g ${GID} ${GNAME}; \
     useradd -u $UID -g $GID -G sudo -ms /bin/bash ${UNAME}; \
-    mkdir /home/${UNAME}; \
-    echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers;
+    mkdir /src; \
+    chown -R ${UNAME}:${GNAME} /src; \
+    mkdir /out; \
+    chown -R ${UNAME}:${GNAME} /out; \
+    echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 USER ${UNAME}:${GNAME}
-WORKDIR /home/${UNAME}/src
+WORKDIR /src
 
 RUN set -ex; \
     id | grep "uid=${UID}(${UNAME}) gid=${GID}(${GNAME})"; \
     sudo ls; \
-    pwd | grep "/home/${UNAME}/src";
+    pwd | grep "^/src"; \
+    touch /src/test; \
+    rm /src/test; \
+    touch /out/test; \
+    rm /out/test
 
 CMD ["bash"]

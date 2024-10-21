@@ -81,8 +81,8 @@ if [ ! -z $INTERACTIVE ]; then
 	echo "Gonna run docker in interactive mode"
 fi
 
-echo "Mount source code directory \"$SRC\" at \"/home/$(id -nu)/src\""
-echo "Mount build output directory \"$OUT\" at \"/home/$(id -nu)/out\""
+echo "Mount source code directory \"$SRC\" at \"/src\""
+echo "Mount build output directory \"$OUT\" at \"/out\""
 
 if [ $# -gt 0 ]; then
 	echo -e "Gonna run command \"$@\"\n"
@@ -92,6 +92,6 @@ fi
 
 # Z for setting SELinux label
 exec $SUDO_CMD docker run $ENV $INTERACTIVE $CIDFILE --rm \
-	-v $SRC:/home/$(id -nu)/src:Z \
-	-v $OUT:/home/$(id -nu)/out:Z \
+	-v $SRC:/src:Z \
+	-v $OUT:/out:Z \
 	kernel-build-container:$COMPILER "$@"
