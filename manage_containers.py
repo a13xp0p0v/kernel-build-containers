@@ -79,10 +79,10 @@ class Container:
         return '\n'.join(running)
 
     def check(self):
-        """Check if the Docker container built and parses the image ID"""
-        cmd = self.runtime_cmd + \
-              ['images', f'kernel-build-container:clang-{self.clang}', '--format', '{{.ID}}']
-        out = subprocess.run(cmd, stdout=subprocess.PIPE, text=True, check=True)
+        """Check whether the Docker container exists and get its image ID"""
+        cmd = self.runtime_cmd + ['images', f'kernel-build-container:clang-{self.clang}',
+                                  '--format', '{{.ID}}']
+        out = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE)
         self.id = out.stdout.strip()
         return self.id
 
@@ -90,15 +90,14 @@ class Container:
         """Check whether we need to run Docker with sudo"""
         try:
             cmd = ['docker', 'ps']
-            out = subprocess.run(cmd, capture_output = True, text = True)
+            out = subprocess.run(cmd, text=True, check=False, capture_output=True)
             if out.returncode == 0:
                 print('We don\'t need sudo to run Docker')
                 return ['docker']
-            elif 'permission denied' in out.stderr:
+            if 'permission denied' in out.stderr:
                 print('We need to use sudo to run Docker')
                 return ['sudo', 'docker']
-            else:
-                sys.exit(f'Testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
+            sys.exit(f'Testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
         except FileNotFoundError:
             sys.exit('[!] docker is not installed')
 
@@ -139,15 +138,15 @@ def list_containers(containers):
 def main():
     """The main function to manage the containers"""
     parser = argparse.ArgumentParser(description='Manage the kernel-build-containers')
-    parser.add_argument('-l','--list', action = 'store_true',
-                        help = 'show the kernel build containers')
-    parser.add_argument('-a', '--add', choices = supported_compilers, metavar = 'compiler',
-                        help=f'build a container with: ({", ".join(supported_compilers)},'
-                              'where \'all\' for all of the compilers)')
+    parser.add_argument('-l','--list', action='store_true',
+                        help='show the kernel build containers')
+    parser.add_argument('-a', '--add', choices=supported_compilers, metavar='compiler',
+                        help=f'build a container with {" / ".join(supported_compilers)} '
+                              '(use "all" for building all containers)')
     parser.add_argument('-r', '--remove', action='store_true',
-                        help = 'remove all created containers')
-    parser.add_argument('-q','--quiet', action = 'store_true',
-                        help = 'suppress container build output')
+                        help='remove all created containers')
+    parser.add_argument('-q','--quiet', action='store_true',
+                        help='suppress container build output')
     args = parser.parse_args()
 
     if not any([args.list, args.add, args.remove]):
