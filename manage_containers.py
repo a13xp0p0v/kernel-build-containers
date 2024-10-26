@@ -23,9 +23,8 @@ class Container:
     """
     Represents a Docker container configured for building the Linux kernel with a specified compiler
 
-
     Class Attributes:
-        docker_wrapper (str): wrap commands with sudo (if needed)
+        runtime_cmd (List): commands for calling the container runtime
         quiet (bool): enable quiet option in Docker build
 
     Instance Attributes:
@@ -35,12 +34,12 @@ class Container:
         id (str): Docker image ID
     """
 
-    docker_wrapper = None
+    runtime_cmd = None
     quiet = False
 
     def __init__(self, gcc_version, clang_version, ubuntu_version):
-        if not Container.docker_wrapper:
-            Container.docker_wrapper = self.wrap_docker_command()
+        if not Container.runtime_cmd:
+            Container.runtime_cmd = self.identify_runtime_cmd()
         self.gcc = gcc_version
         self.clang = clang_version
         self.ubuntu = ubuntu_version
@@ -62,18 +61,18 @@ class Container:
         build_dir = ['.']
         if self.quiet:
             build_args += ['-q']
-        cmd = self.docker_wrapper + build_args + build_dir
+        cmd = self.runtime_cmd + build_args + build_dir
         subprocess.run(cmd, text=True, check=True)
         self.check()
 
     def rm(self):
         """Remove the Docker container if it exists and not running"""
-        cmd = self.docker_wrapper + ['ps']
+        cmd = self.runtime_cmd + ['ps']
         out = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout
         find = rf'(kernel-build-container:gcc-{self.gcc}|kernel-build-container:clang-{self.clang})'
         running = re.findall(find, out)
         if not running:
-            cmd = self.docker_wrapper + ['rmi', '-f', self.id]
+            cmd = self.runtime_cmd + ['rmi', '-f', self.id]
             subprocess.run(cmd, text=True, check=True)
             self.check()
             return ''
@@ -81,13 +80,13 @@ class Container:
 
     def check(self):
         """Check if the Docker container built and parses the image ID"""
-        cmd = self.docker_wrapper + \
+        cmd = self.runtime_cmd + \
               ['images', f'kernel-build-container:clang-{self.clang}', '--format', '{{.ID}}']
         out = subprocess.run(cmd, stdout=subprocess.PIPE, text=True, check=True)
         self.id = out.stdout.strip()
         return self.id
 
-    def wrap_docker_command(self):
+    def identify_runtime_cmd(self):
         """Check whether we need to run Docker with sudo"""
         try:
             cmd = ['docker', 'ps']
