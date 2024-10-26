@@ -129,7 +129,8 @@ def remove_containers(containers):
 
 def list_containers(containers):
     """Show the containers and their status"""
-    print(f'\n{"Ubuntu":<6} | {"GCC":<6} | {"Clang":<6} | {"Status":<6}')
+    print('-' * 34)
+    print(f'{"Ubuntu":<6} | {"GCC":<6} | {"Clang":<6} | {"Status":<6}')
     print('-' * 34)
     for c in containers:
         status = '[+]' if c.id else '[-]'
