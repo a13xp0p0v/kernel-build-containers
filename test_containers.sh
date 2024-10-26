@@ -13,6 +13,10 @@ fi
 
 sleep 3 #sleep to notice the current group
 
+# Clear the state before beginning the test
+python3 manage_containers.py -r
+rm -f .coverage
+
 echo "Clearing coverage cache"
 python3 -m coverage erase
 
@@ -120,4 +124,3 @@ python3 -m coverage run -a --branch manage_containers.py -a gcc-4.9 --unknown-fl
 echo "All tests completed. Creating report"
 python3 -m coverage report --omit='/usr/lib/python3/dist-packages/*'
 python3 -m coverage html --omit='/usr/lib/python3/dist-packages/*'
-rm .coverage
