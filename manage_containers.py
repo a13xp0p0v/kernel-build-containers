@@ -88,13 +88,20 @@ class Container:
         return self.id
 
     def wrap_docker_command(self):
-        """Check if the user is in the Docker group, wrap docker in 'sudo' if not"""
-        cmd = ['groups']
-        out = subprocess.run(cmd, capture_output = True, text = True, check = True)
-        if 'docker' in out.stdout:
-            return ['docker']
-        print('We need to use sudo to run the Docker')
-        return ['sudo', 'docker']
+        """Check whether we need to run Docker with sudo"""
+        try:
+            cmd = ['docker', 'ps']
+            out = subprocess.run(cmd, capture_output = True, text = True)
+            if out.returncode == 0:
+                print('We don\'t need sudo to run Docker')
+                return ['docker']
+            elif 'permission denied' in out.stderr:
+                print('We need to use sudo to run Docker')
+                return ['sudo', 'docker']
+            else:
+                sys.exit(f'Testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
+        except FileNotFoundError:
+            sys.exit('[!] docker is not installed')
 
 def add_containers(needed_compiler, containers):
     """Add the specified container(s) based on the provided compiler or add all of them"""
