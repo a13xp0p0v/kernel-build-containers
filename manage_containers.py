@@ -21,17 +21,17 @@ supported_compilers = ['gcc-4.9', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9',
 
 class Container:
     """
-    Represents a Docker container configured for building the Linux kernel with a specified compiler
+    Represents a container for building the Linux kernel with a specified compiler
 
     Class Attributes:
         runtime_cmd (List): commands for calling the container runtime
-        quiet (bool): enable quiet option in Docker build
+        quiet (bool): quiet mode for hiding the container build log
 
     Instance Attributes:
-        gcc (str): Version of GCC compiler
-        clang (str): Version of Clang compiler
-        ubuntu (str): Version of Ubuntu
-        id (str): Docker image ID
+        gcc (str): GCC version
+        clang (str): Clang version
+        ubuntu (str): Ubuntu version
+        id (str): container ID
     """
 
     runtime_cmd = None
@@ -46,7 +46,7 @@ class Container:
         self.id = self.check()
 
     def add(self):
-        """Build the Docker container with the specified compilers"""
+        """Build a container that provides the specified compilers"""
         build_args = ['build',
                       '--build-arg', f'GCC_VERSION={self.gcc}',
                       '--build-arg', f'CLANG_VERSION={self.clang}',
@@ -66,7 +66,7 @@ class Container:
         self.check()
 
     def rm(self):
-        """Remove the Docker container if it exists and not running"""
+        """Remove the container if it exists and is not running"""
         cmd = self.runtime_cmd + ['ps']
         out = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout
         find = rf'(kernel-build-container:gcc-{self.gcc}|kernel-build-container:clang-{self.clang})'
@@ -79,7 +79,7 @@ class Container:
         return '\n'.join(running)
 
     def check(self):
-        """Check whether the Docker container exists and get its image ID"""
+        """Check whether the container exists and get its image ID"""
         cmd = self.runtime_cmd + ['images', f'kernel-build-container:clang-{self.clang}',
                                   '--format', '{{.ID}}']
         out = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE)
@@ -87,22 +87,22 @@ class Container:
         return self.id
 
     def identify_runtime_cmd(self):
-        """Check whether we need to run Docker with sudo"""
+        """Identify the commands for working with the container runtime"""
         try:
             cmd = ['docker', 'ps']
             out = subprocess.run(cmd, text=True, check=False, capture_output=True)
             if out.returncode == 0:
-                print('We don\'t need sudo to run Docker')
+                print('We don\'t need "sudo" for working with containers')
                 return ['docker']
             if 'permission denied' in out.stderr:
-                print('We need to use sudo to run Docker')
+                print('We need "sudo" for working with containers')
                 return ['sudo', 'docker']
             sys.exit(f'Testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
         except FileNotFoundError:
-            sys.exit('[!] docker is not installed')
+            sys.exit('[!] the container runtime is not installed')
 
 def add_containers(needed_compiler, containers):
-    """Add the specified container(s) based on the provided compiler or add all of them"""
+    """Add container(s) with the specified compiler"""
     for c in containers:
         if needed_compiler == 'all':
             print(f'Adding Ubuntu-{c.ubuntu} container with GCC-{c.gcc} and Clang-{c.clang}')
@@ -118,7 +118,7 @@ def add_containers(needed_compiler, containers):
             return
 
 def remove_containers(containers):
-    """Remove Docker container images"""
+    """Remove the container images"""
     out = ''
     for c in containers:
         if c.id:
@@ -128,7 +128,7 @@ def remove_containers(containers):
         print('\nYou still have running containers, that can\'t be removed:\n'+out)
 
 def list_containers(containers):
-    """Print built containers"""
+    """Show the containers and their status"""
     print(f'\n{"Ubuntu":<6} | {"GCC":<6} | {"Clang":<6} | {"Status":<6}')
     print('-' * 34)
     for c in containers:
@@ -136,7 +136,7 @@ def list_containers(containers):
         print(f'{c.ubuntu:<6} | {c.gcc:<6} | {c.clang:<6} | {status:<6}')
 
 def main():
-    """The main function to manage the containers"""
+    """The main function for managing the kernel-build-containers"""
     parser = argparse.ArgumentParser(description='Manage the kernel-build-containers')
     parser.add_argument('-l','--list', action='store_true',
                         help='show the kernel build containers')
