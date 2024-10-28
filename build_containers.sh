@@ -178,7 +178,7 @@ show_help() {
 	echo "The script will exit with an error if the version is out of range or the format is incorrect"
 }
 
-groups | grep docker > /dev/null
+groups | grep '\<docker\>' > /dev/null
 NEED_SUDO=$?
 
 if [ $NEED_SUDO -eq 1 ]; then

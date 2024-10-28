@@ -5,7 +5,7 @@ set -e
 
 echo "Tests must be run with and without the docker group"
 
-if groups $USER | grep -q 'docker'; then
+if groups $USER | grep '\<docker\>'; then
     echo "Running tests with the docker group"
 else
     echo "Running tests without the docker group"
@@ -74,7 +74,7 @@ python3 -m coverage run -a --branch manage_containers.py -l
 
 echo "Testing removal with running containers..."
 python3 -m coverage run -a --branch manage_containers.py -a gcc-12
-if groups $USER | grep 'docker'; then
+if groups $USER | grep '\<docker\>'; then
     docker run -d --rm --name test-running kernel-build-container:gcc-12 tail -f /dev/null
     python3 -m coverage run -a --branch manage_containers.py -r
     docker stop test-running
