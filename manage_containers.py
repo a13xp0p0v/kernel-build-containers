@@ -76,7 +76,7 @@ class Container:
             subprocess.run(cmd, text=True, check=True)
             self.check()
             return ''
-        return '\n'.join(running)
+        return ''.join(running)
 
     def check(self):
         """Check whether the container exists and get its image ID"""
@@ -100,7 +100,6 @@ class Container:
             cmd = ['docker', 'ps']
             out = subprocess.run(cmd, text=True, check=False, capture_output=True)
             if out.returncode == 0:
-                print('We don\'t need "sudo" for working with containers')
                 return ['docker']
             if 'permission denied' in out.stderr:
                 print('We need "sudo" for working with containers')
@@ -131,7 +130,7 @@ def remove_containers(containers):
     for c in containers:
         if c.id:
             print(f'Removing Ubuntu-{c.ubuntu} container with GCC-{c.gcc} and Clang-{c.clang}')
-            out = out + c.rm()
+            out = out + '\n' + c.rm()
     if out:
         print('\nYou still have running containers, that can\'t be removed:\n'+out)
 
