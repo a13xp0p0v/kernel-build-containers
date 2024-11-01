@@ -82,8 +82,16 @@ class Container:
         """Check whether the container exists and get its image ID"""
         cmd = self.runtime_cmd + ['images', f'kernel-build-container:clang-{self.clang}',
                                   '--format', '{{.ID}}']
-        out = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE)
-        self.id = out.stdout.strip()
+        out = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
+        if out:
+            check_gcc_cmd = self.runtime_cmd + ['images', f'kernel-build-container:gcc-{self.gcc}',
+                                                '--format', '{{.ID}}']
+            gcc_out = subprocess.run(check_gcc_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
+            if not gcc_out:
+                print('No gcc found! Something went wrong!')
+                print('Try to manually remove containers!')
+                sys.exit(1)
+        self.id = out
         return self.id
 
     def identify_runtime_cmd(self):
