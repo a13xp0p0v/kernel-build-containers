@@ -37,11 +37,11 @@ class Container:
     runtime_cmd = None
     quiet = False
 
-    def __init__(self, gcc_version, clang_version, ubuntu_version):
+    def __init__(self, clang_version, gcc_version, ubuntu_version):
         if not Container.runtime_cmd:
             Container.runtime_cmd = self.identify_runtime_cmd()
-        self.gcc = gcc_version
         self.clang = clang_version
+        self.gcc = gcc_version
         self.ubuntu = ubuntu_version
         self.id = self.check()
 
@@ -164,19 +164,19 @@ def main():
         sys.exit('Combining these options doesn\'t make sense!')
 
     containers = []
-    containers += [Container('4.9', '5', '16.04')]
-    containers += [Container('5', '6', '16.04')]
-    containers += [Container('6', '7', '18.04')]
-    containers += [Container('7', '8', '18.04')]
-    containers += [Container('8', '9', '20.04')]
-    containers += [Container('9', '10', '20.04')]
-    containers += [Container('10', '11', '20.04')]
-    containers += [Container('11', '12', '22.04')]
-    containers += [Container('12', '13', '22.04')]
-    containers += [Container('12', '14', '22.04')]
-    containers += [Container('13', '15', '23.04')]
-    containers += [Container('14', '16', '24.04')]
-    containers += [Container('14', '17', '24.04')]
+    containers += [Container('5', '4.9', '16.04')]
+    containers += [Container('6', '5', '16.04')]
+    containers += [Container('7', '6', '18.04')]
+    containers += [Container('8', '7', '18.04')]
+    containers += [Container('9', '8', '20.04')]
+    containers += [Container('10', '9', '20.04')]
+    containers += [Container('11', '10', '20.04')]
+    containers += [Container('12', '11', '22.04')]
+    containers += [Container('13', '12', '22.04')]
+    containers += [Container('14', '12', '22.04')]
+    containers += [Container('15', '13', '23.04')]
+    containers += [Container('16', '14', '24.04')]
+    containers += [Container('17', '14', '24.04')]
 
     if args.quiet:
         Container.quiet = True
