@@ -15,8 +15,7 @@ supported_compilers = ['gcc-4.9', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9',
                        'gcc-10', 'gcc-11', 'gcc-12', 'gcc-13', 'gcc-14',
                        'clang-5', 'clang-6', 'clang-7', 'clang-8',
                        'clang-9', 'clang-10', 'clang-11', 'clang-12',
-                       'clang-13', 'clang-14', 'clang-15', 'clang-16', 'clang-17',
-                       'all']
+                       'clang-13', 'clang-14', 'clang-15', 'clang-16', 'clang-17']
 
 NAME_DELIMITER = '__'
 
@@ -143,11 +142,6 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
         sys.exit('[!] Exit by interrupt')
 
 
-def build_kernels(arch, kconfig, src, out, compilers, make_args):
-    for compiler in compilers:
-        build_kernel(arch, kconfig, src, out, compiler, make_args)
-
-
 def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
     parser.add_argument('-c', '--compiler', metavar='COMPILER', choices=supported_compilers, required=True,
@@ -183,13 +177,7 @@ def main():
         sys.exit(f'[!] ERROR: can\'t find the build output directory "{args.out}"')
     print(f'[+] Using "{args.out}" as build output directory')
 
-    compilers = []
-    if args.compiler != 'all':
-        compilers.append(args.compiler)
-    else:
-        compilers = supported_compilers[:]
-        compilers.remove('all')
-    print(f'[+] Going to build with: {" ".join(compilers)}')
+    print(f'[+] Going to build with: {args.compiler}')
 
     make_args = args.make_args[:]
     if make_args:
@@ -219,7 +207,7 @@ def main():
     else:
         print('[+] Going to run \'make\' in single-threaded mode')
 
-    build_kernels(args.arch, args.kconfig, args.src, args.out, compilers, make_args)
+    build_kernel(args.arch, args.kconfig, args.src, args.out, args.compiler, make_args)
 
     print('\n[+] Done, see the results')
 
