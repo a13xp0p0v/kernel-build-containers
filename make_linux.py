@@ -150,42 +150,42 @@ def build_kernels(arch, kconfig, src, out, compilers, make_args):
 
 def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
-    parser.add_argument('-c', choices=supported_compilers, required=True,
-                        help='building compiler (\'all\' to build with each of them)')
-    parser.add_argument('-a', choices=supported_archs, required=True,
-                        help='build target architecture')
-    parser.add_argument('-s', metavar='src', required=True,
+    parser.add_argument('-c', '--compiler', metavar='COMPILER', choices=supported_compilers, required=True,
+                        help=f'compiler for building ({" / ".join(supported_compilers)})')
+    parser.add_argument('-a', '--arch', metavar='ARCH', choices=supported_archs, required=True,
+                        help=f'build target architecture ({" / ".join(supported_archs)})')
+    parser.add_argument('-s', '--src', required=True,
                         help='Linux kernel sources directory')
-    parser.add_argument('-o', metavar='out', required=True,
+    parser.add_argument('-o', '--out', required=True,
                         help='build output directory')
-    parser.add_argument('-k', metavar='kconfig',
+    parser.add_argument('-k', '--kconfig',
                         help='path to kernel kconfig file')
-    parser.add_argument('-q', action='store_true',
+    parser.add_argument('-q', '--quiet', action='store_true',
                         help='for running `make` in quiet mode')
-    parser.add_argument('-t', action='store_true',
+    parser.add_argument('-t', '--single-thread', action='store_true',
                         help='for running `make` in single-threaded mode (multi-threaded by default)')
     parser.add_argument('make_args', metavar='...', nargs=argparse.REMAINDER,
                         help='additional arguments for \'make\', can be separated by -- delimiter')
     args = parser.parse_args()
 
-    print(f'[+] Going to build the Linux kernel for {args.a}')
+    print(f'[+] Going to build the Linux kernel for {args.arch}')
 
-    if args.k:
-        if not os.path.isfile(args.k):
-            sys.exit(f'[!] ERROR: can\'t find the kernel config "{args.k}"')
-        print(f'[+] Using "{args.k}" as kernel config')
+    if args.kconfig:
+        if not os.path.isfile(args.kconfig):
+            sys.exit(f'[!] ERROR: can\'t find the kernel config "{args.kconfig}"')
+        print(f'[+] Using "{args.kconfig}" as kernel config')
 
-    if not os.path.isdir(args.s):
-        sys.exit(f'[!] ERROR: can\'t find the kernel sources directory "{args.s}"')
-    print(f'[+] Using "{args.s}" as Linux kernel sources directory')
+    if not os.path.isdir(args.src):
+        sys.exit(f'[!] ERROR: can\'t find the kernel sources directory "{args.src}"')
+    print(f'[+] Using "{args.src}" as Linux kernel sources directory')
 
-    if not os.path.isdir(args.o):
-        sys.exit(f'[!] ERROR: can\'t find the build output directory "{args.o}"')
-    print(f'[+] Using "{args.o}" as build output directory')
+    if not os.path.isdir(args.out):
+        sys.exit(f'[!] ERROR: can\'t find the build output directory "{args.out}"')
+    print(f'[+] Using "{args.out}" as build output directory')
 
     compilers = []
-    if args.c != 'all':
-        compilers.append(args.c)
+    if args.compiler != 'all':
+        compilers.append(args.compiler)
     else:
         compilers = supported_compilers[:]
         compilers.remove('all')
@@ -208,18 +208,18 @@ def main():
             if arg.startswith('-j'):
                 sys.exit('[-] Don\'t specify "-j", by default we run \'make\' in parallel on all CPUs')
 
-    if args.q:
+    if args.quiet:
         print('[+] Going to run \'make\' in quiet mode')
         make_args.insert(0, '-s')
 
-    if not args.t:
+    if not args.single_thread:
         cpu_count = os.sysconf('SC_NPROCESSORS_ONLN')
         print(f'[+] Going to run \'make\' on {cpu_count} CPUs')
         make_args = ['-j', str(cpu_count)] + make_args
     else:
         print('[+] Going to run \'make\' in single-threaded mode')
 
-    build_kernels(args.a, args.k, args.s, args.o, compilers, make_args)
+    build_kernels(args.arch, args.kconfig, args.src, args.out, compilers, make_args)
 
     print('\n[+] Done, see the results')
 
