@@ -53,38 +53,9 @@ __Supported clang versions:__
 
 ## Usage
 
-### Building all containers
+### Building containers:
 
-```console
-$ bash build_containers.sh
-```
-
-Created containers:
-
-```console
-$ sudo docker image list | grep kernel-build-container
-kernel-build-container   clang-17   c24d2754f36d   About a minute ago   6.01GB
-kernel-build-container   clang-16   9b3f7dce5f5b   12 minutes ago       6.01GB
-kernel-build-container   clang-15   9f62c82c4826   24 minutes ago       3.83GB
-kernel-build-container   clang-14   83523b7c7241   41 minutes ago       2.21GB
-kernel-build-container   clang-13   8c0f0e68075a   46 minutes ago       2.27GB
-kernel-build-container   clang-12   ac2cea3e0e97   51 minutes ago       2.21GB
-kernel-build-container   gcc-14     ff56932d9a3e   7 hours ago          4.36GB
-kernel-build-container   gcc-13     b05623469193   7 hours ago          3.14GB
-kernel-build-container   gcc-12     63562d1fbb5e   7 hours ago          1.55GB
-kernel-build-container   gcc-11     c4b2e14874f2   7 hours ago          1.03GB
-kernel-build-container   gcc-10     bcbfb78c4a6c   7 hours ago          1.27GB
-kernel-build-container   gcc-9      76f580f18759   7 hours ago          833MB
-kernel-build-container   gcc-8      e22bee633dff   8 hours ago          1.12GB
-kernel-build-container   gcc-7      e79708f81b84   8 hours ago          740MB
-kernel-build-container   gcc-6      61f40d3e3e58   8 hours ago          992MB
-kernel-build-container   gcc-5      ed6270a767c6   8 hours ago          720MB
-kernel-build-container   gcc-4.9    408db89527ec   8 hours ago          913MB
-```
-
-### Building containers with manage_containers.py:
-
-Get help:
+__Get help:__
 
 ```console
 $ python3 manage_containers.py -h
@@ -96,19 +67,20 @@ options:
   -h, --help            show this help message and exit
   -l, --list            show the kernel build containers
   -a compiler, --add compiler
-                        build a container with: (gcc-4.9, gcc-5, gcc-6, gcc-7, gcc-8, gcc-9, gcc-10, gcc-11, gcc-12, gcc-13, gcc-14, clang-5, clang-6, clang-7, clang-8, clang-9,
-                        clang-10, clang-11, clang-12, clang-13, clang-14, clang-15, clang-16, clang-17, all,where 'all' for all of the compilers)
+                        build a container with clang-5 / clang-6 / clang-7 / clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 / clang-14 / clang-15 /
+                        clang-16 / clang-17 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 / all (use "all" for
+                        building all containers)
   -r, --remove          remove all created containers
   -q, --quiet           suppress container build output
 ```
 
-Building all containers:
+__Building all containers:__
 
 ```console
 $ python3 manage_containers.py -a all
 ```
 
-Created containers:
+__Created containers:__
 
 ```console
 $ sudo docker image list | grep kernel-build-container
@@ -139,71 +111,48 @@ kernel-build-container   clang-5     939c94215f80   22 minutes ago   1.87GB
 kernel-build-container   gcc-4.9     939c94215f80   22 minutes ago   1.87GB
 ```
 
-Building all containers quietly:
+__Building all containers quietly:__
 
 ```console
 $ python3 manage_containers.py -a all -q
 ```
 
-last part of expected output:
+__Expected output:__
 
 ```console
-Ubuntu | GCC    | Clang  | Status
 ----------------------------------
-16.04  | 4.9    | 5      | [+]   
-16.04  | 5      | 6      | [+]   
-18.04  | 6      | 7      | [+]   
-18.04  | 7      | 8      | [+]   
-20.04  | 8      | 9      | [+]   
-20.04  | 9      | 10     | [+]   
-20.04  | 10     | 11     | [+]   
-22.04  | 11     | 12     | [+]   
-22.04  | 12     | 13     | [+]   
-22.04  | 12     | 14     | [+]   
-23.04  | 13     | 15     | [+]   
-24.04  | 14     | 16     | [+]   
-24.04  | 14     | 17     | [+] 
+Ubuntu | Clang  | GCC    | Status
+----------------------------------
+16.04  | 5      | 4.9    | [+]   
+16.04  | 6      | 5      | [+]   
+18.04  | 7      | 6      | [+]   
+18.04  | 8      | 7      | [+]   
+20.04  | 9      | 8      | [+]   
+20.04  | 10     | 9      | [+]   
+20.04  | 11     | 10     | [+]   
+22.04  | 12     | 11     | [+]   
+22.04  | 13     | 12     | [+]   
+22.04  | 14     | 12     | [+]   
+23.04  | 15     | 13     | [+]   
+24.04  | 16     | 14     | [+]   
+24.04  | 17     | 14     | [+]  
 ```
 
-Building the specified container:
+__Building the specified container:__
 
 ```console
 $ python3 manage_containers.py -a clang-10
 ```
 
-Building the specified container quietly:
+__Building the specified container quietly:__
 
 ```console
 $ python3 manage_containers.py -a clang-10 -q
 ```
 
-expected output:
-
-```console
-We need to use sudo to run the Docker
-Adding Ubuntu-20.04 container with GCC-9 and Clang-10
-sha256:cc53be032fc2e7ed3942cf399c68e3bc91284d3362a280673afd94be4b2455b5
-
-Ubuntu | GCC    | Clang  | Status
-----------------------------------
-16.04  | 4.9    | 5      | [-]   
-16.04  | 5      | 6      | [-]   
-18.04  | 6      | 7      | [-]   
-18.04  | 7      | 8      | [-]   
-20.04  | 8      | 9      | [-]   
-20.04  | 9      | 10     | [+]   
-20.04  | 10     | 11     | [-]   
-22.04  | 11     | 12     | [-]   
-22.04  | 12     | 13     | [-]   
-22.04  | 12     | 14     | [-]   
-23.04  | 13     | 15     | [-]   
-24.04  | 14     | 16     | [-]   
-24.04  | 14     | 17     | [-]
-```
-
 ### Running a container
 
-Get help:
+__Get help:__
 
 ```console
 $ bash start_container.sh
@@ -217,7 +166,7 @@ usage: start_container.sh compiler src_dir out_dir [-n] [-e VAR] [-h] [-v] [-- c
   If cmd is empty, we will start an interactive bash in the container.
 ```
 
-Run interactive bash in the container:
+__Run interactive bash in the container:__
 
 ```console
 $ bash start_container.sh gcc-12 ~/linux-stable/linux-stable/ ~/linux-stable/build_out/
@@ -234,7 +183,7 @@ See "man sudo_root" for details.
 a13x@38f63939b504:~/src$
 ```
 
-Execute a command in the container:
+__Execute a command in the container:__
 
 ```console
 $ bash start_container.sh clang-15 ~/linux-stable/linux-stable/ ~/linux-stable/build_out/ -- make defconfig
@@ -251,38 +200,35 @@ Gonna run command "make defconfig"
 
 ### Building the Linux kernel
 
-Get help:
+__Get help:__
 
 ```console
-$ python3 make_linux.py --help
-usage: make_linux.py [-h] -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,gcc-14,
-                     clang-12,clang-13,clang-14,clang-15,clang-16,clang-17,all} -a {x86_64,i386,arm64,arm}
-                     -s src -o out [-k kconfig] [-q] [-t]
-                     ...
+$ python3 build_linux.py --help
+usage: build_linux.py [-h] -c COMPILER -a ARCH -s SRC -o OUT [-k KCONFIG] [-q] [-t] ...
 
-Build the Linux kernel using kernel-build-containers
+Build Linux kernel using kernel-build-containers
 
 positional arguments:
   ...                   additional arguments for 'make', can be separated by -- delimiter
 
 options:
   -h, --help            show this help message and exit
-  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,gcc-14,
-      clang-12,clang-13,clang-14,clang-15,clang-16,clang-17,all}
-                        building compiler ('all' to build with each of them)
-  -a {x86_64,i386,arm64,arm}
-                        build target architecture
-  -s src                Linux kernel sources directory
-  -o out                build output directory
-  -k kconfig            path to kernel kconfig file
-  -q                    for running `make` in quiet mode
-  -t                    for running `make` in single-threaded mode (multi-threaded by default)
+  -c COMPILER, --compiler COMPILER
+                        compiler for building (clang-5 / clang-6 / clang-7 / clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 / clang-14 / clang-15 /
+                        clang-16 / clang-17gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14)
+  -a ARCH, --arch ARCH  build target architecture (x86_64 / i386 / arm64 / arm)
+  -s SRC, --src SRC     Linux kernel sources directory
+  -o OUT, --out OUT     build output directory
+  -k KCONFIG, --kconfig KCONFIG
+                        path to kernel kconfig file
+  -q, --quiet           for running `make` in quiet mode
+  -t, --single-thread   for running `make` in single-threaded mode (multi-threaded by default)
 ```
 
-Configure the Linux kernel with `menuconfig` in the needed container:
+__Configure the Linux kernel with `menuconfig` in the needed container:__
 
 ```console
-$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13 -- menuconfig
+$ python3 build_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13 -- menuconfig
 [+] Going to build the Linux kernel for arm64
 [+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
 [+] Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
@@ -325,10 +271,10 @@ The finish_container.sh script returned 2
 [+] Done, see the results
 ```
 
-Build the Linux kernel in the needed container:
+__Build the Linux kernel in the needed container:__
 
 ```console
-$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
+$ python3 build_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
 [+] Going to build the Linux kernel for arm64
 [+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
 [+] Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
@@ -370,7 +316,7 @@ See the build log: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/b
 The tool returns an error if the kconfig file specified with `-k` differs from the `.config` in the build output directory:
 
 ```console
-$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
+$ python3 build_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
 [+] Going to build the Linux kernel for arm64
 [+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
 [+] Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
@@ -395,14 +341,14 @@ $ diff ~/linux-stable/experiment.config ~/linux-stable/build_out/experiment__arm
 ---
 > # CONFIG_NFC_S3FWRN5_I2C is not set
 $ cp ~/linux-stable/build_out/experiment__arm64__gcc-13/.config ~/linux-stable/experiment.config
-$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
+$ python3 build_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
 ```
 
 ### Finishing with the container
 
-That tool is used by `make_linux.py` for fast stopping the kernel build.
+That tool is used by `build_linux.py` for fast stopping the kernel build.
 
-Get help:
+__Get help:__
 
 ```console
 $ bash finish_container.sh
@@ -414,17 +360,13 @@ usage: finish_container.sh kill/nokill out_dir
 
 ### Removing created Docker images
 
-```console
-$ bash rm_containers.sh
-```
-
-### Removing created Docker images (manage_containers.py alternative with warning for running containers):
+__Remove all created images:__
 
 ```console
 $ python3 manage_containers.py -r
 ```
 
-last part of expected output without running containers:
+__Expected output without running containers:__
 
 ```console
 $ python3 manage_containers.py -r
@@ -447,8 +389,10 @@ Ubuntu | GCC    | Clang  | Status
 24.04  | 14     | 17     | [-]
 ```
 
-last part of expected output with running clang-12 container:
-```consoler
+__Running container variation:__
+
+__Expected output with running clang-12 container:__
+
 You still have running containers, that can't be removed:
  148254296e5d   kernel-build-container:clang-12   "/bin/bash"   14 seconds ago   Up 14 seconds             determined_grothendieck
 
@@ -470,10 +414,10 @@ Ubuntu | GCC    | Clang  | Status
 24.04  | 14     | 17     | [-]
 ```
 
-### Running tets for manage_containers.py:
+### Running tests for manage_containers.py (for developers):
 
 ```console
-$ bash cov.sh
+$ test_containers.sh
 ```
 
 Results will be stored in htmlcov/index.html
