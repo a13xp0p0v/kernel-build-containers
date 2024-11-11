@@ -12,11 +12,11 @@ import re
 import pwd
 import grp
 
-supported_compilers = ['gcc-4.9', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9',
-                       'gcc-10', 'gcc-11', 'gcc-12', 'gcc-13', 'gcc-14',
-                       'clang-5', 'clang-6', 'clang-7', 'clang-8',
+supported_compilers = ['clang-5', 'clang-6', 'clang-7', 'clang-8',
                        'clang-9', 'clang-10', 'clang-11', 'clang-12',
                        'clang-13', 'clang-14', 'clang-15', 'clang-16', 'clang-17',
+                       'gcc-4.9', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9',
+                       'gcc-10', 'gcc-11', 'gcc-12', 'gcc-13', 'gcc-14',
                        'all']
 
 class Container:
@@ -28,8 +28,8 @@ class Container:
         quiet (bool): quiet mode for hiding the container build log
 
     Instance Attributes:
-        gcc (str): GCC version
         clang (str): Clang version
+        gcc (str): GCC version
         ubuntu (str): Ubuntu version
         id (str): container ID
     """
@@ -48,15 +48,15 @@ class Container:
     def add(self):
         """Build a container that provides the specified compilers"""
         build_args = ['build',
-                      '--build-arg', f'GCC_VERSION={self.gcc}',
                       '--build-arg', f'CLANG_VERSION={self.clang}',
+                      '--build-arg', f'GCC_VERSION={self.gcc}',
                       '--build-arg', f'UBUNTU_VERSION={self.ubuntu}',
                       '--build-arg', f'UNAME={pwd.getpwuid(os.getuid())[0]}',
                       '--build-arg', f'GNAME={grp.getgrgid(os.getgid())[0]}',
                       '--build-arg', f'UID={os.getuid()}',
                       '--build-arg', f'GID={os.getgid()}',
-                      '-t', f'kernel-build-container:gcc-{self.gcc}',
-                      '-t', f'kernel-build-container:clang-{self.clang}'
+                      '-t', f'kernel-build-container:clang-{self.clang}',
+                      '-t', f'kernel-build-container:gcc-{self.gcc}'
         ]
         build_dir = ['.']
         if self.quiet:
@@ -69,7 +69,7 @@ class Container:
         """Remove the container if it exists and is not running"""
         cmd = self.runtime_cmd + ['ps']
         out = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout
-        find = rf'(kernel-build-container:gcc-{self.gcc}|kernel-build-container:clang-{self.clang})'
+        find = rf'(kernel-build-container:clang-{self.clang}|kernel-build-container:gcc-{self.gcc})'
         running = re.findall(find, out)
         if not running:
             cmd = self.runtime_cmd + ['rmi', '-f', self.id]
@@ -86,7 +86,8 @@ class Container:
         if out:
             check_gcc_cmd = self.runtime_cmd + ['images', f'kernel-build-container:gcc-{self.gcc}',
                                                 '--format', '{{.ID}}']
-            gcc_out = subprocess.run(check_gcc_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
+            gcc_out = subprocess.run(check_gcc_cmd, text=True, check=True,
+                                     stdout=subprocess.PIPE).stdout.strip()
             if not gcc_out:
                 print('No gcc found! Something went wrong!')
                 print('Try to manually remove containers!')
@@ -112,15 +113,15 @@ def add_containers(needed_compiler, containers):
     """Add container(s) with the specified compiler"""
     for c in containers:
         if needed_compiler == 'all':
-            print(f'Adding Ubuntu-{c.ubuntu} container with GCC-{c.gcc} and Clang-{c.clang}')
+            print(f'Adding Ubuntu-{c.ubuntu} container with Clang-{c.clang} and GCC-{c.gcc}')
             if not c.id:
                 c.add()
             else:
                 print('[!] WARNING: exists, skipping!')
-        if needed_compiler in ('gcc-' + c.gcc, 'clang-' + c.clang):
+        if needed_compiler in ('clang-' + c.clang, 'gcc-' + c.gcc):
             if c.id:
                 sys.exit(f'[!] ERROR: container with {needed_compiler} already exists!')
-            print(f'Adding Ubuntu-{c.ubuntu} container with GCC-{c.gcc} and Clang-{c.clang}')
+            print(f'Adding Ubuntu-{c.ubuntu} container with Clang-{c.clang} and GCC-{c.gcc}')
             c.add()
             return
 
@@ -129,7 +130,7 @@ def remove_containers(containers):
     out = ''
     for c in containers:
         if c.id:
-            print(f'Removing Ubuntu-{c.ubuntu} container with GCC-{c.gcc} and Clang-{c.clang}')
+            print(f'Removing Ubuntu-{c.ubuntu} container with Clang-{c.clang} and GCC-{c.gcc}')
             out = out + '\n' + c.rm()
     if out:
         print('\nYou still have running containers, that can\'t be removed:\n'+out)
@@ -137,11 +138,11 @@ def remove_containers(containers):
 def list_containers(containers):
     """Show the containers and their status"""
     print('-' * 34)
-    print(f'{"Ubuntu":<6} | {"GCC":<6} | {"Clang":<6} | {"Status":<6}')
+    print(f'{"Ubuntu":<6} | {"Clang":<6} | {"GCC":<6} | {"Status":<6}')
     print('-' * 34)
     for c in containers:
         status = '[+]' if c.id else '[-]'
-        print(f'{c.ubuntu:<6} | {c.gcc:<6} | {c.clang:<6} | {status:<6}')
+        print(f'{c.ubuntu:<6} | {c.clang:<6} | {c.gcc:<6} | {status:<6}')
 
 def main():
     """The main function for managing the kernel-build-containers"""
