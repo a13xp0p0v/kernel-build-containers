@@ -84,14 +84,15 @@ class Container:
 
     def check(self):
         """Check whether the container exists and get its image ID"""
-        cmd = self.runtime_cmd + ['images', self.clang_tag, '--format', '{{.ID}}']
-        out = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
-        if out:
+        check_clang_cmd = self.runtime_cmd + ['images', self.clang_tag, '--format', '{{.ID}}']
+        clang_id = subprocess.run(check_clang_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
+        if clang_id:
             check_gcc_cmd = self.runtime_cmd + ['images', self.gcc_tag, '--format', '{{.ID}}']
-            gcc_out = subprocess.run(check_gcc_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
-            if not gcc_out:
+            gcc_id = subprocess.run(check_gcc_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
+            # gcc_id may differ from clang_id if it's overridden by another container
+            if not gcc_id:
                 sys.exit(f'[!] ERROR: invalid container "{self.clang_tag}" without "{self.gcc_tag}", remove it manually')
-        self.id = out
+        self.id = clang_id
 
     def identify_runtime_cmd(self):
         """Identify the commands for working with the container runtime"""
@@ -134,7 +135,7 @@ def remove_containers(containers):
         print('\nYou still have running containers, that can\'t be removed:\n'+out)
 
 def list_containers(containers):
-    """Show the containers and their ID"""
+    """Show the containers and their IDs"""
     print('-' * 41)
     print(f' {"Ubuntu":<6} | {"Clang":<6} | {"GCC":<6} | {"Container ID"}')
     print('-' * 41)
@@ -145,7 +146,7 @@ def main():
     """The main function for managing the kernel-build-containers"""
     parser = argparse.ArgumentParser(description='Manage the kernel-build-containers')
     parser.add_argument('-l','--list', action='store_true',
-                        help='show the containers and their ID')
+                        help='show the containers and their IDs')
     parser.add_argument('-a', '--add', choices=supported_compilers, metavar='compiler',
                         help=f'add a container with {" / ".join(supported_compilers)} '
                               '(use "all" for adding all containers)')
@@ -155,7 +156,7 @@ def main():
                         help='remove all created containers')
     args = parser.parse_args()
 
-    if not any([args.list, args.add, args.remove]):
+    if not any((args.list, args.add, args.remove)):
         parser.print_help()
         sys.exit(1)
     if bool(args.list) + bool(args.add) + bool(args.remove) > 1:
