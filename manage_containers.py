@@ -150,12 +150,12 @@ def main():
     parser.add_argument('-l','--list', action='store_true',
                         help='show the kernel build containers')
     parser.add_argument('-a', '--add', choices=supported_compilers, metavar='compiler',
-                        help=f'build a container with {" / ".join(supported_compilers)} '
-                              '(use "all" for building all containers)')
+                        help=f'add a container with {" / ".join(supported_compilers)} '
+                              '(use "all" for adding all containers)')
+    parser.add_argument('-q','--quiet', action='store_true',
+                        help='suppress the container build output (for using with --add)')
     parser.add_argument('-r', '--remove', action='store_true',
                         help='remove all created containers')
-    parser.add_argument('-q','--quiet', action='store_true',
-                        help='suppress container build output')
     args = parser.parse_args()
 
     if not any([args.list, args.add, args.remove]):
