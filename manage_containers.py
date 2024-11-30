@@ -43,7 +43,7 @@ class Container:
         self.clang = clang_version
         self.gcc = gcc_version
         self.ubuntu = ubuntu_version
-        self.id = self.check()
+        self.check()
 
     def add(self):
         """Build a container that provides the specified compilers"""
@@ -93,7 +93,6 @@ class Container:
                 print('Try to manually remove containers!')
                 sys.exit(1)
         self.id = out
-        return self.id
 
     def identify_runtime_cmd(self):
         """Identify the commands for working with the container runtime"""
