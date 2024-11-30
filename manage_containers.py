@@ -60,6 +60,7 @@ class Container:
         ]
         build_dir = ['.']
         if self.quiet:
+            print('Quiet mode, please wait...')
             build_args += ['-q']
         cmd = self.runtime_cmd + build_args + build_dir
         subprocess.run(cmd, text=True, check=True)
@@ -104,9 +105,9 @@ class Container:
             if 'permission denied' in out.stderr:
                 print('We need "sudo" for working with containers')
                 return ['sudo', 'docker']
-            sys.exit(f'Testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
+            sys.exit(f'[!] ERROR: testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
         except FileNotFoundError:
-            sys.exit('[!] the container runtime is not installed')
+            sys.exit('[!] ERROR: the container runtime is not installed')
 
 def add_containers(needed_compiler, containers):
     """Add container(s) with the specified compiler"""
@@ -160,7 +161,7 @@ def main():
         parser.print_help()
         sys.exit(1)
     if bool(args.list) + bool(args.add) + bool(args.remove) > 1:
-        sys.exit('Combining these options doesn\'t make sense!')
+        sys.exit('[!] ERROR: combining these options doesn\'t make sense!')
 
     containers = []
     containers += [Container('5', '4.9', '16.04')]
