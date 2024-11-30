@@ -136,19 +136,18 @@ def remove_containers(containers):
         print('\nYou still have running containers, that can\'t be removed:\n'+out)
 
 def list_containers(containers):
-    """Show the containers and their status"""
-    print('-' * 34)
-    print(f'{"Ubuntu":<6} | {"Clang":<6} | {"GCC":<6} | {"Status":<6}')
-    print('-' * 34)
+    """Show the containers and their ID"""
+    print('-' * 41)
+    print(f' {"Ubuntu":<6} | {"Clang":<6} | {"GCC":<6} | {"Container ID"}')
+    print('-' * 41)
     for c in containers:
-        status = '[+]' if c.id else '[-]'
-        print(f'{c.ubuntu:<6} | {c.clang:<6} | {c.gcc:<6} | {status:<6}')
+        print(f' {c.ubuntu:<6} | {c.clang:<6} | {c.gcc:<6} | {c.id if c.id else "-"}')
 
 def main():
     """The main function for managing the kernel-build-containers"""
     parser = argparse.ArgumentParser(description='Manage the kernel-build-containers')
     parser.add_argument('-l','--list', action='store_true',
-                        help='show the kernel build containers')
+                        help='show the containers and their ID')
     parser.add_argument('-a', '--add', choices=supported_compilers, metavar='compiler',
                         help=f'add a container with {" / ".join(supported_compilers)} '
                               '(use "all" for adding all containers)')
