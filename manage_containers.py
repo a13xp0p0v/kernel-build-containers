@@ -29,7 +29,9 @@ class Container:
 
     Instance Attributes:
         clang (str): Clang version
+        clang_tag (str): container Clang tag
         gcc (str): GCC version
+        gcc_tag (str): container GCC tag
         ubuntu (str): Ubuntu version
         id (str): container ID
     """
@@ -41,7 +43,9 @@ class Container:
         if not Container.runtime_cmd:
             Container.runtime_cmd = self.identify_runtime_cmd()
         self.clang = clang_version
+        self.clang_tag = 'kernel-build-container:clang-' + self.clang
         self.gcc = gcc_version
+        self.gcc_tag = 'kernel-build-container:gcc-' + self.gcc
         self.ubuntu = ubuntu_version
         self.check()
 
@@ -55,9 +59,8 @@ class Container:
                       '--build-arg', f'GNAME={grp.getgrgid(os.getgid())[0]}',
                       '--build-arg', f'UID={os.getuid()}',
                       '--build-arg', f'GID={os.getgid()}',
-                      '-t', f'kernel-build-container:clang-{self.clang}',
-                      '-t', f'kernel-build-container:gcc-{self.gcc}'
-        ]
+                      '-t', self.clang_tag,
+                      '-t', self.gcc_tag]
         build_dir = ['.']
         if self.quiet:
             print('Quiet mode, please wait...')
@@ -70,7 +73,7 @@ class Container:
         """Remove the container if it exists and is not running"""
         cmd = self.runtime_cmd + ['ps']
         out = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout
-        find = rf'(kernel-build-container:clang-{self.clang}|kernel-build-container:gcc-{self.gcc})'
+        find = rf'({self.clang_tag}|{self.gcc_tag})'
         running = re.findall(find, out)
         if not running:
             cmd = self.runtime_cmd + ['rmi', '-f', self.id]
@@ -81,18 +84,13 @@ class Container:
 
     def check(self):
         """Check whether the container exists and get its image ID"""
-        cmd = self.runtime_cmd + ['images', f'kernel-build-container:clang-{self.clang}',
-                                  '--format', '{{.ID}}']
+        cmd = self.runtime_cmd + ['images', self.clang_tag, '--format', '{{.ID}}']
         out = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
         if out:
-            check_gcc_cmd = self.runtime_cmd + ['images', f'kernel-build-container:gcc-{self.gcc}',
-                                                '--format', '{{.ID}}']
-            gcc_out = subprocess.run(check_gcc_cmd, text=True, check=True,
-                                     stdout=subprocess.PIPE).stdout.strip()
+            check_gcc_cmd = self.runtime_cmd + ['images', self.gcc_tag, '--format', '{{.ID}}']
+            gcc_out = subprocess.run(check_gcc_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
             if not gcc_out:
-                print('No gcc found! Something went wrong!')
-                print('Try to manually remove containers!')
-                sys.exit(1)
+                sys.exit(f'[!] ERROR: invalid container "{self.clang_tag}" without "{self.gcc_tag}", remove it manually')
         self.id = out
 
     def identify_runtime_cmd(self):
