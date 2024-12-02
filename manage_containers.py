@@ -71,16 +71,17 @@ class Container:
 
     def rm(self):
         """Remove the container if it exists and is not running"""
-        cmd = self.runtime_cmd + ['ps']
-        out = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout
-        find = rf'({self.clang_tag}|{self.gcc_tag})'
-        running = re.findall(find, out)
-        if not running:
+        out = ''
+        cmd = self.runtime_cmd + ['ps', '-a', '--filter', f'ancestor={self.id}', '--format', '{{.ID}}']
+        container_id = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
+        if not container_id:
             cmd = self.runtime_cmd + ['rmi', '-f', self.id]
             subprocess.run(cmd, text=True, check=True)
             self.check()
             return ''
-        return ''.join(running)
+        for id in container_id.splitlines():
+            out += id + '\n'
+        return out
 
     def check(self):
         """Check whether the container exists and get its image ID"""
@@ -130,9 +131,9 @@ def remove_containers(containers):
     for c in containers:
         if c.id:
             print(f'Removing Ubuntu-{c.ubuntu} container with Clang-{c.clang} and GCC-{c.gcc}')
-            out = out + '\n' + c.rm()
+            out = out + c.rm()
     if out:
-        print('\nYou still have running containers, that can\'t be removed:\n'+out)
+        print('\nYou still have running containers, that can\'t be removed:\n' + out + '\n')
 
 def list_containers(containers):
     """Show the containers and their IDs"""
