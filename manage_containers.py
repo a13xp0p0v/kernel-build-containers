@@ -8,7 +8,6 @@ import os
 import subprocess
 import sys
 import argparse
-import re
 import pwd
 import grp
 
@@ -71,17 +70,12 @@ class ContainerImage:
 
     def rm(self):
         """Remove the container image if it exists and related container is not running"""
-        out = ''
-        cmd = self.runtime_cmd + ['ps', '-a', '--filter', f'ancestor={self.id}', '--format', '{{.ID}}']
-        container_id = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
-        if not container_id:
+        try:
             cmd = self.runtime_cmd + ['rmi', '-f', self.id]
-            subprocess.run(cmd, text=True, check=True)
+            subprocess.run(cmd, text=True, check=True, stderr=subprocess.PIPE)
             self.check()
-            return ''
-        for id in container_id.splitlines():
-            out += id + '\n'
-        return out
+        except:
+            print("[!] Warning, removal failed! Is image being used?")
 
     def check(self):
         """Check whether the container image exists and get its ID"""
@@ -127,21 +121,33 @@ def build_images(needed_compiler, images):
 
 def remove_images(images):
     """Remove the container images"""
-    out = ''
+    remaining = []
     for c in images:
         if c.id:
             print(f'Removing Ubuntu-{c.ubuntu} container image with Clang-{c.clang} and GCC-{c.gcc}')
-            out = out + c.rm()
-    if out:
-        print('\nYou still have running containers, that can\'t be removed:\n' + out + '\n')
+            c.rm()
+            cmd = ContainerImage.runtime_cmd + ['ps', '-a', '--filter', f'ancestor={c.id}', '--format', '{{.ID}}']
+            container_ids = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
+            if container_ids:
+                remaining.extend([cid, c.id] for cid in container_ids.splitlines())
+    if remaining:
+        print('\nYou still have running containers, some images can\'t be removed:\n')
+        print('-' * 41)
+        print(f' {"Container ID":<24} | {"Image ID":<24}')
+        print('-' * 41)
+        for cid, image_id in remaining:
+            print(f' {cid:<24} | {image_id:<24}')
+        print('-' * 41)
 
 def list_images(images):
     """Show the images and their IDs"""
+    print('\nCurrent status:\n')
     print('-' * 41)
     print(f' {"Ubuntu":<6} | {"Clang":<6} | {"GCC":<6} | {"Image ID"}')
     print('-' * 41)
     for c in images:
         print(f' {c.ubuntu:<6} | {c.clang:<6} | {c.gcc:<6} | {c.id if c.id else "-"}')
+    print('-' * 41)
 
 def main():
     """The main function for managing the kernel-build-containers"""
