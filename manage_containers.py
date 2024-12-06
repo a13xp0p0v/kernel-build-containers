@@ -109,8 +109,8 @@ class ContainerImage:
         except FileNotFoundError:
             sys.exit('[!] ERROR: the container runtime is not installed')
 
-def add_images(needed_compiler, images):
-    """Add container image(s) with the specified compiler"""
+def build_images(needed_compiler, images):
+    """Build container image(s) with the specified compiler"""
     for c in images:
         if needed_compiler == 'all':
             print(f'Adding Ubuntu-{c.ubuntu} container image with Clang-{c.clang} and GCC-{c.gcc}')
@@ -148,9 +148,9 @@ def main():
     parser = argparse.ArgumentParser(description='Manage the kernel-build-containers')
     parser.add_argument('-l','--list', action='store_true',
                         help='show the container images and their IDs')
-    parser.add_argument('-a', '--add', choices=supported_compilers, metavar='compiler',
-                        help=f'add a container image with {" / ".join(supported_compilers)} '
-                              '(use "all" for adding all containers)')
+    parser.add_argument('-b', '--build', choices=supported_compilers, metavar='compiler',
+                        help=f'build a container image with {" / ".join(supported_compilers)} '
+                              '(use "all" for building all images)')
     parser.add_argument('-q','--quiet', action='store_true',
                         help='suppress the container image build output (for using with --build)')
     parser.add_argument('-r', '--remove', action='store_true',
@@ -186,7 +186,7 @@ def main():
         sys.exit(0)
 
     if args.build:
-        add_images(args.build, images)
+        build_images(args.build, images)
         list_images(images)
         sys.exit(0)
 
