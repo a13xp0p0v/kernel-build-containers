@@ -28,9 +28,9 @@ class ContainerImage:
 
     Instance Attributes:
         clang (str): Clang version
-        clang_tag (str): container image Clang tag
+        clang_tag (str): Clang tag of the container image
         gcc (str): GCC version
-        gcc_tag (str): container image GCC tag
+        gcc_tag (str): GCC tag of the container image
         ubuntu (str): Ubuntu version
         id (str): container image ID
     """
@@ -48,7 +48,7 @@ class ContainerImage:
         self.ubuntu = ubuntu_version
         self.check()
 
-    def add(self):
+    def build(self):
         """Build a container image that provides the specified compilers"""
         build_args = ['build',
                       '--build-arg', f'CLANG_VERSION={self.clang}',
@@ -69,7 +69,7 @@ class ContainerImage:
         self.check()
 
     def rm(self):
-        """Remove the container image if it exists and related container is not running"""
+        """Try to remove the container image if it exists"""
         try:
             cmd = self.runtime_cmd + ['rmi', '-f', self.id]
             subprocess.run(cmd, text=True, check=True, stderr=subprocess.PIPE)
@@ -86,7 +86,7 @@ class ContainerImage:
             gcc_id = subprocess.run(check_gcc_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
             # gcc_id may differ if it's overridden by another container image
             if not gcc_id:
-                sys.exit(f'[!] ERROR: invalid container image "{self.clang_tag}" without "{self.gcc_tag}", remove it manually')
+                sys.exit(f'[!] ERROR: invalid image "{self.clang_tag}" without "{self.gcc_tag}", remove it manually')
         self.id = clang_id
 
     def identify_runtime_cmd(self):
@@ -104,27 +104,27 @@ class ContainerImage:
             sys.exit('[!] ERROR: the container runtime is not installed')
 
 def build_images(needed_compiler, images):
-    """Build container image(s) with the specified compiler"""
+    """Build container image(s) providing the specified compiler"""
     for c in images:
         if needed_compiler == 'all':
-            print(f'Adding Ubuntu-{c.ubuntu} container image with Clang-{c.clang} and GCC-{c.gcc}')
+            print(f'Add Ubuntu-{c.ubuntu} container image with Clang-{c.clang} and GCC-{c.gcc}')
             if not c.id:
-                c.add()
+                c.build()
             else:
                 print('[!] WARNING: exists, skipping!')
         if needed_compiler in ('clang-' + c.clang, 'gcc-' + c.gcc):
             if c.id:
                 sys.exit(f'[!] ERROR: container image with {needed_compiler} already exists!')
-            print(f'Adding Ubuntu-{c.ubuntu} container image with Clang-{c.clang} and GCC-{c.gcc}')
-            c.add()
+            print(f'Add Ubuntu-{c.ubuntu} container image with Clang-{c.clang} and GCC-{c.gcc}')
+            c.build()
             return
 
 def remove_images(images):
-    """Remove the container images"""
+    """Remove all container images"""
     remaining = []
     for c in images:
         if c.id:
-            print(f'Removing Ubuntu-{c.ubuntu} container image with Clang-{c.clang} and GCC-{c.gcc}')
+            print(f'Remove Ubuntu-{c.ubuntu} container image with Clang-{c.clang} and GCC-{c.gcc}')
             c.rm()
             cmd = ContainerImage.runtime_cmd + ['ps', '-a', '--filter', f'ancestor={c.id}', '--format', '{{.ID}}']
             container_ids = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
@@ -155,7 +155,7 @@ def main():
     parser.add_argument('-l','--list', action='store_true',
                         help='show the container images and their IDs')
     parser.add_argument('-b', '--build', choices=supported_compilers, metavar='compiler',
-                        help=f'build a container image with {" / ".join(supported_compilers)} '
+                        help=f'build a container image providing {" / ".join(supported_compilers)} '
                               '(use "all" for building all images)')
     parser.add_argument('-q','--quiet', action='store_true',
                         help='suppress the container image build output (for using with --build)')
