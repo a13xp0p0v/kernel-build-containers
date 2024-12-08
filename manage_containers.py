@@ -74,12 +74,15 @@ class ContainerImage:
 
     def rm(self):
         """Try to remove the container image if it exists"""
+        if not self.id:
+            return
+        print(f'\nRemove Ubuntu-{self.ubuntu} container image providing Clang {self.clang} and GCC {self.gcc}')
         try:
             cmd = self.runtime_cmd + ['rmi', '-f', self.id]
-            subprocess.run(cmd, text=True, check=True, stderr=subprocess.PIPE)
-            self.check()
+            subprocess.run(cmd, text=True, check=True)
         except:
-            print("[!] Warning, removal failed! Is image being used?")
+            print("[!] WARNING: image removing failed, see the error message above")
+        self.check()
 
     def check(self):
         """Check whether the container image exists and get its ID"""
@@ -117,27 +120,12 @@ def build_images(needed_compiler, images):
 
 def remove_images(images):
     """Remove all container images"""
-    remaining = []
     for c in images:
-        if c.id:
-            print(f'Remove Ubuntu-{c.ubuntu} container image with Clang-{c.clang} and GCC-{c.gcc}')
-            c.rm()
-            cmd = ContainerImage.runtime_cmd + ['ps', '-a', '--filter', f'ancestor={c.id}', '--format', '{{.ID}}']
-            container_ids = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
-            if container_ids:
-                remaining.extend([cid, c.id] for cid in container_ids.splitlines())
-    if remaining:
-        print('\nYou still have running containers, some images can\'t be removed:\n')
-        print('-' * 41)
-        print(f' {"Container ID":<24} | {"Image ID":<24}')
-        print('-' * 41)
-        for cid, image_id in remaining:
-            print(f' {cid:<24} | {image_id:<24}')
-        print('-' * 41)
+        c.rm()
 
 def list_images(images):
     """Show the images and their IDs"""
-    print('\nCurrent status:\n')
+    print('\nCurrent status:')
     print('-' * 41)
     print(f' {"Ubuntu":<6} | {"Clang":<6} | {"GCC":<6} | {"Image ID"}')
     print('-' * 41)
