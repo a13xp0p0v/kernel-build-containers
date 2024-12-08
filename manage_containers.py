@@ -50,6 +50,10 @@ class ContainerImage:
 
     def build(self):
         """Build a container image that provides the specified compilers"""
+        print(f'\nBuild Ubuntu-{self.ubuntu} container image providing Clang {self.clang} and GCC {self.gcc}')
+        if self.id:
+            print(f'[!] WARNING: container image already exists: {self.id}')
+            return
         build_args = ['build',
                       '--build-arg', f'CLANG_VERSION={self.clang}',
                       '--build-arg', f'GCC_VERSION={self.gcc}',
@@ -60,10 +64,10 @@ class ContainerImage:
                       '--build-arg', f'GID={os.getgid()}',
                       '-t', self.clang_tag,
                       '-t', self.gcc_tag]
-        build_dir = ['.']
         if self.quiet:
             print('Quiet mode, please wait...')
             build_args += ['-q']
+        build_dir = ['.']
         cmd = self.runtime_cmd + build_args + build_dir
         subprocess.run(cmd, text=True, check=True)
         self.check()
@@ -106,18 +110,10 @@ class ContainerImage:
 def build_images(needed_compiler, images):
     """Build container image(s) providing the specified compiler"""
     for c in images:
-        if needed_compiler == 'all':
-            print(f'Add Ubuntu-{c.ubuntu} container image with Clang-{c.clang} and GCC-{c.gcc}')
-            if not c.id:
-                c.build()
-            else:
-                print('[!] WARNING: exists, skipping!')
-        if needed_compiler in ('clang-' + c.clang, 'gcc-' + c.gcc):
-            if c.id:
-                sys.exit(f'[!] ERROR: container image with {needed_compiler} already exists!')
-            print(f'Add Ubuntu-{c.ubuntu} container image with Clang-{c.clang} and GCC-{c.gcc}')
+        if needed_compiler in ('all', 'clang-' + c.clang, 'gcc-' + c.gcc):
             c.build()
-            return
+            if needed_compiler != 'all':
+                return
 
 def remove_images(images):
     """Remove all container images"""
