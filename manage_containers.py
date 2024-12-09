@@ -75,13 +75,14 @@ class ContainerImage:
     def rm(self):
         """Try to remove the container image if it exists"""
         if not self.id:
-            return
+            return False
         print(f'\nRemove Ubuntu-{self.ubuntu} container image providing Clang {self.clang} and GCC {self.gcc}')
         try:
             cmd = self.runtime_cmd + ['rmi', '-f', self.id]
             subprocess.run(cmd, text=True, check=True)
         except:
             print('[!] WARNING: Image removal failed, see the error message above')
+            return True
         self.check()
 
     def check(self):
@@ -120,8 +121,13 @@ def build_images(needed_compiler, images):
 
 def remove_images(images):
     """Remove all container images"""
+    output = False
     for c in images:
-        c.rm()
+        error = c.rm()
+        if error:
+            output = True
+    if output:
+        print(f'\n[!] WARNING: The deletion is not complete, check the log above!')
 
 def list_images(images):
     """Show the images and their IDs"""
