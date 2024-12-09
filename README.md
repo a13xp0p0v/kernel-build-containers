@@ -53,34 +53,34 @@ __Supported clang versions:__
 
 ## Usage
 
-### Building containers:
+### Building container images:
 
 __Get help:__
 
 ```console
 $ python3 manage_containers.py -h
-usage: manage_containers.py [-h] [-l] [-a compiler] [-r] [-q]
+usage: manage_containers.py [-h] [-l] [-b compiler] [-q] [-r]
 
 Manage the kernel-build-containers
 
-options:
+optional arguments:
   -h, --help            show this help message and exit
-  -l, --list            show the kernel build containers
-  -a compiler, --add compiler
-                        build a container with clang-5 / clang-6 / clang-7 / clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 / clang-14 / clang-15 /
-                        clang-16 / clang-17 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 / all (use "all" for
-                        building all containers)
-  -r, --remove          remove all created containers
-  -q, --quiet           suppress container build output
+  -l, --list            show the container images and their IDs
+  -b compiler, --build compiler
+                        build a container image providing clang-5 / clang-6 / clang-7 / clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 /
+                        clang-14 / clang-15 / clang-16 / clang-17 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 /
+                        gcc-14 / all (use "all" for building all images)
+  -q, --quiet           suppress the container image build output (for using with --build)
+  -r, --remove          remove all created images
 ```
 
-__Building all containers:__
+__Building all container images:__
 
 ```console
-$ python3 manage_containers.py -a all
+$ python3 manage_containers.py -b all
 ```
 
-__Created containers:__
+__Created container images:__
 
 ```console
 $ sudo docker image list | grep kernel-build-container
@@ -111,43 +111,45 @@ kernel-build-container   clang-5     939c94215f80   22 minutes ago   1.87GB
 kernel-build-container   gcc-4.9     939c94215f80   22 minutes ago   1.87GB
 ```
 
-__Building all containers quietly:__
+__Building all container images quietly:__
 
 ```console
-$ python3 manage_containers.py -a all -q
+$ python3 manage_containers.py -b all -q
 ```
 
 __Expected output:__
 
 ```console
-----------------------------------
-Ubuntu | Clang  | GCC    | Status
-----------------------------------
-16.04  | 5      | 4.9    | [+]   
-16.04  | 6      | 5      | [+]   
-18.04  | 7      | 6      | [+]   
-18.04  | 8      | 7      | [+]   
-20.04  | 9      | 8      | [+]   
-20.04  | 10     | 9      | [+]   
-20.04  | 11     | 10     | [+]   
-22.04  | 12     | 11     | [+]   
-22.04  | 13     | 12     | [+]   
-22.04  | 14     | 12     | [+]   
-23.04  | 15     | 13     | [+]   
-24.04  | 16     | 14     | [+]   
-24.04  | 17     | 14     | [+]  
+Current status:
+-----------------------------------------
+ Ubuntu | Clang  | GCC    | Image ID
+-----------------------------------------
+ 16.04  | 5      | 4.9    | bbce94fcee9c
+ 16.04  | 6      | 5      | 54b9630ba882
+ 18.04  | 7      | 6      | f03e20951522
+ 18.04  | 8      | 7      | b27c1e287e25
+ 20.04  | 9      | 8      | 40eefb172a0f
+ 20.04  | 10     | 9      | 57d7073e4ba9
+ 20.04  | 11     | 10     | e4577a5224af
+ 22.04  | 12     | 11     | 1eb2b2f1c198
+ 22.04  | 13     | 12     | 7ecb55d91dd2
+ 22.04  | 14     | 12     | 8aa47eca3d06
+ 24.04  | 15     | 13     | dbbf9364fc03
+ 24.04  | 16     | 14     | 64acfe09ebd5
+ 24.04  | 17     | 14     | f1b6beaa5a82
+-----------------------------------------
 ```
 
-__Building the specified container:__
+__Building the specified container image:__
 
 ```console
-$ python3 manage_containers.py -a clang-10
+$ python3 manage_containers.py -b clang-10
 ```
 
-__Building the specified container quietly:__
+__Building the specified container image quietly:__
 
 ```console
-$ python3 manage_containers.py -a clang-10 -q
+$ python3 manage_containers.py -b clang-10 -q
 ```
 
 ### Running a container
@@ -370,54 +372,74 @@ __Expected output without running containers:__
 
 ```console
 $ python3 manage_containers.py -r
-We need to use sudo to run the Docker
+We need "sudo" for working with containers
 
-Ubuntu | GCC    | Clang  | Status
-----------------------------------
-16.04  | 4.9    | 5      | [-]   
-16.04  | 5      | 6      | [-]   
-18.04  | 6      | 7      | [-]   
-18.04  | 7      | 8      | [-]   
-20.04  | 8      | 9      | [-]   
-20.04  | 9      | 10     | [-]   
-20.04  | 10     | 11     | [-]   
-22.04  | 11     | 12     | [-]   
-22.04  | 12     | 13     | [-]   
-22.04  | 12     | 14     | [-]   
-23.04  | 13     | 15     | [-]   
-24.04  | 14     | 16     | [-]   
-24.04  | 14     | 17     | [-]
+Current status:
+-----------------------------------------
+ Ubuntu | Clang  | GCC    | Image ID
+-----------------------------------------
+ 16.04  | 5      | 4.9    | -
+ 16.04  | 6      | 5      | -
+ 18.04  | 7      | 6      | -
+ 18.04  | 8      | 7      | -
+ 20.04  | 9      | 8      | -
+ 20.04  | 10     | 9      | -
+ 20.04  | 11     | 10     | -
+ 22.04  | 12     | 11     | -
+ 22.04  | 13     | 12     | -
+ 22.04  | 14     | 12     | -
+ 24.04  | 15     | 13     | -
+ 24.04  | 16     | 14     | -
+ 24.04  | 17     | 14     | -
+-----------------------------------------
 ```
 
 __Running container variation:__
 
-__Expected output with running clang-12 container:__
+__Expected output with running container:__
 
-You still have running containers, that can't be removed:
- 148254296e5d   kernel-build-container:clang-12   "/bin/bash"   14 seconds ago   Up 14 seconds             determined_grothendieck
+```console
+[!] WARNING: The deletion is not complete, see the log above!
 
-
-Ubuntu | GCC    | Clang  | Status
-----------------------------------
-16.04  | 4.9    | 5      | [-]   
-16.04  | 5      | 6      | [-]   
-18.04  | 6      | 7      | [-]   
-18.04  | 7      | 8      | [-]   
-20.04  | 8      | 9      | [-]   
-20.04  | 9      | 10     | [-]   
-20.04  | 10     | 11     | [-]   
-22.04  | 11     | 12     | [+]   
-22.04  | 12     | 13     | [-]   
-22.04  | 12     | 14     | [-]   
-23.04  | 13     | 15     | [-]   
-24.04  | 14     | 16     | [-]   
-24.04  | 14     | 17     | [-]
+Current status:
+-----------------------------------------
+ Ubuntu | Clang  | GCC    | Image ID
+-----------------------------------------
+ 16.04  | 5      | 4.9    | -
+ 16.04  | 6      | 5      | -
+ 18.04  | 7      | 6      | -
+ 18.04  | 8      | 7      | -
+ 20.04  | 9      | 8      | -
+ 20.04  | 10     | 9      | -
+ 20.04  | 11     | 10     | -
+ 22.04  | 12     | 11     | -
+ 22.04  | 13     | 12     | -
+ 22.04  | 14     | 12     | 8aa47eca3d06
+ 24.04  | 15     | 13     | -
+ 24.04  | 16     | 14     | -
+ 24.04  | 17     | 14     | -
+-----------------------------------------
 ```
+
+In this case, look at the log above and try to find the message:
+
+```console
+Error response from daemon: conflict: unable to delete 8aa47eca3d06 (cannot be forced) - image is being used by running container b7b9bd168414
+[!] WARNING: image removal failed, see the error message above
+```
+
+To stop the container, simply use finish_container.sh, or in the case of a docker, stop the container as follows:
+
+```console
+$ sudo docker stop b7b9bd168414
+```
+
+Then run the deletion again, in the case of multiple running containers it may take several iterations.
 
 ### Running tests for manage_containers.py (for developers):
 
 ```console
-$ test_containers.sh
+$ bash test_containers.sh
 ```
 
-Results will be stored in htmlcov/index.html
+Results will be stored in htmlcov/index.html, don't forget to clean up your .coverage file before submitting commits!
