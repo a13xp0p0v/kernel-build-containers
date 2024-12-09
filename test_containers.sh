@@ -121,6 +121,18 @@ echo "Testing unknown options..."
 python3 -m coverage run -a --branch manage_containers.py --unknown-flag && exit 1 
 python3 -m coverage run -a --branch manage_containers.py -b gcc-4.9 --unknown-flag && exit 1 
 
+echo "Testing containers with missing gcc tags"
+python3 -m coverage run -a --branch manage_containers.py -b gcc-12
+if groups $USER | grep '\<docker\>'; then
+    docker rmi -f kernel-build-container:gcc-12
+    python3 -m coverage run -a --branch manage_containers.py -l && exit 1
+    docker rmi -f kernel-build-container:clang-13
+else
+    sudo docker rmi -f kernel-build-container:gcc-12
+    python3 -m coverage run -a --branch manage_containers.py -l && exit 1
+    sudo docker rmi -f kernel-build-container:clang-13
+fi
+
 echo "All tests completed. Creating report"
 python3 -m coverage report --omit='/usr/lib/python3/dist-packages/*'
 python3 -m coverage html --omit='/usr/lib/python3/dist-packages/*'
