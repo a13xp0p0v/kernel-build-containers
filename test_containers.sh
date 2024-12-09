@@ -85,6 +85,14 @@ else
 fi
 python3 -m coverage run -a --branch manage_containers.py -r
 
+echo "Testing building an existing container..."
+python3 -m coverage run -a --branch manage_containers.py -b gcc-10
+python3 -m coverage run -a --branch manage_containers.py -b gcc-10
+python3 -m coverage run -a --branch manage_containers.py -b gcc-12
+python3 -m coverage run -a --branch manage_containers.py -b clang-13 #it's the same container as gcc-12
+python3 -m coverage run -a --branch manage_containers.py -b all
+python3 -m coverage run -a --branch manage_containers.py -r
+
 echo "Collecting coverage for error handling"
 
 echo "Testing without any options..."
@@ -104,14 +112,6 @@ python3 -m coverage run -a --branch manage_containers.py -b all -l && exit 1
 python3 -m coverage run -a --branch manage_containers.py -r all -l && exit 1
 python3 -m coverage run -a --branch manage_containers.py -b all -r -l && exit 1
 python3 -m coverage run -a --branch manage_containers.py -b all -r -l -q && exit 1
-
-echo "Testing building an existing container..."
-python3 -m coverage run -a --branch manage_containers.py -b gcc-10
-python3 -m coverage run -a --branch manage_containers.py -b gcc-10 && exit 1
-python3 -m coverage run -a --branch manage_containers.py -b gcc-12
-python3 -m coverage run -a --branch manage_containers.py -b clang-13 && exit 1 #it's the same container as gcc-12
-python3 -m coverage run -a --branch manage_containers.py -b all
-python3 -m coverage run -a --branch manage_containers.py -r
 
 echo "Testing invalid GCC/Clang version..."
 python3 -m coverage run -a --branch manage_containers.py -b gcc-invalid && exit 1 
