@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """
-This tool manages container images for building the Linux kernel with various compilers
+This tool manages container images for building the Linux kernel with Clang and GCC compilers
 """
 
 import os
@@ -52,7 +52,7 @@ class ContainerImage:
         """Build a container image that provides the specified compilers"""
         print(f'\nBuild Ubuntu-{self.ubuntu} container image providing Clang {self.clang} and GCC {self.gcc}')
         if self.id:
-            print(f'[!] WARNING: container image already exists: {self.id}')
+            print(f'[!] WARNING: Container image already exists: {self.id}, skip build')
             return
         build_args = ['build',
                       '--build-arg', f'CLANG_VERSION={self.clang}',
@@ -65,7 +65,7 @@ class ContainerImage:
                       '-t', self.clang_tag,
                       '-t', self.gcc_tag]
         if self.quiet:
-            print('Quiet mode, please wait...')
+            print('[!] INFO: Quiet mode, please wait...')
             build_args += ['-q']
         build_dir = ['.']
         cmd = self.runtime_cmd + build_args + build_dir
@@ -81,7 +81,7 @@ class ContainerImage:
             cmd = self.runtime_cmd + ['rmi', '-f', self.id]
             subprocess.run(cmd, text=True, check=True)
         except:
-            print("[!] WARNING: image removing failed, see the error message above")
+            print('[!] WARNING: Image removal failed, see the error message above')
         self.check()
 
     def check(self):
@@ -93,7 +93,7 @@ class ContainerImage:
             gcc_id = subprocess.run(check_gcc_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
             # gcc_id may differ if it's overridden by another container image
             if not gcc_id:
-                sys.exit(f'[!] ERROR: invalid image "{self.clang_tag}" without "{self.gcc_tag}", remove it manually')
+                sys.exit(f'[!] ERROR: Invalid image "{self.clang_tag}" without "{self.gcc_tag}", remove it manually')
         self.id = clang_id
 
     def identify_runtime_cmd(self):
@@ -106,12 +106,12 @@ class ContainerImage:
             if 'permission denied' in out.stderr:
                 print('We need "sudo" for working with containers')
                 return ['sudo', 'docker']
-            sys.exit(f'[!] ERROR: testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
+            sys.exit(f'[!] ERROR: Testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
         except FileNotFoundError:
-            sys.exit('[!] ERROR: the container runtime is not installed')
+            sys.exit('[!] ERROR: The container runtime is not installed')
 
 def build_images(needed_compiler, images):
-    """Build container image(s) providing the specified compiler"""
+    """Build container image(s) providing the specified compilers"""
     for c in images:
         if needed_compiler in ('all', 'clang-' + c.clang, 'gcc-' + c.gcc):
             c.build()
@@ -136,12 +136,12 @@ def list_images(images):
 def main():
     """The main function for managing the kernel-build-containers"""
     parser = argparse.ArgumentParser(description='Manage the kernel-build-containers')
-    parser.add_argument('-l','--list', action='store_true',
+    parser.add_argument('-l', '--list', action='store_true',
                         help='show the container images and their IDs')
     parser.add_argument('-b', '--build', choices=supported_compilers, metavar='compiler',
                         help=f'build a container image providing {" / ".join(supported_compilers)} '
                               '(use "all" for building all images)')
-    parser.add_argument('-q','--quiet', action='store_true',
+    parser.add_argument('-q', '--quiet', action='store_true',
                         help='suppress the container image build output (for using with --build)')
     parser.add_argument('-r', '--remove', action='store_true',
                         help='remove all created images')
@@ -151,7 +151,7 @@ def main():
         parser.print_help()
         sys.exit(1)
     if bool(args.list) + bool(args.build) + bool(args.remove) > 1:
-        sys.exit('[!] ERROR: combining these options doesn\'t make sense!')
+        sys.exit('[!] ERROR: Invalid option combination.')
 
     images = []
     images += [ContainerImage('5', '4.9', '16.04')]
