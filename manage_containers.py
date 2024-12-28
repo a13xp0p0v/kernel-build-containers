@@ -52,7 +52,7 @@ class ContainerImage:
         """Build a container image that provides the specified compilers"""
         print(f'\nBuild Ubuntu-{self.ubuntu} container image providing Clang {self.clang} and GCC {self.gcc}')
         if self.id:
-            print(f'[!] WARNING: Container image already exists: {self.id}, skip build')
+            print(f'[!] WARNING: Container image already exists: {self.id}, skip building')
             return
         build_args = ['build',
                       '--build-arg', f'CLANG_VERSION={self.clang}',
@@ -112,7 +112,7 @@ class ContainerImage:
             sys.exit('[!] ERROR: The container runtime is not installed')
 
 def build_images(needed_compiler, images):
-    """Build container image(s) providing the specified compilers"""
+    """Build container images providing the specified compilers"""
     for c in images:
         if needed_compiler in ('all', 'clang-' + c.clang, 'gcc-' + c.gcc):
             c.build()
@@ -157,7 +157,7 @@ def main():
         parser.print_help()
         sys.exit(1)
     if bool(args.list) + bool(args.build) + bool(args.remove) > 1:
-        sys.exit('[!] ERROR: Invalid option combination.')
+        sys.exit('[!] ERROR: Invalid combination of options')
 
     images = []
     images += [ContainerImage('5', '4.9', '16.04')]
