@@ -93,7 +93,7 @@ class ContainerImage:
             gcc_id = subprocess.run(find_gcc_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
             # gcc_id may differ if it's overridden by another container image, but it should exist
             if not gcc_id:
-                sys.exit(f'[!] ERROR: Invalid image "{self.clang_tag}" without "{self.gcc_tag}", remove it manually')
+                sys.exit(f'[!] ERROR: Invalid image "{self.clang_tag}" without the corresponding GCC tag, remove it manually')
         return clang_id
 
     def identify_runtime_cmd(self):
