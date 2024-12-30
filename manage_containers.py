@@ -91,7 +91,7 @@ class ContainerImage:
         if clang_id:
             find_gcc_cmd = self.runtime_cmd + ['images', self.gcc_tag, '--format', '{{.ID}}']
             gcc_id = subprocess.run(find_gcc_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
-            # gcc_id may differ if it's overridden by another container image
+            # gcc_id may differ if it's overridden by another container image, but it should exist
             if not gcc_id:
                 sys.exit(f'[!] ERROR: Invalid image "{self.clang_tag}" without "{self.gcc_tag}", remove it manually')
         return clang_id
@@ -114,6 +114,7 @@ def build_images(needed_compiler, images):
     """Build container images providing the specified compilers"""
     for c in images:
         if needed_compiler in ('all', 'clang-' + c.clang, 'gcc-' + c.gcc):
+            # Special case for GCC: build the first known container image providing this compiler
             c.build()
             if needed_compiler != 'all':
                 return
