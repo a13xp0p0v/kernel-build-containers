@@ -80,7 +80,7 @@ class ContainerImage:
         try:
             cmd = self.runtime_cmd + ['rmi', '-f', self.id]
             subprocess.run(cmd, text=True, check=True)
-        except:
+        except subprocess.CalledProcessError:
             print('[!] WARNING: Image removal failed, see the error message above')
         self.id = self.find_id()
 
