@@ -46,7 +46,7 @@ class ContainerImage:
         self.gcc = gcc_version
         self.gcc_tag = 'kernel-build-container:gcc-' + self.gcc
         self.ubuntu = ubuntu_version
-        self.check()
+        self.id = self.find_id()
 
     def build(self):
         """Build a container image that provides the specified compilers"""
@@ -70,7 +70,7 @@ class ContainerImage:
         build_dir = ['.']
         cmd = self.runtime_cmd + build_args + build_dir
         subprocess.run(cmd, text=True, check=True)
-        self.check()
+        self.id = self.find_id()
 
     def rm(self):
         """Try to remove the container image if it exists"""
@@ -82,19 +82,19 @@ class ContainerImage:
             subprocess.run(cmd, text=True, check=True)
         except:
             print('[!] WARNING: Image removal failed, see the error message above')
-        self.check()
+        self.id = self.find_id()
 
-    def check(self):
-        """Check whether the container image exists and get its ID"""
-        check_clang_cmd = self.runtime_cmd + ['images', self.clang_tag, '--format', '{{.ID}}']
-        clang_id = subprocess.run(check_clang_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
+    def find_id(self):
+        """Find the ID of the container image. Return an empty string if it doesn't exist."""
+        find_clang_cmd = self.runtime_cmd + ['images', self.clang_tag, '--format', '{{.ID}}']
+        clang_id = subprocess.run(find_clang_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
         if clang_id:
-            check_gcc_cmd = self.runtime_cmd + ['images', self.gcc_tag, '--format', '{{.ID}}']
-            gcc_id = subprocess.run(check_gcc_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
+            find_gcc_cmd = self.runtime_cmd + ['images', self.gcc_tag, '--format', '{{.ID}}']
+            gcc_id = subprocess.run(find_gcc_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
             # gcc_id may differ if it's overridden by another container image
             if not gcc_id:
                 sys.exit(f'[!] ERROR: Invalid image "{self.clang_tag}" without "{self.gcc_tag}", remove it manually')
-        self.id = clang_id
+        return clang_id
 
     def identify_runtime_cmd(self):
         """Identify the commands for working with the container runtime"""
