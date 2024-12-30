@@ -52,7 +52,7 @@ class ContainerImage:
         """Build a container image that provides the specified compilers"""
         print(f'\nBuild Ubuntu-{self.ubuntu} container image providing Clang {self.clang} and GCC {self.gcc}')
         if self.id:
-            print(f'[!] WARNING: Container image already exists: {self.id}, skip building')
+            print(f'[!] WARNING: Container image already exists ({self.id}), skip building')
             return
         build_args = ['build',
                       '--build-arg', f'CLANG_VERSION={self.clang}',
