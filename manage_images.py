@@ -117,9 +117,10 @@ def build_images(needed_compiler, images):
     """Build container images providing the specified compilers"""
     for c in images:
         if needed_compiler in ('all', 'clang-' + c.clang, 'gcc-' + c.gcc):
-            # Special case for GCC: build the first known container image providing this compiler
+            # Special case for GCC: build the *first* known container image providing this compiler
             c.build()
             if needed_compiler != 'all':
+                # We need only one container image providing this compiler
                 return
 
 def remove_images(images):
