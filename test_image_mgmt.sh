@@ -75,11 +75,17 @@ python3 -m coverage run -a --branch manage_images.py -r invalid-option && exit 1
 
 $DELIMITER
 echo "Testing invalid combinations..."
+python3 -m coverage run -a --branch manage_images.py -q && exit 1
+python3 -m coverage run -a --branch manage_images.py -q -r && exit 1
+python3 -m coverage run -a --branch manage_images.py -l -r && exit 1
+python3 -m coverage run -a --branch manage_images.py -l -q && exit 1
+python3 -m coverage run -a --branch manage_images.py -l -q -r && exit 1
 python3 -m coverage run -a --branch manage_images.py -b gcc-10 -r && exit 1
 python3 -m coverage run -a --branch manage_images.py -b gcc-10 -q -r && exit 1
 python3 -m coverage run -a --branch manage_images.py -b all -l && exit 1
-python3 -m coverage run -a --branch manage_images.py -b all -q -l && exit 1
-python3 -m coverage run -a --branch manage_images.py -r -l && exit 1
+python3 -m coverage run -a --branch manage_images.py -b all -l -r && exit 1
+python3 -m coverage run -a --branch manage_images.py -b all -l -q && exit 1
+python3 -m coverage run -a --branch manage_images.py -b all -l -q -r && exit 1
 
 $DELIMITER
 echo "Testing containers with missing GCC tags..."
@@ -93,3 +99,5 @@ $DELIMITER
 echo "All tests completed. Creating the coverage report..."
 python3 -m coverage report
 python3 -m coverage html
+
+echo "Well done!"

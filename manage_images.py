@@ -160,8 +160,14 @@ def main():
     if not any((args.list, args.build, args.remove)):
         parser.print_help()
         sys.exit(1)
+
     if bool(args.list) + bool(args.build) + bool(args.remove) > 1:
         sys.exit('[!] ERROR: Invalid combination of options')
+
+    if args.quiet:
+        if not args.build:
+            sys.exit('[!] ERROR: "--quiet" should be used only with the "--build" option')
+        ContainerImage.quiet = True
 
     images = []
     images += [ContainerImage('5', '4.9', '16.04')]
@@ -177,9 +183,6 @@ def main():
     images += [ContainerImage('15', '13', '24.04')]
     images += [ContainerImage('16', '14', '24.04')]
     images += [ContainerImage('17', '14', '24.04')]
-
-    if args.quiet:
-        ContainerImage.quiet = True
 
     if args.list:
         list_images(images)
