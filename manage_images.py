@@ -143,8 +143,8 @@ def list_images(images):
     print('-' * 41)
 
 def main():
-    """The main function for managing the kernel-build-containers"""
-    parser = argparse.ArgumentParser(description='Manage the kernel-build-containers')
+    """The main function for managing the images for kernel-build-containers"""
+    parser = argparse.ArgumentParser(description='Manage the images for kernel-build-containers')
     parser.add_argument('-l', '--list', action='store_true',
                         help='show the container images and their IDs')
     parser.add_argument('-b', '--build', choices=supported_compilers, metavar='compiler',
