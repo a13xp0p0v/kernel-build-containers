@@ -20,8 +20,8 @@ It's very useful for testing gcc-plugins for the Linux kernel, for example. Good
 __Supported build targets:__
  - `x86_64`
  - `i386`
- - `arm64` or `aarch64`
- - `arm` or `aarch32`
+ - `arm64` (or `aarch64`)
+ - `arm` (or `aarch32`)
 
 __Supported gcc versions:__
  - gcc-4.9 (doesn't support `gcc-plugins` for `arm64` and `arm`)
@@ -37,6 +37,13 @@ __Supported gcc versions:__
  - gcc-14
 
 __Supported clang versions:__
+ - clang-5
+ - clang-6
+ - clang-7
+ - clang-8
+ - clang-9
+ - clang-10
+ - clang-11
  - clang-12
  - clang-13
  - clang-14
@@ -44,40 +51,130 @@ __Supported clang versions:__
  - clang-16
  - clang-17
 
-## Usage
+## How to build container images
 
-### Building all containers
-
-```console
-$ bash build_containers.sh
-```
-
-Created containers:
+__Get help:__
 
 ```console
-$ sudo docker image list | grep kernel-build-container
-kernel-build-container   clang-17   c24d2754f36d   About a minute ago   6.01GB
-kernel-build-container   clang-16   9b3f7dce5f5b   12 minutes ago       6.01GB
-kernel-build-container   clang-15   9f62c82c4826   24 minutes ago       3.83GB
-kernel-build-container   clang-14   83523b7c7241   41 minutes ago       2.21GB
-kernel-build-container   clang-13   8c0f0e68075a   46 minutes ago       2.27GB
-kernel-build-container   clang-12   ac2cea3e0e97   51 minutes ago       2.21GB
-kernel-build-container   gcc-14     ff56932d9a3e   7 hours ago          4.36GB
-kernel-build-container   gcc-13     b05623469193   7 hours ago          3.14GB
-kernel-build-container   gcc-12     63562d1fbb5e   7 hours ago          1.55GB
-kernel-build-container   gcc-11     c4b2e14874f2   7 hours ago          1.03GB
-kernel-build-container   gcc-10     bcbfb78c4a6c   7 hours ago          1.27GB
-kernel-build-container   gcc-9      76f580f18759   7 hours ago          833MB
-kernel-build-container   gcc-8      e22bee633dff   8 hours ago          1.12GB
-kernel-build-container   gcc-7      e79708f81b84   8 hours ago          740MB
-kernel-build-container   gcc-6      61f40d3e3e58   8 hours ago          992MB
-kernel-build-container   gcc-5      ed6270a767c6   8 hours ago          720MB
-kernel-build-container   gcc-4.9    408db89527ec   8 hours ago          913MB
+$ python3 manage_images.py -h
+usage: manage_images.py [-h] [-l] [-b compiler] [-q] [-r]
+
+Manage the images for kernel-build-containers
+
+options:
+  -h, --help            show this help message and exit
+  -l, --list            show the container images and their IDs
+  -b compiler, --build compiler
+                        build a container image providing clang-5 / clang-6 / clang-7 /
+                        clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 /
+                        clang-14 / clang-15 / clang-16 / clang-17 /
+                        gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 /
+                        gcc-12 / gcc-13 / gcc-14 / all (use "all" for building all images)
+  -q, --quiet           suppress the container image build output (for using with --build)
+  -r, --remove          remove all created images
 ```
 
-### Running a container
+__Build a single container image:__
 
-Get help:
+```console
+$ python3 manage_images.py -b gcc-12
+```
+
+__Build a container image quietly:__
+
+```console
+$ python3 manage_images.py -b clang-11 -q
+```
+
+__List container images:__
+
+```console
+$ python3 manage_images.py -l
+We need "sudo" for working with containers
+
+Current status:
+-----------------------------------------
+ Ubuntu | Clang  | GCC    | Image ID
+-----------------------------------------
+ 16.04  | 5      | 4.9    | -
+ 16.04  | 6      | 5      | -
+ 18.04  | 7      | 6      | -
+ 18.04  | 8      | 7      | -
+ 20.04  | 9      | 8      | -
+ 20.04  | 10     | 9      | -
+ 20.04  | 11     | 10     | 4b575e530b96
+ 22.04  | 12     | 11     | -
+ 22.04  | 13     | 12     | 42108f7cd499
+ 22.04  | 14     | 12     | -
+ 24.04  | 15     | 13     | -
+ 24.04  | 16     | 14     | -
+ 24.04  | 17     | 14     | -
+-----------------------------------------
+```
+
+__Build all container images:__
+
+```console
+$ python3 manage_images.py -b all
+```
+
+__Expected output after building all images:__
+
+```console
+Current status:
+-----------------------------------------
+ Ubuntu | Clang  | GCC    | Image ID
+-----------------------------------------
+ 16.04  | 5      | 4.9    | 84de06274519
+ 16.04  | 6      | 5      | 9f1a2dd62fdd
+ 18.04  | 7      | 6      | 112aac42ce4c
+ 18.04  | 8      | 7      | 9aba209703da
+ 20.04  | 9      | 8      | c1e7857ea7b9
+ 20.04  | 10     | 9      | 70773f4ade91
+ 20.04  | 11     | 10     | 794661e2251e
+ 22.04  | 12     | 11     | a3edfb04cb59
+ 22.04  | 13     | 12     | fd3d31b4b29b
+ 22.04  | 14     | 12     | 9f78a073c0a2
+ 24.04  | 15     | 13     | a48106dc194e
+ 24.04  | 16     | 14     | 1c0aba835f6c
+ 24.04  | 17     | 14     | 18f5a5c70571
+-----------------------------------------
+```
+
+__Created container images:__
+
+```console
+$ sudo docker images
+REPOSITORY               TAG        IMAGE ID       CREATED          SIZE
+kernel-build-container   clang-17   18f5a5c70571   4 seconds ago    2.14GB
+kernel-build-container   gcc-14     18f5a5c70571   4 seconds ago    2.14GB
+kernel-build-container   clang-16   1c0aba835f6c   2 minutes ago    2.16GB
+kernel-build-container   clang-15   a48106dc194e   4 minutes ago    1.87GB
+kernel-build-container   gcc-13     a48106dc194e   4 minutes ago    1.87GB
+kernel-build-container   clang-14   9f78a073c0a2   6 minutes ago    1.89GB
+kernel-build-container   gcc-12     9f78a073c0a2   6 minutes ago    1.89GB
+kernel-build-container   clang-13   fd3d31b4b29b   8 minutes ago    1.97GB
+kernel-build-container   clang-12   a3edfb04cb59   10 minutes ago   1.73GB
+kernel-build-container   gcc-11     a3edfb04cb59   10 minutes ago   1.73GB
+kernel-build-container   clang-11   794661e2251e   12 minutes ago   1.62GB
+kernel-build-container   gcc-10     794661e2251e   12 minutes ago   1.62GB
+kernel-build-container   clang-10   70773f4ade91   14 minutes ago   1.39GB
+kernel-build-container   gcc-9      70773f4ade91   14 minutes ago   1.39GB
+kernel-build-container   clang-9    c1e7857ea7b9   16 minutes ago   1.56GB
+kernel-build-container   gcc-8      c1e7857ea7b9   16 minutes ago   1.56GB
+kernel-build-container   clang-8    9aba209703da   18 minutes ago   1.4GB
+kernel-build-container   gcc-7      9aba209703da   18 minutes ago   1.4GB
+kernel-build-container   clang-7    112aac42ce4c   20 minutes ago   1.5GB
+kernel-build-container   gcc-6      112aac42ce4c   20 minutes ago   1.5GB
+kernel-build-container   clang-6    9f1a2dd62fdd   21 minutes ago   1.33GB
+kernel-build-container   gcc-5      9f1a2dd62fdd   21 minutes ago   1.33GB
+kernel-build-container   clang-5    84de06274519   23 minutes ago   1.88GB
+kernel-build-container   gcc-4.9    84de06274519   23 minutes ago   1.88GB
+```
+
+## How to run a container
+
+__Get help:__
 
 ```console
 $ bash start_container.sh
@@ -91,7 +188,7 @@ usage: start_container.sh compiler src_dir out_dir [-n] [-e VAR] [-h] [-v] [-- c
   If cmd is empty, we will start an interactive bash in the container.
 ```
 
-Run interactive bash in the container:
+__Run interactive bash in the container:__
 
 ```console
 $ bash start_container.sh gcc-12 ~/linux-stable/linux-stable/ ~/linux-stable/build_out/
@@ -108,7 +205,7 @@ See "man sudo_root" for details.
 a13x@38f63939b504:~/src$
 ```
 
-Execute a command in the container:
+__Execute a command in the container:__
 
 ```console
 $ bash start_container.sh clang-15 ~/linux-stable/linux-stable/ ~/linux-stable/build_out/ -- make defconfig
@@ -123,40 +220,37 @@ Gonna run command "make defconfig"
 ...
 ```
 
-### Building the Linux kernel
+## How to build the Linux kernel
 
-Get help:
+__Get help:__
 
 ```console
-$ python3 make_linux.py --help
-usage: make_linux.py [-h] -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,gcc-14,
-                     clang-12,clang-13,clang-14,clang-15,clang-16,clang-17,all} -a {x86_64,i386,arm64,arm}
-                     -s src -o out [-k kconfig] [-q] [-t]
-                     ...
+$ python3 build_linux.py --help
+usage: build_linux.py [-h] -c COMPILER -a ARCH -s SRC -o OUT [-k KCONFIG] [-q] [-t] ...
 
-Build the Linux kernel using kernel-build-containers
+Build Linux kernel using kernel-build-containers
 
 positional arguments:
   ...                   additional arguments for 'make', can be separated by -- delimiter
 
 options:
   -h, --help            show this help message and exit
-  -c {gcc-4.9,gcc-5,gcc-6,gcc-7,gcc-8,gcc-9,gcc-10,gcc-11,gcc-12,gcc-13,gcc-14,
-      clang-12,clang-13,clang-14,clang-15,clang-16,clang-17,all}
-                        building compiler ('all' to build with each of them)
-  -a {x86_64,i386,arm64,arm}
-                        build target architecture
-  -s src                Linux kernel sources directory
-  -o out                build output directory
-  -k kconfig            path to kernel kconfig file
-  -q                    for running `make` in quiet mode
-  -t                    for running `make` in single-threaded mode (multi-threaded by default)
+  -c COMPILER, --compiler COMPILER
+                        compiler for building (clang-5 / clang-6 / clang-7 / clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 / clang-14 / clang-15 / clang-16 / clang-17 /
+                        gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14)
+  -a ARCH, --arch ARCH  build target architecture (x86_64 / i386 / arm64 / arm)
+  -s SRC, --src SRC     Linux kernel sources directory
+  -o OUT, --out OUT     build output directory
+  -k KCONFIG, --kconfig KCONFIG
+                        path to kernel kconfig file
+  -q, --quiet           for running `make` in quiet mode
+  -t, --single-thread   for running `make` in single-threaded mode (multi-threaded by default)
 ```
 
-Configure the Linux kernel with `menuconfig` in the needed container:
+__Configure the Linux kernel with `menuconfig` in the needed container:__
 
 ```console
-$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13 -- menuconfig
+$ python3 build_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13 -- menuconfig
 [+] Going to build the Linux kernel for arm64
 [+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
 [+] Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
@@ -199,10 +293,10 @@ The finish_container.sh script returned 2
 [+] Done, see the results
 ```
 
-Build the Linux kernel in the needed container:
+__Build the Linux kernel in the needed container:__
 
 ```console
-$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
+$ python3 build_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
 [+] Going to build the Linux kernel for arm64
 [+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
 [+] Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
@@ -244,7 +338,7 @@ See the build log: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/b
 The tool returns an error if the kconfig file specified with `-k` differs from the `.config` in the build output directory:
 
 ```console
-$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
+$ python3 build_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
 [+] Going to build the Linux kernel for arm64
 [+] Using "/home/a13x/linux-stable/experiment.config" as kernel config
 [+] Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
@@ -269,25 +363,79 @@ $ diff ~/linux-stable/experiment.config ~/linux-stable/build_out/experiment__arm
 ---
 > # CONFIG_NFC_S3FWRN5_I2C is not set
 $ cp ~/linux-stable/build_out/experiment__arm64__gcc-13/.config ~/linux-stable/experiment.config
-$ python3 make_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
+$ python3 build_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux-stable/linux-stable -o ~/linux-stable/build_out -c gcc-13
 ```
 
-### Finishing with the container
+## How to remove the created container images
 
-That tool is used by `make_linux.py` for fast stopping the kernel build.
-
-Get help:
+__Remove all created images:__
 
 ```console
-$ bash finish_container.sh
-Hey, we gonna use sudo for running docker
-usage: finish_container.sh kill/nokill out_dir
-  kill/nokill -- how to finish: kill the container and then clean up / only clean up
-  out_dir -- build output directory used by this container (with container.id file)
+$ python3 manage_images.py -r
 ```
 
-### Removing created Docker images
+__Expected output, if the containers are not running:__
 
 ```console
-$ bash rm_containers.sh
+Current status:
+-----------------------------------------
+ Ubuntu | Clang  | GCC    | Image ID
+-----------------------------------------
+ 16.04  | 5      | 4.9    | -
+ 16.04  | 6      | 5      | -
+ 18.04  | 7      | 6      | -
+ 18.04  | 8      | 7      | -
+ 20.04  | 9      | 8      | -
+ 20.04  | 10     | 9      | -
+ 20.04  | 11     | 10     | -
+ 22.04  | 12     | 11     | -
+ 22.04  | 13     | 12     | -
+ 22.04  | 14     | 12     | -
+ 24.04  | 15     | 13     | -
+ 24.04  | 16     | 14     | -
+ 24.04  | 17     | 14     | -
+-----------------------------------------
 ```
+
+__Expected output, if some containers are running:__
+
+```console
+Remove the container image providing Clang 17 and GCC 14
+Error response from daemon: conflict: unable to delete 18f5a5c70571 (cannot be forced) - image is being used by running container e322f234ee1b
+[!] WARNING: Image removal failed, see the error message above
+
+[!] WARNING: failed to remove 1 container image(s), see the log above
+
+Current status:
+-----------------------------------------
+ Ubuntu | Clang  | GCC    | Image ID
+-----------------------------------------
+ 16.04  | 5      | 4.9    | -
+ 16.04  | 6      | 5      | -
+ 18.04  | 7      | 6      | -
+ 18.04  | 8      | 7      | -
+ 20.04  | 9      | 8      | -
+ 20.04  | 10     | 9      | -
+ 20.04  | 11     | 10     | -
+ 22.04  | 12     | 11     | -
+ 22.04  | 13     | 12     | -
+ 22.04  | 14     | 12     | -
+ 24.04  | 15     | 13     | -
+ 24.04  | 16     | 14     | -
+ 24.04  | 17     | 14     | 18f5a5c70571
+-----------------------------------------
+```
+
+In that case simply stop this container and run `manage_images.py -r` again.
+
+## Notes for developers
+
+If you change `manage_images.py`, please run the test:
+
+```console
+$ bash test_image_mgmt.sh
+```
+
+The code coverage will be stored in `htmlcov/index.html`.
+
+Have fun!

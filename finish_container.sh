@@ -1,6 +1,6 @@
 #!/bin/bash
 
-groups | grep docker > /dev/null
+groups | grep '\<docker\>' > /dev/null
 NEED_SUDO=$?
 
 if [ $NEED_SUDO -eq 1 ]; then
