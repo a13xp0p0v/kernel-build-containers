@@ -65,8 +65,7 @@ Manage the images for kernel-build-containers
 options:
   -h, --help            show this help message and exit
   -l, --list            show the container images and their IDs
-  -b compiler, --build compiler
-                        build a container image providing clang-5 / clang-6 / clang-7 /
+  -b, --build compiler  build a container image providing clang-5 / clang-6 / clang-7 /
                         clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 /
                         clang-14 / clang-15 / clang-16 / clang-17 /
                         gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 /
@@ -236,13 +235,16 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -c COMPILER, --compiler COMPILER
-                        compiler for building (clang-5 / clang-6 / clang-7 / clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 / clang-14 / clang-15 / clang-16 / clang-17 /
-                        gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14)
-  -a ARCH, --arch ARCH  build target architecture (x86_64 / i386 / arm64 / arm)
-  -s SRC, --src SRC     Linux kernel sources directory
-  -o OUT, --out OUT     build output directory
-  -k KCONFIG, --kconfig KCONFIG
+  -c, --compiler COMPILER
+                        compiler for building (clang-5 / clang-6 / clang-7 /
+                        clang-8 / clang-9 / clang-10 / clang-11 / clang-12 /
+                        clang-13 / clang-14 / clang-15 / clang-16 / clang-17 /
+                        gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 /
+                        gcc-11 / gcc-12 / gcc-13 / gcc-14)
+  -a, --arch ARCH       build target architecture (x86_64 / i386 / arm64 / arm / riscv64)
+  -s, --src SRC         Linux kernel sources directory
+  -o, --out OUT         build output directory
+  -k, --kconfig KCONFIG
                         path to kernel kconfig file
   -q, --quiet           for running `make` in quiet mode
   -t, --single-thread   for running `make` in single-threaded mode (multi-threaded by default)
