@@ -22,12 +22,13 @@ __Supported build targets:__
  - `i386`
  - `arm64` (or `aarch64`)
  - `arm` (or `aarch32`)
+ - `riscv64`
 
 __Supported gcc versions:__
  - gcc-4.9 (doesn't support `gcc-plugins` for `arm64` and `arm`)
  - gcc-5
  - gcc-6
- - gcc-7
+ - gcc-7 (`riscv64` support starts from this version)
  - gcc-8
  - gcc-9
  - gcc-10
