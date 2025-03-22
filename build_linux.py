@@ -10,7 +10,7 @@ import shutil
 import filecmp
 
 
-supported_archs = ['x86_64', 'i386', 'arm64', 'arm', 'riscv64']
+supported_archs = ['x86_64', 'i386', 'arm64', 'arm', 'riscv']
 supported_compilers = ['clang-5', 'clang-6', 'clang-7', 'clang-8',
                        'clang-9', 'clang-10', 'clang-11', 'clang-12',
                        'clang-13', 'clang-14', 'clang-15', 'clang-16', 'clang-17',
@@ -30,7 +30,7 @@ def get_cross_compile_args(arch):
     elif arch == 'arm':
         args_list.append('ARCH=arm')
         args_list.append('CROSS_COMPILE=arm-linux-gnueabi-')
-    elif arch == 'riscv64':
+    elif arch == 'riscv':
         args_list.append('ARCH=riscv')
         args_list.append('CROSS_COMPILE=riscv64-linux-gnu-')
     return args_list

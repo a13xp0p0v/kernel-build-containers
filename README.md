@@ -20,15 +20,15 @@ It's very useful for testing gcc-plugins for the Linux kernel, for example. Good
 __Supported build targets:__
  - `x86_64`
  - `i386`
- - `arm64` (or `aarch64`)
- - `arm` (or `aarch32`)
- - `riscv64`
+ - `arm64` (toolchain name `aarch64`)
+ - `arm`
+ - `riscv` (toolchain name `riscv64`)
 
 __Supported gcc versions:__
  - gcc-4.9 (doesn't support `gcc-plugins` for `arm64` and `arm`)
  - gcc-5
  - gcc-6
- - gcc-7 (`riscv64` support starts from this version)
+ - gcc-7 (`riscv` support starts from this version)
  - gcc-8
  - gcc-9
  - gcc-10
@@ -241,7 +241,7 @@ options:
                         clang-13 / clang-14 / clang-15 / clang-16 / clang-17 /
                         gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 /
                         gcc-11 / gcc-12 / gcc-13 / gcc-14)
-  -a, --arch ARCH       build target architecture (x86_64 / i386 / arm64 / arm / riscv64)
+  -a, --arch ARCH       build target architecture (x86_64 / i386 / arm64 / arm / riscv)
   -s, --src SRC         Linux kernel sources directory
   -o, --out OUT         build output directory
   -k, --kconfig KCONFIG
