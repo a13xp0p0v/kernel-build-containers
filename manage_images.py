@@ -165,14 +165,14 @@ def main():
     parser = argparse.ArgumentParser(description='Manage the images for kernel-build-containers')
     parser.add_argument('-l', '--list', action='store_true',
                         help='show the container images and their IDs')
-    parser.add_argument('-b', '--build', choices=supported_compilers, metavar='compiler',
+    parser.add_argument('-b', '--build', nargs='?', const='all', choices=supported_compilers, metavar='compiler',
                         help=f'build a container image providing {" / ".join(supported_compilers)} '
-                              '(use "all" for building all images)')
+                              '(default = "all" images if no compilers are specified)')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='suppress the container image build output (for using with --build)')
-    parser.add_argument('-r', '--remove', choices=supported_compilers, metavar='compiler',
+    parser.add_argument('-r', '--remove', nargs='?', const='all', choices=supported_compilers, metavar='compiler',
                         help=f'remove a container image providing {" / ".join(supported_compilers)} '
-                              '(use "all" for removing all images)')
+                              '(default = "all" images if no compilers are specified)')
     args = parser.parse_args()
 
     if not any((args.list, args.build, args.remove)):
