@@ -76,13 +76,17 @@ class ContainerImage:
         """Try to remove the container image if it exists"""
         if not self.id:
             return
-        print(f'\nRemove the container image providing Clang {self.clang} and GCC {self.gcc}')
-        try:
+        print(f'\nRemove the container image {self.id} providing Clang {self.clang} and GCC {self.gcc}')
+        full_cmd = self.runtime_cmd + ['inspect', f'{self.id}', '--format', '{{.ID}}']
+        full_id = subprocess.run(full_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout # for later podman compatabilty
+        cmd = self.runtime_cmd + ['ps', '-a', '--filter', f'ancestor={full_id}', '--format', '{{.ID}}']
+        container_id = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
+        if not container_id:
             cmd = self.runtime_cmd + ['rmi', '-f', self.id]
             subprocess.run(cmd, text=True, check=True)
-        except subprocess.CalledProcessError:
-            print('[!] WARNING: Image removal failed, see the error message above')
-        self.id = self.find_id()
+            self.id = self.find_id()
+        else:
+            print(f'[!] WARNING: Image removal failed, {self.id} still in use')
 
     def find_id(self):
         """Find the ID of the container image. Return an empty string if it doesn't exist."""
