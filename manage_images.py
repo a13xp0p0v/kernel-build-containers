@@ -139,13 +139,14 @@ def build_images(needed_compiler, images):
                 # We need only one container image providing this compiler
                 return
 
-def remove_images(images):
+def remove_images(needed_compiler, images):
     """Remove all container images"""
     fail_cnt = 0
     for c in images:
-        c.rm()
-        if c.id:
-            fail_cnt += 1
+        if needed_compiler in ('all', 'clang-' + c.clang, 'gcc-' + c.gcc):
+            c.rm()
+            if c.id:
+                fail_cnt += 1
     if fail_cnt:
         print(f'\n[!] WARNING: failed to remove {fail_cnt} container image(s), see the log above')
 
@@ -169,8 +170,9 @@ def main():
                               '(use "all" for building all images)')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='suppress the container image build output (for using with --build)')
-    parser.add_argument('-r', '--remove', action='store_true',
-                        help='remove all created images')
+    parser.add_argument('-r', '--remove', choices=supported_compilers, metavar='compiler',
+                        help=f'remove a container image providing {" / ".join(supported_compilers)} '
+                              '(use "all" for removing all images)')
     args = parser.parse_args()
 
     if not any((args.list, args.build, args.remove)):
@@ -210,7 +212,7 @@ def main():
         sys.exit(0)
 
     if args.remove:
-        remove_images(images)
+        remove_images(args.remove, images)
         list_images(images)
         sys.exit(0)
 
