@@ -146,6 +146,7 @@ def remove_images(needed_compiler, images):
     fail_cnt = 0
     for c in images:
         if needed_compiler in ('all', 'clang-' + c.clang, 'gcc-' + c.gcc):
+            # Special case for GCC: remove all container images providing this compiler
             c.rm()
             if c.id:
                 fail_cnt += 1
