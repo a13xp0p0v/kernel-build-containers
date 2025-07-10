@@ -76,17 +76,29 @@ class ContainerImage:
         """Try to remove the container image if it exists"""
         if not self.id:
             return
+
         print(f'\nRemove the container image {self.id} providing Clang {self.clang} and GCC {self.gcc}')
-        full_cmd = self.runtime_cmd + ['inspect', f'{self.id}', '--format', '{{.ID}}']
-        full_id = subprocess.run(full_cmd, text=True, check=True, stdout=subprocess.PIPE).stdout # for later podman compatabilty
-        cmd = self.runtime_cmd + ['ps', '-a', '--filter', f'ancestor={full_id}', '--format', '{{.ID}}']
-        container_id = subprocess.run(cmd, text=True, check=True, stdout=subprocess.PIPE).stdout.strip()
-        if not container_id:
-            cmd = self.runtime_cmd + ['rmi', '-f', self.id]
-            subprocess.run(cmd, text=True, check=True)
-            self.id = self.find_id()
+
+        # We need to get full ID of the container image,
+        # since Podman fails to search containers using a short one (strange!)
+        get_full_id_cmd = self.runtime_cmd + ['inspect', f'{self.id}', '--format', '{{.ID}}']
+        out = subprocess.run(get_full_id_cmd, text=True, check=True, stdout=subprocess.PIPE)
+        full_id = out.stdout.strip()
+        if not full_id:
+            print(f'[!] WARNING: Looks like the image {self.id} is already removed')
         else:
-            print(f'[!] WARNING: Image removal failed, {self.id} still in use')
+            get_containers_cmd = self.runtime_cmd + ['ps', '-a', '--filter', f'ancestor={full_id}',
+                                                     '--format', '{{.ID}}']
+            out = subprocess.run(get_containers_cmd, text=True, check=True, stdout=subprocess.PIPE)
+            running_containers = out.stdout.strip()
+            if running_containers:
+                print(f'[!] WARNING: Removing the image {self.id} failed, some containers use it')
+            else:
+                rmi_cmd = self.runtime_cmd + ['rmi', '-f', self.id]
+                subprocess.run(rmi_cmd, text=True, check=True)
+
+        # Update ContainerImage.id to reflect the changes
+        self.id = self.find_id()
 
     def find_id(self):
         """Find the ID of the container image. Return an empty string if it doesn't exist."""
