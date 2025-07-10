@@ -169,13 +169,13 @@ def main():
     parser.add_argument('-l', '--list', action='store_true',
                         help='show the container images and their IDs')
     parser.add_argument('-b', '--build', nargs='?', const='all', choices=supported_compilers, metavar='compiler',
-                        help=f'build a container image providing {" / ".join(supported_compilers)} '
-                              '(default = "all" images if no compilers are specified)')
+                        help=f'build a container image providing: {" / ".join(supported_compilers)} '
+                              '("all" is default, the tool will build all images if no compiler is specified)')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='suppress the container image build output (for using with --build)')
     parser.add_argument('-r', '--remove', nargs='?', const='all', choices=supported_compilers, metavar='compiler',
-                        help=f'remove a container image providing {" / ".join(supported_compilers)} '
-                              '(default = "all" images if no compilers are specified)')
+                        help=f'remove container images providing: {" / ".join(supported_compilers)} '
+                              '("all" is default, the tool will remove all images if no compiler is specified)')
     args = parser.parse_args()
 
     if not any((args.list, args.build, args.remove)):
