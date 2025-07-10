@@ -130,7 +130,7 @@ class ContainerImage:
             sys.exit('[!] ERROR: The container runtime is not installed')
 
 def build_images(needed_compiler, images):
-    """Build container images providing the specified compilers"""
+    """Build the container images providing the specified compilers"""
     for c in images:
         if needed_compiler in ('all', 'clang-' + c.clang, 'gcc-' + c.gcc):
             # Special case for GCC: build the *first* known container image providing this compiler
@@ -140,7 +140,7 @@ def build_images(needed_compiler, images):
                 return
 
 def remove_images(needed_compiler, images):
-    """Remove all container images"""
+    """Remove the container images providing the specified compilers"""
     fail_cnt = 0
     for c in images:
         if needed_compiler in ('all', 'clang-' + c.clang, 'gcc-' + c.gcc):
