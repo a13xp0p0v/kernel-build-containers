@@ -114,7 +114,7 @@ class ContainerImage:
             # gcc_id may differ if it's overridden by another container image, but it should exist
             if not gcc_id:
                 sys.exit(f'[!] ERROR: Invalid image "{self.clang_tag}" ' \
-                          'without the corresponding GCC tag, remove it manually')
+                          'without the corresponding GCC tag, please remove it manually')
         return clang_id
 
     def identify_runtime_cmd(self):
