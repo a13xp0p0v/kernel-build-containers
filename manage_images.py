@@ -50,10 +50,11 @@ class ContainerImage:
 
     def build(self):
         """Build a container image that provides the specified compilers"""
-        print(f'\nBuild a container image providing Clang {self.clang} and GCC {self.gcc}')
         if self.id:
-            print(f'[!] WARNING: Container image already exists ({self.id}), skip building')
+            print(f'\nThe container image providing Clang {self.clang} and GCC {self.gcc} exists: {self.id}')
             return
+
+        print(f'\nBuild a container image providing Clang {self.clang} and GCC {self.gcc}')
         build_args = ['build',
                       '--build-arg', f'CLANG_VERSION={self.clang}',
                       '--build-arg', f'GCC_VERSION={self.gcc}',
@@ -75,6 +76,7 @@ class ContainerImage:
     def rm(self):
         """Try to remove the container image if it exists"""
         if not self.id:
+            print(f'\nNo container image providing Clang {self.clang} and GCC {self.gcc}')
             return
 
         print(f'\nRemove the container image {self.id} providing Clang {self.clang} and GCC {self.gcc}')
