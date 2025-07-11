@@ -58,20 +58,28 @@ __Get help:__
 
 ```console
 $ python3 manage_images.py -h
-usage: manage_images.py [-h] [-l] [-b compiler] [-q] [-r]
+usage: manage_images.py [-h] [-l] [-b [compiler]] [-q] [-r [compiler]]
 
 Manage the images for kernel-build-containers
 
 options:
   -h, --help            show this help message and exit
   -l, --list            show the container images and their IDs
-  -b, --build compiler  build a container image providing clang-5 / clang-6 / clang-7 /
+  -b, --build [compiler]
+                        build a container image providing: clang-5 / clang-6 / clang-7 /
                         clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 /
-                        clang-14 / clang-15 / clang-16 / clang-17 /
-                        gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 /
-                        gcc-12 / gcc-13 / gcc-14 / all (use "all" for building all images)
+                        clang-14 / clang-15 / clang-16 / clang-17 / gcc-4.9 / gcc-5 / gcc-6
+                        / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14
+                        / all ("all" is default, the tool will build all images if no
+                        compiler is specified)
   -q, --quiet           suppress the container image build output (for using with --build)
-  -r, --remove          remove all created images
+  -r, --remove [compiler]
+                        remove container images providing: clang-5 / clang-6 / clang-7 /
+                        clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 /
+                        clang-14 / clang-15 / clang-16 / clang-17 / gcc-4.9 / gcc-5 / gcc-6
+                        / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14
+                        / all ("all" is default, the tool will remove all images if no
+                        compiler is specified)
 ```
 
 __Build a single container image:__
@@ -116,6 +124,10 @@ __Build all container images:__
 
 ```console
 $ python3 manage_images.py -b all
+```
+or simply
+```console
+$ python3 manage_images.py -b
 ```
 
 __Expected output after building all images:__
@@ -371,8 +383,18 @@ $ python3 build_linux.py -a arm64 -k ~/linux-stable/experiment.config -s ~/linux
 
 ## How to remove the created container images
 
+__Remove the container image(s) providing one given compiler:__
+
+```console
+$ python3 manage_images.py -r gcc-12
+```
+
 __Remove all created images:__
 
+```console
+$ python3 manage_images.py -r all
+```
+or simply
 ```console
 $ python3 manage_images.py -r
 ```
@@ -403,9 +425,34 @@ Current status:
 __Expected output, if some containers are running:__
 
 ```console
-Remove the container image providing Clang 17 and GCC 14
-Error response from daemon: conflict: unable to delete 18f5a5c70571 (cannot be forced) - image is being used by running container e322f234ee1b
-[!] WARNING: Image removal failed, see the error message above
+We need "sudo" for working with containers
+
+No container image providing Clang 5 and GCC 4.9
+
+No container image providing Clang 6 and GCC 5
+
+No container image providing Clang 7 and GCC 6
+
+No container image providing Clang 8 and GCC 7
+
+No container image providing Clang 9 and GCC 8
+
+No container image providing Clang 10 and GCC 9
+
+No container image providing Clang 11 and GCC 10
+
+No container image providing Clang 12 and GCC 11
+
+No container image providing Clang 13 and GCC 12
+
+No container image providing Clang 14 and GCC 12
+
+No container image providing Clang 15 and GCC 13
+
+Remove the container image c3426ea8383d providing Clang 16 and GCC 14
+[!] WARNING: Removing the image c3426ea8383d failed, some containers use it
+
+No container image providing Clang 17 and GCC 14
 
 [!] WARNING: failed to remove 1 container image(s), see the log above
 
@@ -424,8 +471,8 @@ Current status:
  22.04  | 13     | 12     | -
  22.04  | 14     | 12     | -
  24.04  | 15     | 13     | -
- 24.04  | 16     | 14     | -
- 24.04  | 17     | 14     | 18f5a5c70571
+ 24.04  | 16     | 14     | c3426ea8383d
+ 24.04  | 17     | 14     | -
 -----------------------------------------
 ```
 
