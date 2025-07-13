@@ -120,9 +120,6 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
 
     start_container_cmd.extend(make_args)
 
-    if noninteractive:
-        start_container_cmd.extend(['2>&1'])
-
     print(f'Run the container: {" ".join(start_container_cmd)}')
     interrupt = False
     with subprocess.Popen(start_container_cmd, stdout=stdout_destination, stderr=subprocess.STDOUT,
