@@ -36,7 +36,7 @@ def get_cross_compile_args(arch):
     return args_list
 
 
-def finish_building_kernel(out_dir, interrupt):
+def finish_building_kernel(out_dir, interrupt, runtime):
     print('Finish building the kernel')
     finish_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/finish_container.sh']
     if interrupt:
@@ -45,7 +45,7 @@ def finish_building_kernel(out_dir, interrupt):
     else:
         print('Only remove the container id file:')
         finish_container_cmd.extend(['nokill'])
-    finish_container_cmd.extend([out_dir])
+    finish_container_cmd.extend([out_dir, runtime])
 
     with subprocess.Popen(finish_container_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                           universal_newlines=True, bufsize=1) as process:
@@ -93,7 +93,7 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
         print('No kconfig to copy to the output subdirectory')
 
     start_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/start_container.sh',
-                                   compiler, src, out_subdir]
+                                   compiler, src, out_subdir, f'--{runtime}']
 
     noninteractive = True
     if 'menuconfig' in make_args:
@@ -141,13 +141,23 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
         except KeyboardInterrupt:
             print('[!] WARNING: Got keyboard interrupt, stopping build process...')
             interrupt = True
-    finish_building_kernel(out_subdir, interrupt)
+    finish_building_kernel(out_subdir, interrupt, runtime)
     if noninteractive:
         print(f'See the build log: {build_log}')
         build_log_fd.close()
     if interrupt:
         sys.exit('[!] WARNING: Exit by interrupt')
 
+def identify_runtime():
+    """Check for Docker and Podman in the system PATH using `shutil.which`."""
+    engines = [eng for eng in ['docker', 'podman'] if shutil.which(eng)]
+    if not engines:
+        sys.exit('[!] ERROR: The container runtime is not installed')
+    if len(engines) == 1:
+        print(f'[+] {engines[0].capitalize()} runtime image engine identified')
+        return engines[0]
+    print('[+] Both Docker and Podman are available. Defaulting to Docker.')
+    return 'docker'
 
 def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
@@ -169,6 +179,10 @@ def main():
                         help='for running `make` in quiet mode')
     parser.add_argument('-t', '--single-thread', action='store_true',
                         help='for running `make` in single-threaded mode (multi-threaded by default)')
+    parser.add_argument('-d', '--docker', action='store_true',
+                        help='use docker image runtime engine')
+    parser.add_argument('-p', '--podman', action='store_true',
+                        help='use podman image runtime enhine')
     parser.add_argument('make_args', metavar='...', nargs=argparse.REMAINDER,
                         help='additional arguments for \'make\', can be separated by -- delimiter')
     args = parser.parse_args()
@@ -192,6 +206,15 @@ def main():
         if not os.path.isdir(args.out):
             sys.exit(f'[-] ERROR: can\'t find the build output directory "{args.out}"')
         print(f'Using "{args.out}" as build output directory')
+
+    if args.podman and args.docker:
+        sys.exit('[!] ERROR: Multiple image runtime engines specified')
+    if not (args.podman or args.docker):
+        runtime = identify_runtime()
+    if args.docker:
+        runtime = 'docker'
+    if args.podman:
+        runtime = 'podman'
 
     make_args = args.make_args[:]
     if make_args:
@@ -221,7 +244,7 @@ def main():
     else:
         print('Going to run \'make\' in single-threaded mode')
 
-    build_kernel(args.arch, args.kconfig, args.src, args.out, args.compiler, make_args)
+    build_kernel(args.arch, args.kconfig, args.src, args.out, args.compiler, runtime, make_args)
 
     print('[+] Done, see the results')
 
