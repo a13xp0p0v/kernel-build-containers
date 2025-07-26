@@ -89,7 +89,7 @@ class ContainerImage:
         get_full_id_cmd = self.runtime_cmd + ['inspect', f'{self.id}', '--format', '{{.ID}}']
         out = subprocess.run(get_full_id_cmd, text=True, check=True, stdout=subprocess.PIPE)
         full_id = out.stdout.strip()
-        assert full_id, f'[!] ERROR: Looks like the image {self.id} is already removed'
+        assert(full_id), f'[-] ERROR: Looks like the image {self.id} is already removed'
         get_containers_cmd = self.runtime_cmd + ['ps', '-a', '--filter', f'ancestor={full_id}',
                                                     '--format', '{{.ID}}']
         out = subprocess.run(get_containers_cmd, text=True, check=True, stdout=subprocess.PIPE)
@@ -114,7 +114,7 @@ class ContainerImage:
             gcc_id = out.stdout.strip()
             # gcc_id may differ if it's overridden by another container image, but it should exist
             if not gcc_id:
-                sys.exit(f'[!] ERROR: Invalid image "{self.clang_tag}" ' \
+                sys.exit(f'[-] ERROR: Invalid image "{self.clang_tag}" ' \
                           'without the corresponding GCC tag, please remove it manually')
         return clang_id.split()[0] if clang_id else ''
         # this formatting is necessary due to a podman output
@@ -130,11 +130,11 @@ class ContainerImage:
             if out.returncode == 0:
                 return [self.runtime]
             if self.runtime == 'docker' and 'permission denied' in out.stderr:
-                print('We need "sudo" for working with containers')
+                print('[!] INFO: We need "sudo" for working with Docker containers')
                 return ['sudo', self.runtime]
-            sys.exit(f'[!] ERROR: Testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
+            sys.exit(f'[-] ERROR: Testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
         except FileNotFoundError:
-            sys.exit('[!] ERROR: The container runtime is not installed')
+            sys.exit('[-] ERROR: The container runtime is not installed')
 
 def identify_runtime():
     """Check for Docker and Podman in the system PATH using `shutil.which`."""
@@ -193,9 +193,9 @@ def main():
                         help=f'remove container images providing: {" / ".join(supported_compilers)} '
                               '("all" is default, the tool will remove all images if no compiler is specified)')
     parser.add_argument('-d', '--docker', action='store_true',
-                        help='use docker image runtime engine')
+                        help='force to use the Docker container engine (default)')
     parser.add_argument('-p', '--podman', action='store_true',
-                        help='use podman image runtime engine')
+                        help='force to use the Podman container engine instead of default Docker')
     args = parser.parse_args()
 
     if not any((args.list, args.build, args.remove)):
@@ -203,20 +203,22 @@ def main():
         sys.exit(1)
 
     if bool(args.list) + bool(args.build) + bool(args.remove) > 1:
-        sys.exit('[!] ERROR: Invalid combination of options')
+        sys.exit('[-] ERROR: Invalid combination of options')
 
     if args.quiet:
         if not args.build:
-            sys.exit('[!] ERROR: "--quiet" should be used only with the "--build" option')
+            sys.exit('[-] ERROR: "--quiet" should be used only with the "--build" option')
         ContainerImage.quiet = True
 
     if args.podman and args.docker:
-        sys.exit('[!] ERROR: Multiple image runtime engines specified')
+        sys.exit('[-] ERROR: Multiple container engines specified')
     if not (args.podman or args.docker):
         ContainerImage.runtime = identify_runtime()
     if args.docker:
+        print('[+] Force to use the Docker container engine')
         ContainerImage.runtime = 'docker'
     if args.podman:
+        print('[+] Force to use the Podman container engine')
         ContainerImage.runtime = 'podman'
 
     images = []
