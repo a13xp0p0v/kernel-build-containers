@@ -91,7 +91,7 @@ class ContainerImage:
         full_id = out.stdout.strip()
         assert(full_id), f'[-] ERROR: Looks like the image {self.id} is already removed'
         get_containers_cmd = self.runtime_cmd + ['ps', '-a', '--filter', f'ancestor={full_id}',
-                                                    '--format', '{{.ID}}']
+                                                 '--format', '{{.ID}}']
         out = subprocess.run(get_containers_cmd, text=True, check=True, stdout=subprocess.PIPE)
         running_containers = out.stdout.strip()
         if running_containers:
@@ -116,11 +116,10 @@ class ContainerImage:
             if not gcc_id:
                 sys.exit(f'[-] ERROR: Invalid image "{self.clang_tag}" ' \
                           'without the corresponding GCC tag, please remove it manually')
-        return clang_id.split()[0] if clang_id else ''
-        # this formatting is necessary due to a podman output
-        # and designed to keep the code working even after a fix.
-        # it will take a while to see this fix in distro-packages.
-        # (see https://github.com/containers/podman/issues/25725)
+            return clang_id.split()[0] # a fix for the Podman issue (duplicated results),
+                                       # see https://github.com/containers/podman/issues/25725
+        else:
+            return clang_id
 
     def identify_runtime_cmd(self):
         """Identify the commands for working with the container runtime"""
@@ -136,16 +135,15 @@ class ContainerImage:
         except FileNotFoundError:
             sys.exit('[-] ERROR: The container runtime is not installed')
 
-def identify_runtime():
-    """Check for Docker and Podman in the system PATH using `shutil.which`."""
-    engines = [eng for eng in ['docker', 'podman'] if shutil.which(eng)]
-    if not engines:
-        sys.exit('[!] ERROR: The container runtime is not installed')
-    if len(engines) == 1:
-        print(f'[+] {engines[0].capitalize()} runtime image engine identified')
-        return engines[0]
-    print('[+] Both Docker and Podman are available. Defaulting to Docker.')
-    return 'docker'
+def choose_runtime():
+    """Choose the container runtime: Docker (default) or Podman"""
+    if shutil.which('docker'):
+        print(f'[+] Docker container engine is chosen (default)')
+        return 'docker'
+    if shutil.which('podman'):
+        print(f'[+] Podman container engine is chosen (no Docker on this system)')
+        return 'podman'
+    sys.exit('[-] ERROR: No container runtime found')
 
 def build_images(needed_compiler, images):
     """Build the container images providing the specified compilers"""
@@ -173,7 +171,7 @@ def list_images(images):
     """Show the images and their IDs"""
     print('\nCurrent status:')
     print('-' * 44)
-    print(f' {"Ubuntu":<6} | {"Clang":<6} | {"GCC":<6} | {f"{ContainerImage.runtime.capitalize()} Image ID"}')
+    print(f' {"Ubuntu":<6} | {"Clang":<6} | {"GCC":<6} | {ContainerImage.runtime.capitalize() + " Image ID"}')
     print('-' * 44)
     for c in images:
         print(f' {c.ubuntu:<6} | {c.clang:<6} | {c.gcc:<6} | {c.id if c.id else "-"}')
@@ -212,14 +210,14 @@ def main():
 
     if args.podman and args.docker:
         sys.exit('[-] ERROR: Multiple container engines specified')
-    if not (args.podman or args.docker):
-        ContainerImage.runtime = identify_runtime()
     if args.docker:
         print('[+] Force to use the Docker container engine')
         ContainerImage.runtime = 'docker'
-    if args.podman:
+    elif args.podman:
         print('[+] Force to use the Podman container engine')
         ContainerImage.runtime = 'podman'
+    else:
+        ContainerImage.runtime = choose_runtime()
 
     images = []
     images += [ContainerImage('5', '4.9', '16.04')]
