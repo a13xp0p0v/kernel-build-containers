@@ -3,8 +3,8 @@
 print_help() {
 	echo "usage: $0 compiler src_dir out_dir [-h] [-d | -p] [-n] [-e VAR] [-v] [-- cmd with args]"
 	echo "  -h    print this help"
-	echo "  -d    force to use the Docker container engine"
-	echo "  -p    force to use the Podman container engine"
+	echo "  -d    force to use the Docker container engine (default)"
+	echo "  -p    force to use the Podman container engine instead of default Docker"
 	echo "  -n    launch container in non-interactive mode"
 	echo "  -e    add environment variable in the container (may be used multiple times)"
 	echo "  -v    enable debug output"
@@ -84,8 +84,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ -z "$RUNTIME" ]; then
-	echo "Please use --podman / --docker flags" >&2
-	exit 1
+	echo "Docker container engine is chosen (default)"
+	RUNTIME="docker"
 fi
 
 output=$($RUNTIME ps 2>&1)

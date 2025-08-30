@@ -10,7 +10,6 @@ import sys
 import argparse
 import pwd
 import grp
-import shutil
 
 supported_compilers = ['clang-5', 'clang-6', 'clang-7', 'clang-8',
                        'clang-9', 'clang-10', 'clang-11', 'clang-12',
@@ -135,16 +134,6 @@ class ContainerImage:
         except FileNotFoundError:
             sys.exit('[-] ERROR: The container runtime is not installed')
 
-def choose_runtime():
-    """Choose the container runtime: Docker (default) or Podman"""
-    if shutil.which('docker'):
-        print(f'[+] Docker container engine is chosen (default)')
-        return 'docker'
-    if shutil.which('podman'):
-        print(f'[+] Podman container engine is chosen (no Docker on this system)')
-        return 'podman'
-    sys.exit('[-] ERROR: No container runtime found')
-
 def build_images(needed_compiler, images):
     """Build the container images providing the specified compilers"""
     for c in images:
@@ -217,7 +206,8 @@ def main():
         print('[+] Force to use the Podman container engine')
         ContainerImage.runtime = 'podman'
     else:
-        ContainerImage.runtime = choose_runtime()
+        print(f'[+] Docker container engine is chosen (default)')
+        ContainerImage.runtime = 'docker'
 
     images = []
     images += [ContainerImage('5', '4.9', '16.04')]
