@@ -12,6 +12,8 @@ print_help() {
 	echo "  If cmd is empty, we will start an interactive bash in the container."
 }
 
+set -eu
+
 if [ $# -lt 3 ]; then
 	print_help
 	exit 1
@@ -89,8 +91,9 @@ if [ -z "$RUNTIME" ]; then
 	RUNTIME="docker"
 fi
 
+set +e
 output=$($RUNTIME ps 2>&1)
-set -eu
+set -e
 
 if [ "$RUNTIME" = "podman" ]; then
 	if [ "$EUID" -eq 0 ]; then
