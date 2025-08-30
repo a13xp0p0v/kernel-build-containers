@@ -1,13 +1,13 @@
 #!/bin/bash
 
 print_help() {
-	echo "usage: $0 compiler src_dir out_dir [-n] [-e VAR] [-h] [-v] [-p | -d] [-- cmd with args]"
+	echo "usage: $0 compiler src_dir out_dir [-h] [-d | -p] [-n] [-e VAR] [-v] [-- cmd with args]"
+	echo "  -h    print this help"
+	echo "  -d    force to use the Docker container engine"
+	echo "  -p    force to use the Podman container engine"
 	echo "  -n    launch container in non-interactive mode"
 	echo "  -e    add environment variable in the container (may be used multiple times)"
-	echo "  -h    print this help"
 	echo "  -v    enable debug output"
-	echo "  -p    use podman runtime"
-	echo "  -d    use docker runtime"
 	echo ""
 	echo "  If cmd is empty, we will start an interactive bash in the container."
 }
@@ -32,6 +32,30 @@ PODMAN_CMD=""
 
 while [[ $# -gt 0 ]]; do
 	case $1 in
+	-h | --help)
+		print_help
+		exit 0
+		;;
+	-d |--docker)
+		if [ "$RUNTIME" != "" ]; then
+			echo "ERROR: Multiple container engines specified" >&2
+			exit 1
+		else
+			echo "Force to use the Docker container engine"
+			RUNTIME="docker"
+		fi
+		shift
+		;;
+	-p |--podman)
+		if [ "$RUNTIME" != "" ]; then
+			echo "ERROR: Multiple container engines specified" >&2
+			exit 1
+		else
+			echo "Force to use the Podman container engine"
+			RUNTIME="podman"
+		fi
+		shift
+		;;
 	-n | --non-interactive)
 		INTERACTIVE=""
 		CIDFILE="--cidfile $OUT/container.id"
@@ -46,30 +70,6 @@ while [[ $# -gt 0 ]]; do
 	-v | --verbose)
 		set -x
 		shift
-		;;
-	-p |--podman)
-		if [ "$RUNTIME" != "" ]; then
-			echo "ERROR: Multiple container engines specified" >&2
-			exit 1
-		else
-			echo "Force to use the Podman container engine"
-			RUNTIME="podman"
-		fi
-		shift
-		;;
-	-d |--docker)
-		if [ "$RUNTIME" != "" ]; then
-			echo "ERROR: Multiple container engines specified" >&2
-			exit 1
-		else
-			echo "Force to use the Docker container engine"
-			RUNTIME="docker"
-		fi
-		shift
-		;;
-	-h | --help)
-		print_help
-		exit 0
 		;;
 	--)
 		shift
