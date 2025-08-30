@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
 	-n | --non-interactive)
 		INTERACTIVE=""
 		CIDFILE="--cidfile $OUT/container.id"
-		echo "Run image runtime engine in NON-interactive mode"
+		echo "Gonna run the container in NON-interactive mode"
 		shift
 		;;
 	-e | --env)
@@ -49,18 +49,20 @@ while [[ $# -gt 0 ]]; do
 		;;
 	-p |--podman)
 		if [ "$RUNTIME" != "" ]; then
-			echo "Multiple image runtime engines specified" >&2
+			echo "ERROR: Multiple container engines specified" >&2
 			exit 1
 		else
+			echo "Force to use the Podman container engine"
 			RUNTIME="podman"
 		fi
 		shift
 		;;
 	-d |--docker)
 		if [ "$RUNTIME" != "" ]; then
-			echo "Multiple image runtime engines specified" >&2
+			echo "ERROR: Multiple container engines specified" >&2
 			exit 1
 		else
+			echo "Force to use the Docker container engine"
 			RUNTIME="docker"
 		fi
 		shift
@@ -74,7 +76,7 @@ while [[ $# -gt 0 ]]; do
 		break
 		;;
 	*)
-		echo "Unknown option $1"
+		echo "ERROR: Unknown option $1"
 		print_help
 		exit 1
 		;;
@@ -115,7 +117,7 @@ if [ ! -z "$ENV" ]; then
 fi
 
 if [ ! -z $INTERACTIVE ]; then
-	echo "Gonna run $RUNTIME in interactive mode"
+	echo "Gonna run the container in interactive mode"
 fi
 
 echo "Mount source code directory \"$SRC\" at \"/src\""
