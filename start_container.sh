@@ -27,8 +27,8 @@ CIDFILE=""
 ENV=""
 INTERACTIVE="-it"
 RUNTIME=""
+RUNTIME_ARGS=""
 SUDO_CMD=""
-PODMAN_CMD=""
 
 while [[ $# -gt 0 ]]; do
 	case $1 in
@@ -53,6 +53,7 @@ while [[ $# -gt 0 ]]; do
 		else
 			echo "Force to use the Podman container engine"
 			RUNTIME="podman"
+			RUNTIME_ARGS="--userns=keep-id"
 		fi
 		shift
 		;;
@@ -97,7 +98,6 @@ if [ "$RUNTIME" = "podman" ]; then
 		exit 1
 	fi
 	echo "Hey, you are running podman as $USERNAME ($(id -u))"
-	PODMAN_CMD="--userns=keep-id"
 elif [ "$RUNTIME" = "docker" ]; then
 	if echo "$output" | grep -qi "CONTAINER ID"; then
 		echo "Enough permissions to run docker, sudo is not needed"
@@ -130,7 +130,7 @@ else
 fi
 
 # Z for setting SELinux label
-exec $SUDO_CMD $RUNTIME run $ENV $INTERACTIVE $CIDFILE $PODMAN_CMD --rm \
+exec $SUDO_CMD $RUNTIME run $ENV $INTERACTIVE $CIDFILE $RUNTIME_ARGS --rm \
 	-v $SRC:/src:Z \
 	-v $OUT:/out:Z \
 	kernel-build-container:$COMPILER "$@"
