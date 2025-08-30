@@ -92,25 +92,12 @@ if [ -z "$RUNTIME" ]; then
 fi
 
 set +e
-output=$($RUNTIME ps 2>&1)
+RUNTIME_TEST_OUTPUT="$($RUNTIME ps 2>&1)"
 set -e
 
-if [ "$RUNTIME" = "podman" ]; then
-	if [ "$EUID" -eq 0 ]; then
-		echo "Dont use podman with sudo, it's rootless!" >&2
-		exit 1
-	fi
-	echo "Hey, you are running podman as $USERNAME ($(id -u))"
-elif [ "$RUNTIME" = "docker" ]; then
-	if echo "$output" | grep -qi "CONTAINER ID"; then
-		echo "Enough permissions to run docker, sudo is not needed"
-	elif echo "$output" | grep -qi "permission denied"; then
-		echo "Hey, we gonna use sudo for running docker"
-		SUDO_CMD="sudo"
-	fi
-else
-	echo "Unexpected state" >&2
-	exit 1
+if echo "$RUNTIME_TEST_OUTPUT" | grep -qi "permission denied"; then
+	echo "Hey, we gonna use sudo for running the container"
+	SUDO_CMD="sudo"
 fi
 
 echo "Starting \"kernel-build-container:$COMPILER\""
