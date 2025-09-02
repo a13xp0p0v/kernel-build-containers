@@ -61,8 +61,8 @@ class ContainerImage:
                       '--build-arg', f'CLANG_VERSION={self.clang}',
                       '--build-arg', f'GCC_VERSION={self.gcc}',
                       '--build-arg', f'UBUNTU_VERSION={self.ubuntu}',
-                      '--build-arg', f'UNAME={pwd.getpwuid(os.getuid())[0]}',
-                      '--build-arg', f'GNAME={grp.getgrgid(os.getgid())[0]}',
+                      '--build-arg', f'UNAME={pwd.getpwuid(os.getuid()).pw_name}',
+                      '--build-arg', f'GNAME={grp.getgrgid(os.getgid()).gr_name}',
                       '--build-arg', f'UID={os.getuid()}',
                       '--build-arg', f'GID={os.getgid()}',
                       '-t', self.clang_tag,
@@ -204,6 +204,7 @@ def main():
         ContainerImage.runtime = 'docker'
     elif args.podman:
         print('[+] Force to use the Podman container engine')
+        print(f'[!] INFO: Working with Podman images belonging to "{pwd.getpwuid(os.getuid()).pw_name}" (UID {os.getuid()})')
         ContainerImage.runtime = 'podman'
     else:
         print(f'[+] Docker container engine is chosen (default)')

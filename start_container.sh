@@ -54,6 +54,7 @@ while [[ $# -gt 0 ]]; do
 			exit 1
 		else
 			echo "Force to use the Podman container engine"
+			echo "INFO: Working with Podman images belonging to \"$(id -un)\" (UID $(id -u))"
 			RUNTIME="podman"
 			RUNTIME_ARGS="--userns=keep-id"
 		fi
@@ -100,7 +101,7 @@ if echo "$RUNTIME_TEST_OUTPUT" | grep -qi "permission denied"; then
 	SUDO_CMD="sudo"
 fi
 
-echo "Starting \"kernel-build-container:$COMPILER\""
+echo -e "\nStarting \"kernel-build-container:$COMPILER\""
 
 if [ ! -z "$ENV" ]; then
 	echo "Container environment arguments: $ENV"
