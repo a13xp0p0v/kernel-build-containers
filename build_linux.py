@@ -171,9 +171,9 @@ def main():
     parser.add_argument('-t', '--single-thread', action='store_true',
                         help='for running `make` in single-threaded mode (multi-threaded by default)')
     parser.add_argument('-d', '--docker', action='store_true',
-                        help='use docker image runtime engine')
+                        help='force to use the Docker container engine (default)')
     parser.add_argument('-p', '--podman', action='store_true',
-                        help='use podman image runtime enhine')
+                        help='force to use the Podman container engine instead of default Docker')
     parser.add_argument('make_args', metavar='...', nargs=argparse.REMAINDER,
                         help='additional arguments for \'make\', can be separated by -- delimiter')
     args = parser.parse_args()
@@ -199,12 +199,16 @@ def main():
         print(f'Using "{args.out}" as build output directory')
 
     if args.podman and args.docker:
-        sys.exit('[!] ERROR: Multiple image runtime engines specified')
+        sys.exit('[-] ERROR: Multiple container engines specified')
     if args.docker:
+        print('[+] Force to use the Docker container engine')
         runtime = 'docker'
-    if args.podman:
+    elif args.podman:
+        print('[+] Force to use the Podman container engine')
+        print(f'[!] INFO: Working with Podman images belonging to "{pwd.getpwuid(os.getuid()).pw_name}" (UID {os.getuid()})')
         runtime = 'podman'
     else:
+        print(f'[+] Docker container engine is chosen (default)')
         runtime = 'docker'
 
     make_args = args.make_args[:]
