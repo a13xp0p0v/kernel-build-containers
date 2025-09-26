@@ -11,6 +11,7 @@ print_help(){
 set -eu
 
 if [ $# -ne 3 ]; then
+	echo "ERROR: Invalid amount of arguments specified"
 	print_help
 	exit 1
 fi
@@ -22,6 +23,7 @@ SUDO_CMD=""
 CID_FILE="$OUT/container.id"
 
 if [ "$RUNTIME" != "podman" ] && [ $RUNTIME != "docker" ]; then
+	echo "ERROR: Invalid conatiner engine specified"
 	print_help
 	exit 1
 fi
