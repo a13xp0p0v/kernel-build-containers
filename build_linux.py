@@ -8,6 +8,7 @@ import argparse
 import subprocess
 import shutil
 import filecmp
+import pwd
 
 
 supported_archs = ['x86_64', 'i386', 'arm64', 'arm', 'riscv']
@@ -148,16 +149,6 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
     if interrupt:
         sys.exit('[!] WARNING: Exit by interrupt')
 
-def identify_runtime():
-    """Check for Docker and Podman in the system PATH using `shutil.which`."""
-    engines = [eng for eng in ['docker', 'podman'] if shutil.which(eng)]
-    if not engines:
-        sys.exit('[!] ERROR: The container runtime is not installed')
-    if len(engines) == 1:
-        print(f'[+] {engines[0].capitalize()} runtime image engine identified')
-        return engines[0]
-    print('[+] Both Docker and Podman are available. Defaulting to Docker.')
-    return 'docker'
 
 def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
@@ -209,12 +200,12 @@ def main():
 
     if args.podman and args.docker:
         sys.exit('[!] ERROR: Multiple image runtime engines specified')
-    if not (args.podman or args.docker):
-        runtime = identify_runtime()
     if args.docker:
         runtime = 'docker'
     if args.podman:
         runtime = 'podman'
+    else:
+        runtime = 'docker'
 
     make_args = args.make_args[:]
     if make_args:
