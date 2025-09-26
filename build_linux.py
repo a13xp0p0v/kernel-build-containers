@@ -39,14 +39,14 @@ def get_cross_compile_args(arch):
 
 def finish_building_kernel(out_dir, interrupt, runtime):
     print('Finish building the kernel')
-    finish_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/finish_container.sh']
+    finish_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/finish_container.sh', runtime]
     if interrupt:
         print('Kill the container and remove the container id file:')
         finish_container_cmd.extend(['kill'])
     else:
         print('Only remove the container id file:')
         finish_container_cmd.extend(['nokill'])
-    finish_container_cmd.extend([out_dir, runtime])
+    finish_container_cmd.extend([out_dir])
 
     with subprocess.Popen(finish_container_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                           universal_newlines=True, bufsize=1) as process:
@@ -57,7 +57,7 @@ def finish_building_kernel(out_dir, interrupt, runtime):
     print(f'The finish_container.sh script returned {return_code}')
 
 
-def build_kernel(arch, kconfig, src, out, compiler, make_args):
+def build_kernel(arch, kconfig, src, out, compiler, runtime, make_args):
     if kconfig:
         assert(out), 'Ouch, the output directory is required for building with the kconfig file'
         kconfig_name_parts = os.path.splitext(os.path.basename(kconfig))
