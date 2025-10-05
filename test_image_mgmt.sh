@@ -117,6 +117,16 @@ $SUDO_CMD docker rmi -f kernel-build-container:clang-13
 python3 -m coverage run -a --branch manage_images.py -l
 
 $DELIMITER
+echo "Testing runtime engine selection and errors handling when multiple container engines installed"
+python3 -m coverage run -a --branch manage_images.py -d -p -l | grep "\[-\] Multiple container engines specified"
+python3 -m coverage run -a --branch manage_images.py -p -l | grep "\[+\] Force to use the Podman container engine"
+python3 -m coverage run -a --branch manage_images.py -d -l | grep "\[+\] Force to use the Docker container engine"
+export PATH_BACK="$PATH"
+export PATH=''
+/usr/bin/python3 -m coverage run -a --branch manage_images.py -l && exit 1
+export PATH="$PATH_BACK"
+
+$DELIMITER
 echo "All tests completed. Creating the coverage report..."
 python3 -m coverage report
 python3 -m coverage html
