@@ -1,27 +1,18 @@
 #!/bin/bash
 
 print_help() {
-	echo "usage: $0 compiler src_dir out_dir [-n] [-e VAR] [-h] [-v] [-- cmd with args]"
+	echo "usage: $0 compiler src_dir out_dir [-h] [-d | -p] [-n] [-e VAR] [-v] [-- cmd with args]"
+	echo "  -h    print this help"
+	echo "  -d    force to use the Docker container engine (default)"
+	echo "  -p    force to use the Podman container engine instead of default Docker"
 	echo "  -n    launch container in non-interactive mode"
 	echo "  -e    add environment variable in the container (may be used multiple times)"
-	echo "  -h    print this help"
 	echo "  -v    enable debug output"
 	echo ""
 	echo "  If cmd is empty, we will start an interactive bash in the container."
 }
 
-groups | grep '\<docker\>' > /dev/null
-NEED_SUDO=$?
-
 set -eu
-
-if [ $NEED_SUDO -eq 1 ]; then
-	echo "Hey, we gonna use sudo for running docker"
-	SUDO_CMD="sudo"
-else
-	echo "Hey, you are in docker group, sudo is not needed"
-	SUDO_CMD=""
-fi
 
 if [ $# -lt 3 ]; then
 	print_help
@@ -37,13 +28,42 @@ shift 3
 CIDFILE=""
 ENV=""
 INTERACTIVE="-it"
+RUNTIME=""
+RUNTIME_ARGS=""
+SUDO_CMD=""
 
 while [[ $# -gt 0 ]]; do
 	case $1 in
+	-h | --help)
+		print_help
+		exit 0
+		;;
+	-d |--docker)
+		if [ "$RUNTIME" != "" ]; then
+			echo "ERROR: Multiple container engines specified" >&2
+			exit 1
+		else
+			echo "Force to use the Docker container engine"
+			RUNTIME="docker"
+		fi
+		shift
+		;;
+	-p |--podman)
+		if [ "$RUNTIME" != "" ]; then
+			echo "ERROR: Multiple container engines specified" >&2
+			exit 1
+		else
+			echo "Force to use the Podman container engine"
+			echo "INFO: Working with Podman images belonging to \"$(id -un)\" (UID $(id -u))"
+			RUNTIME="podman"
+			RUNTIME_ARGS="--userns=keep-id"
+		fi
+		shift
+		;;
 	-n | --non-interactive)
 		INTERACTIVE=""
 		CIDFILE="--cidfile $OUT/container.id"
-		echo "Run docker in NON-interactive mode"
+		echo "Gonna run the container in NON-interactive mode"
 		shift
 		;;
 	-e | --env)
@@ -55,30 +75,40 @@ while [[ $# -gt 0 ]]; do
 		set -x
 		shift
 		;;
-	-h | --help)
-		print_help
-		exit 0
-		;;
 	--)
 		shift
 		break
 		;;
 	*)
-		echo "Unknown option $1"
+		echo "ERROR: Unknown option $1"
 		print_help
 		exit 1
 		;;
 	esac
 done
 
-echo "Starting \"kernel-build-container:$COMPILER\""
+if [ -z "$RUNTIME" ]; then
+	echo "Docker container engine is chosen (default)"
+	RUNTIME="docker"
+fi
+
+set +e
+RUNTIME_TEST_OUTPUT="$($RUNTIME ps 2>&1)"
+set -e
+
+if echo "$RUNTIME_TEST_OUTPUT" | grep -qi "permission denied"; then
+	echo "Hey, we gonna use sudo for running the container"
+	SUDO_CMD="sudo"
+fi
+
+echo -e "\nStarting \"kernel-build-container:$COMPILER\""
 
 if [ ! -z "$ENV" ]; then
 	echo "Container environment arguments: $ENV"
 fi
 
 if [ ! -z $INTERACTIVE ]; then
-	echo "Gonna run docker in interactive mode"
+	echo "Gonna run the container in interactive mode"
 fi
 
 echo "Mount source code directory \"$SRC\" at \"/src\""
@@ -91,7 +121,7 @@ else
 fi
 
 # Z for setting SELinux label
-exec $SUDO_CMD docker run $ENV $INTERACTIVE $CIDFILE --rm \
+exec $SUDO_CMD $RUNTIME run $ENV $INTERACTIVE $CIDFILE $RUNTIME_ARGS --rm \
 	-v $SRC:/src:Z \
 	-v $OUT:/out:Z \
 	kernel-build-container:$COMPILER "$@"

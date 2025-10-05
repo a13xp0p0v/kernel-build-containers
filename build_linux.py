@@ -6,8 +6,8 @@ import os
 import sys
 import argparse
 import subprocess
-import shutil
 import filecmp
+import pwd
 
 
 supported_archs = ['x86_64', 'i386', 'arm64', 'arm', 'riscv']
@@ -36,9 +36,9 @@ def get_cross_compile_args(arch):
     return args_list
 
 
-def finish_building_kernel(out_dir, interrupt):
+def finish_building_kernel(out_dir, interrupt, runtime):
     print('Finish building the kernel')
-    finish_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/finish_container.sh']
+    finish_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/finish_container.sh', runtime]
     if interrupt:
         print('Kill the container and remove the container id file:')
         finish_container_cmd.extend(['kill'])
@@ -56,7 +56,7 @@ def finish_building_kernel(out_dir, interrupt):
     print(f'The finish_container.sh script returned {return_code}')
 
 
-def build_kernel(arch, kconfig, src, out, compiler, make_args):
+def build_kernel(arch, kconfig, src, out, compiler, runtime, make_args):
     print(f'\n=== Building with {compiler} ===')
 
     if kconfig:
@@ -86,12 +86,12 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
                 print(f'kconfig files "{kconfig}" and "{current_config}" are identical, proceed')
             else:
                 print(f'kconfig files "{kconfig}" and "{current_config}" differ, stop')
-                sys.exit('[!] ERROR: kconfig files are different, check the diff and consider copying')
+                sys.exit('[-] ERROR: kconfig files are different, check the diff and consider copying')
     else:
         print('No kconfig to copy to output subdirectory')
 
     start_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/start_container.sh',
-                                   compiler, src, out_subdir]
+                                   compiler, src, out_subdir, f'--{runtime}']
 
     noninteractive = True
     if 'menuconfig' in make_args:
@@ -134,12 +134,13 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
         except KeyboardInterrupt:
             print('[!] Got keyboard interrupt, stopping build process...')
             interrupt = True
-    finish_building_kernel(out_subdir, interrupt)
+    finish_building_kernel(out_subdir, interrupt, runtime)
     if noninteractive:
         print(f'See the build log: {build_log}')
         build_log_fd.close()
     if interrupt:
         sys.exit('[!] Exit by interrupt')
+
 
 
 def main():
@@ -158,6 +159,10 @@ def main():
                         help='for running `make` in quiet mode')
     parser.add_argument('-t', '--single-thread', action='store_true',
                         help='for running `make` in single-threaded mode (multi-threaded by default)')
+    parser.add_argument('-d', '--docker', action='store_true',
+                        help='force to use the Docker container engine (default)')
+    parser.add_argument('-p', '--podman', action='store_true',
+                        help='force to use the Podman container engine instead of default Docker')
     parser.add_argument('make_args', metavar='...', nargs=argparse.REMAINDER,
                         help='additional arguments for \'make\', can be separated by -- delimiter')
     args = parser.parse_args()
@@ -166,18 +171,31 @@ def main():
 
     if args.kconfig:
         if not os.path.isfile(args.kconfig):
-            sys.exit(f'[!] ERROR: can\'t find the kernel config "{args.kconfig}"')
+            sys.exit(f'[-] ERROR: can\'t find the kernel config "{args.kconfig}"')
         print(f'[+] Using "{args.kconfig}" as kernel config')
 
     if not os.path.isdir(args.src):
-        sys.exit(f'[!] ERROR: can\'t find the kernel sources directory "{args.src}"')
+        sys.exit(f'[-] ERROR: can\'t find the kernel sources directory "{args.src}"')
     print(f'[+] Using "{args.src}" as Linux kernel sources directory')
 
     if not os.path.isdir(args.out):
-        sys.exit(f'[!] ERROR: can\'t find the build output directory "{args.out}"')
+        sys.exit(f'[-] ERROR: can\'t find the build output directory "{args.out}"')
     print(f'[+] Using "{args.out}" as build output directory')
 
     print(f'[+] Going to build with: {args.compiler}')
+
+    if args.podman and args.docker:
+        sys.exit('[-] ERROR: Multiple container engines specified')
+    if args.docker:
+        print('[+] Force to use the Docker container engine')
+        runtime = 'docker'
+    elif args.podman:
+        print('[+] Force to use the Podman container engine')
+        print(f'[!] INFO: Working with Podman images belonging to "{pwd.getpwuid(os.getuid()).pw_name}" (UID {os.getuid()})')
+        runtime = 'podman'
+    else:
+        print(f'[+] Docker container engine is chosen (default)')
+        runtime = 'docker'
 
     make_args = args.make_args[:]
     if make_args:
@@ -207,7 +225,7 @@ def main():
     else:
         print('[+] Going to run \'make\' in single-threaded mode')
 
-    build_kernel(args.arch, args.kconfig, args.src, args.out, args.compiler, make_args)
+    build_kernel(args.arch, args.kconfig, args.src, args.out, args.compiler, runtime, make_args)
 
     print('\n[+] Done, see the results')
 
