@@ -238,7 +238,7 @@ __Get help:__
 
 ```console
 $ python3 build_linux.py --help
-usage: build_linux.py [-h] [-k KCONFIG] -a ARCH -c COMPILER -s SRC -o OUT [-q] [-t] ...
+usage: build_linux.py [-h] [-k KCONFIG] -a ARCH -c COMPILER -s SRC [-o OUT] [-q] [-t] ...
 
 Build Linux kernel using kernel-build-containers
 
@@ -253,14 +253,15 @@ options:
   -c, --compiler COMPILER
                         compiler for building (clang-5 / clang-6 / clang-7 / clang-8 /
                         clang-9 / clang-10 / clang-11 / clang-12 / clang-13 / clang-14 /
-                        clang-15 / clang-16 / clang-17 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7
-                        / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14)
+                        clang-15 / clang-16 / clang-17 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 /
+                        gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14)
   -s, --src SRC         Linux kernel sources directory
   -o, --out OUT         build output directory, where the output subdirectory
                         "kconfig__arch__compiler" is created. Without "-k", the output
-                        subdirectory name is "arch__compiler". Specifying the same "-s"
-                        and "-o" arguments without "-k" allows building at the root of
-                        the kernel source tree.
+                        subdirectory name format is "arch__compiler". For in-place building
+                        of Linux at the root of the kernel source tree, you can specify the
+                        same "-s" and "-o" path without "-k" or simply run the tool without
+                        "-o" and "-k" arguments.
   -q, --quiet           for running `make` in quiet mode
   -t, --single-thread   for running `make` in single-threaded mode (multi-threaded by
                         default)

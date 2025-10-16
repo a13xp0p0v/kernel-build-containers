@@ -60,13 +60,17 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
     print(f'\n=== Building with {compiler} ===')
 
     if kconfig:
+        assert(out), 'output directory is required for building with kconfig file'
         suffix = os.path.splitext(os.path.basename(kconfig))[0]
         out_subdir = out + '/' + suffix + NAME_DELIMITER + arch + NAME_DELIMITER + compiler
-    elif out != src:
-        out_subdir = out + '/' + arch + NAME_DELIMITER + compiler
+    elif not out:
+        print('No "-k" and "-o" arguments; skip creating an output subdirectory to allow in-place build')
+        out_subdir = src
+    elif out == src:
+        print('Same "-s" and "-o" values and no "-k"; skip creating an output subdirectory to allow in-place build')
+        out_subdir = src
     else:
-        print('Same "-s" and "-o" arguments! Skip creating an output subdirectory to allow in-place build')
-        out_subdir = out
+        out_subdir = out + '/' + arch + NAME_DELIMITER + compiler
 
     print(f'Output subdirectory for this build: {out_subdir}')
     if os.path.isdir(out_subdir):
@@ -108,7 +112,7 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
 
     start_container_cmd.extend(['--', 'make'])
 
-    if out != src:
+    if out_subdir != src:
         start_container_cmd.append('O=../out/')
     else:
         print('Going to build the kernel in-place (without "O=")')
@@ -156,11 +160,12 @@ def main():
                         help=f'compiler for building ({" / ".join(supported_compilers)})')
     parser.add_argument('-s', '--src', required=True,
                         help='Linux kernel sources directory')
-    parser.add_argument('-o', '--out', required=True,
+    parser.add_argument('-o', '--out',
                         help='build output directory, where the output subdirectory "kconfig__arch__compiler" '
-                             'is created. Without "-k", the output subdirectory name is "arch__compiler". '
-                             'Specifying the same "-s" and "-o" arguments without "-k" allows building '
-                             'at the root of the kernel source tree.')
+                             'is created. Without "-k", the output subdirectory name format is "arch__compiler". '
+                             'For in-place building of Linux at the root of the kernel source tree, you can '
+                             'specify the same "-s" and "-o" path without "-k" or simply run the tool '
+                             'without "-o" and "-k" arguments.')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='for running `make` in quiet mode')
     parser.add_argument('-t', '--single-thread', action='store_true',
@@ -174,17 +179,20 @@ def main():
     if args.kconfig:
         if not os.path.isfile(args.kconfig):
             sys.exit(f'[!] ERROR: can\'t find the kernel config "{args.kconfig}"')
+        if not args.out:
+            sys.exit('[!] ERROR: "-k" requires specifying the build output directory using "-o"')
         print(f'[+] Using "{args.kconfig}" as kernel config')
+
+    print(f'[+] Going to build with: {args.compiler}')
 
     if not os.path.isdir(args.src):
         sys.exit(f'[!] ERROR: can\'t find the kernel sources directory "{args.src}"')
     print(f'[+] Using "{args.src}" as Linux kernel sources directory')
 
-    if not os.path.isdir(args.out):
-        sys.exit(f'[!] ERROR: can\'t find the build output directory "{args.out}"')
-    print(f'[+] Using "{args.out}" as build output directory')
-
-    print(f'[+] Going to build with: {args.compiler}')
+    if args.out:
+        if not os.path.isdir(args.out):
+            sys.exit(f'[!] ERROR: can\'t find the build output directory "{args.out}"')
+        print(f'[+] Using "{args.out}" as build output directory')
 
     make_args = args.make_args[:]
     if make_args:
