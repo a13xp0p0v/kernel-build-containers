@@ -257,11 +257,11 @@ options:
                         gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14)
   -s, --src SRC         Linux kernel sources directory
   -o, --out OUT         build output directory, where the output subdirectory
-                        "kconfig__arch__compiler" is created. Without "-k", the output
+                        "kconfig__arch__compiler" is created. Without '-k', the output
                         subdirectory name format is "arch__compiler". For in-place building
                         of Linux at the root of the kernel source tree, you can specify the
-                        same "-s" and "-o" path without "-k" or simply run the tool without
-                        "-o" and "-k" arguments.
+                        same '-s' and '-o' path without '-k' or simply run the tool without
+                        '-o' and '-k' arguments.
   -q, --quiet           for running `make` in quiet mode
   -t, --single-thread   for running `make` in single-threaded mode (multi-threaded by
                         default)
