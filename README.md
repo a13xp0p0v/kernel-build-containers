@@ -238,7 +238,7 @@ __Get help:__
 
 ```console
 $ python3 build_linux.py --help
-usage: build_linux.py [-h] -c COMPILER -a ARCH -s SRC -o OUT [-k KCONFIG] [-q] [-t] ...
+usage: build_linux.py [-h] [-k KCONFIG] -a ARCH -c COMPILER -s SRC -o OUT [-q] [-t] ...
 
 Build Linux kernel using kernel-build-containers
 
@@ -247,19 +247,23 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -c, --compiler COMPILER
-                        compiler for building (clang-5 / clang-6 / clang-7 /
-                        clang-8 / clang-9 / clang-10 / clang-11 / clang-12 /
-                        clang-13 / clang-14 / clang-15 / clang-16 / clang-17 /
-                        gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 /
-                        gcc-11 / gcc-12 / gcc-13 / gcc-14)
-  -a, --arch ARCH       build target architecture (x86_64 / i386 / arm64 / arm / riscv)
-  -s, --src SRC         Linux kernel sources directory
-  -o, --out OUT         build output directory
   -k, --kconfig KCONFIG
-                        path to kernel kconfig file
+                        path to kernel kconfig file (optional argument)
+  -a, --arch ARCH       build target architecture (x86_64 / i386 / arm64 / arm / riscv)
+  -c, --compiler COMPILER
+                        compiler for building (clang-5 / clang-6 / clang-7 / clang-8 /
+                        clang-9 / clang-10 / clang-11 / clang-12 / clang-13 / clang-14 /
+                        clang-15 / clang-16 / clang-17 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7
+                        / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14)
+  -s, --src SRC         Linux kernel sources directory
+  -o, --out OUT         build output directory, where the output subdirectory
+                        "kconfig__arch__compiler" is created. Without "-k", the output
+                        subdirectory name is "arch__compiler". Specifying the same "-s"
+                        and "-o" arguments without "-k" allows building at the root of
+                        the kernel source tree.
   -q, --quiet           for running `make` in quiet mode
-  -t, --single-thread   for running `make` in single-threaded mode (multi-threaded by default)
+  -t, --single-thread   for running `make` in single-threaded mode (multi-threaded by
+                        default)
 ```
 
 __Configure the Linux kernel with `menuconfig` in the needed container:__

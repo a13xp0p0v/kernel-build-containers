@@ -61,13 +61,12 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
 
     if kconfig:
         suffix = os.path.splitext(os.path.basename(kconfig))[0]
-        if arch in suffix:
-            print(f'Arch name "{arch}" is already a part of kconfig name')
-            out_subdir = out + '/' + suffix + NAME_DELIMITER + compiler
-        else:
-            out_subdir = out + '/' + suffix + NAME_DELIMITER + arch + NAME_DELIMITER + compiler
-    else:
+        out_subdir = out + '/' + suffix + NAME_DELIMITER + arch + NAME_DELIMITER + compiler
+    elif out != src:
         out_subdir = out + '/' + arch + NAME_DELIMITER + compiler
+    else:
+        print('Same "-s" and "-o" arguments! Skip creating an output subdirectory to allow in-place build')
+        out_subdir = out
 
     print(f'Output subdirectory for this build: {out_subdir}')
     if os.path.isdir(out_subdir):
@@ -107,7 +106,12 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
         print('Going to run the container in the interactive mode (without build log)')
         stdout_destination = None
 
-    start_container_cmd.extend(['--', 'make', 'O=../out/'])
+    start_container_cmd.extend(['--', 'make'])
+
+    if out != src:
+        start_container_cmd.append('O=../out/')
+    else:
+        print('Going to build the kernel in-place (without "O=")')
 
     if compiler.startswith('clang'):
         print('Compiling with clang requires \'CC=clang\'')
@@ -144,16 +148,19 @@ def build_kernel(arch, kconfig, src, out, compiler, make_args):
 
 def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
-    parser.add_argument('-c', '--compiler', metavar='COMPILER', choices=supported_compilers, required=True,
-                        help=f'compiler for building ({" / ".join(supported_compilers)})')
+    parser.add_argument('-k', '--kconfig',
+                        help='path to kernel kconfig file (optional argument)')
     parser.add_argument('-a', '--arch', metavar='ARCH', choices=supported_archs, required=True,
                         help=f'build target architecture ({" / ".join(supported_archs)})')
+    parser.add_argument('-c', '--compiler', metavar='COMPILER', choices=supported_compilers, required=True,
+                        help=f'compiler for building ({" / ".join(supported_compilers)})')
     parser.add_argument('-s', '--src', required=True,
                         help='Linux kernel sources directory')
     parser.add_argument('-o', '--out', required=True,
-                        help='build output directory')
-    parser.add_argument('-k', '--kconfig',
-                        help='path to kernel kconfig file')
+                        help='build output directory, where the output subdirectory "kconfig__arch__compiler" '
+                             'is created. Without "-k", the output subdirectory name is "arch__compiler". '
+                             'Specifying the same "-s" and "-o" arguments without "-k" allows building '
+                             'at the root of the kernel source tree.')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='for running `make` in quiet mode')
     parser.add_argument('-t', '--single-thread', action='store_true',
