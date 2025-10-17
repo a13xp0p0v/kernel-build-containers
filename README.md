@@ -384,7 +384,7 @@ For in-place building of Linux at the root of the kernel source tree, you can ei
  - Or simply run the tool without `-o` and `-k` arguments.
 
 ```console
-$ ./build_linux.py -c clang-16 -a x86_64 -s ~/linux-stable/linux-stable -- defconfig
+$ python3 build_linux.py -c clang-16 -a x86_64 -s ~/linux-stable/linux-stable -- defconfig
 Going to build the Linux kernel for x86_64
 Going to build with clang-16
 Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
