@@ -59,8 +59,9 @@ def finish_building_kernel(out_dir, interrupt):
 def build_kernel(arch, kconfig, src, out, compiler, make_args):
     if kconfig:
         assert(out), 'Ouch, the output directory is required for building with the kconfig file'
-        suffix = os.path.splitext(os.path.basename(kconfig))[0]
-        out_subdir = out + '/' + suffix + NAME_DELIMITER + arch + NAME_DELIMITER + compiler
+        kconfig_name_parts = os.path.splitext(os.path.basename(kconfig))
+        kconfig_name = kconfig_name_parts[0].lstrip('.') # handling the corner case: "-k .config"
+        out_subdir = out + '/' + kconfig_name + NAME_DELIMITER + arch + NAME_DELIMITER + compiler
     elif not out:
         print('No \'-k\' and \'-o\' arguments; skip creating an output subdirectory to allow in-place build')
         out_subdir = src
