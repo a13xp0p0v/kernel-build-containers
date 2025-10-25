@@ -3,7 +3,7 @@
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/a13xp0p0v/kernel-build-containers?label=release)](https://github.com/a13xp0p0v/kernel-build-containers/tags)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-This project provides Docker containers for building the Linux kernel (or other software) with many different compilers.
+This project provides Docker and Podman containers for building the Linux kernel (or other software) with many different compilers.
 
 License: GPL-3.0.
 
@@ -58,7 +58,7 @@ __Get help:__
 
 ```console
 $ python3 manage_images.py -h
-usage: manage_images.py [-h] [-l] [-b [compiler]] [-q] [-r [compiler]]
+usage: manage_images.py [-h] [-l] [-b [compiler]] [-q] [-r [compiler]] [-d] [-p]
 
 Manage the images for kernel-build-containers
 
@@ -80,12 +80,20 @@ options:
                         / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14
                         / all ("all" is default, the tool will remove all images if no
                         compiler is specified)
+  -d, --docker          force to use the Docker container engine (default)
+  -p, --podman          force to use the Podman container engine instead of default Docker
 ```
 
-__Build a single container image:__
+__Build a single Docker (default) container image:__
 
 ```console
 $ python3 manage_images.py -b gcc-12
+```
+
+__Build a single Podman container image:__
+
+```console
+$ python3 manage_images.py -b gcc-12 -p
 ```
 
 __Build a container image quietly:__
@@ -98,12 +106,13 @@ __List container images:__
 
 ```console
 $ python3 manage_images.py -l
-We need "sudo" for working with containers
+[+] Docker container engine is chosen (default)
+[!] INFO: We need "sudo" for working with Docker containers
 
 Current status:
------------------------------------------
- Ubuntu | Clang  | GCC    | Image ID
------------------------------------------
+--------------------------------------------
+ Ubuntu | Clang  | GCC    | Docker Image ID
+--------------------------------------------
  16.04  | 5      | 4.9    | -
  16.04  | 6      | 5      | -
  18.04  | 7      | 6      | -
@@ -117,7 +126,7 @@ Current status:
  24.04  | 15     | 13     | -
  24.04  | 16     | 14     | -
  24.04  | 17     | 14     | -
------------------------------------------
+--------------------------------------------
 ```
 
 __Build all container images:__
@@ -134,9 +143,9 @@ __Expected output after building all images:__
 
 ```console
 Current status:
------------------------------------------
- Ubuntu | Clang  | GCC    | Image ID
------------------------------------------
+--------------------------------------------
+ Ubuntu | Clang  | GCC    | Docker Image ID
+--------------------------------------------
  16.04  | 5      | 4.9    | 84de06274519
  16.04  | 6      | 5      | 9f1a2dd62fdd
  18.04  | 7      | 6      | 112aac42ce4c
@@ -150,7 +159,7 @@ Current status:
  24.04  | 15     | 13     | a48106dc194e
  24.04  | 16     | 14     | 1c0aba835f6c
  24.04  | 17     | 14     | 18f5a5c70571
------------------------------------------
+--------------------------------------------
 ```
 
 __Created container images:__
@@ -190,11 +199,12 @@ __Get help:__
 
 ```console
 $ bash start_container.sh
-Hey, we gonna use sudo for running docker
-usage: start_container.sh compiler src_dir out_dir [-n] [-e VAR] [-h] [-v] [-- cmd with args]
+usage: start_container.sh compiler src_dir out_dir [-h] [-d | -p] [-n] [-e VAR] [-v] [-- cmd with args]
+  -h    print this help
+  -d    force to use the Docker container engine (default)
+  -p    force to use the Podman container engine instead of default Docker
   -n    launch container in non-interactive mode
   -e    add environment variable in the container (may be used multiple times)
-  -h    print this help
   -v    enable debug output
 
   If cmd is empty, we will start an interactive bash in the container.
@@ -204,15 +214,15 @@ __Run interactive bash in the container:__
 
 ```console
 $ bash start_container.sh gcc-12 ~/linux-stable/linux-stable/ ~/linux-stable/build_out/
-Hey, we gonna use sudo for running docker
+Docker container engine is chosen (default)
+Hey, we gonna use sudo for running the container
+
 Starting "kernel-build-container:gcc-12"
-Gonna run docker in interactive mode
+Gonna run the container in interactive mode
 Mount source code directory "/home/a13x/linux-stable/linux-stable/" at "/home/a13x/src"
 Mount build output directory "/home/a13x/linux-stable/build_out/" at "/home/a13x/out"
 Gonna run bash
 
-To run a command as administrator (user "root"), use "sudo <command>".
-See "man sudo_root" for details.
 
 a13x@38f63939b504:~/src$
 ```
@@ -221,9 +231,11 @@ __Execute a command in the container:__
 
 ```console
 $ bash start_container.sh clang-15 ~/linux-stable/linux-stable/ ~/linux-stable/build_out/ -- make defconfig
-Hey, we gonna use sudo for running docker
+Docker container engine is chosen (default)
+Hey, we gonna use sudo for running the container
+
 Starting "kernel-build-container:clang-15"
-Gonna run docker in interactive mode
+Gonna run the container in interactive mode
 Mount source code directory "/home/a13x/linux-stable/linux-stable/" at "/home/a13x/src"
 Mount build output directory "/home/a13x/linux-stable/build_out/" at "/home/a13x/out"
 Gonna run command "make defconfig"
@@ -238,7 +250,7 @@ __Get help:__
 
 ```console
 $ python3 build_linux.py --help
-usage: build_linux.py [-h] [-k KCONFIG] -a ARCH -c COMPILER -s SRC [-o OUT] [-q] [-t] ...
+usage: build_linux.py [-h] [-k KCONFIG] -a ARCH -c COMPILER -s SRC [-o OUT] [-q] [-t] [-d] [-p] ...
 
 Build Linux kernel using kernel-build-containers
 
@@ -265,6 +277,8 @@ options:
   -q, --quiet           for running `make` in quiet mode
   -t, --single-thread   for running `make` in single-threaded mode (multi-threaded by
                         default)
+  -d, --docker          force to use the Docker container engine (default)
+  -p, --podman          force to use the Podman container engine instead of default Docker
 ```
 
 __Configure the Linux kernel with `menuconfig` in the needed container:__
@@ -276,6 +290,7 @@ Using "/home/a13x/linux-stable/experiment.config" as kernel config
 Going to build with gcc-13
 Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
 Using "/home/a13x/linux-stable/build_out" as build output directory
+[+] Docker container engine is chosen (default)
 Have additional arguments for 'make': menuconfig
 Going to run 'make' on 6 CPUs
 Output subdirectory for this build: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13
@@ -284,9 +299,11 @@ The kconfig files "/home/a13x/linux-stable/experiment.config" and "/home/a13x/li
 Going to run the container in the interactive mode (without build log)
 Add arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 Run the container: bash /home/a13x/kernel-build-containers/start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -- make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j 6 menuconfig
-Hey, we gonna use sudo for running docker
+Force to use the Docker container engine
+Hey, we gonna use sudo for running the container
+
 Starting "kernel-build-container:gcc-13"
-Gonna run docker in interactive mode
+Gonna run the container in interactive mode
 Mount source code directory "/home/a13x/linux-stable/linux-stable" at "/src"
 Mount build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13" at "/out"
 Gonna run command "make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j 6 menuconfig"
@@ -301,7 +318,7 @@ make[1]: Leaving directory '/out'
 The container returned 0
 Finish building the kernel
 Only remove the container id file:
-    Hey, we gonna use sudo for running docker
+    Hey, we gonna use sudo for running the container
     Search "container.id" file in build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13"
     NO such file, nothing to do, exit
 The finish_container.sh script returned 2
@@ -318,14 +335,17 @@ Going to build with gcc-13
 Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
 Using "/home/a13x/linux-stable/build_out" as build output directory
 Going to run 'make' on 6 CPUs
+[+] Docker container engine is chosen (default)
 Output subdirectory for this build: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13
 Output subdirectory doesn't exist, create it
 No ".config", copy "/home/a13x/linux-stable/experiment.config" to "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/.config"
 Going to write the build log to "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/build_log.txt"
 Add arguments for cross-compilation: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 Run the container: bash /home/a13x/kernel-build-containers/start_container.sh gcc-13 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13 -n -- make O=../out/ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j 6
-    Hey, we gonna use sudo for running docker
-    Run docker in NON-interactive mode
+    Force to use the Docker container engine
+    Gonna run the container in NON-interactive mode
+    Hey, we gonna use sudo for running the container
+
     Starting "kernel-build-container:gcc-13"
     Mount source code directory "/home/a13x/linux-stable/linux-stable" at "/src"
     Mount build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13" at "/out"
@@ -339,7 +359,7 @@ Run the container: bash /home/a13x/kernel-build-containers/start_container.sh gc
 The container returned 0
 Finish building the kernel
 Only remove the container id file:
-    Hey, we gonna use sudo for running docker
+    Hey, we gonna use sudo for running the container
     Search "container.id" file in build output directory "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13"
     OK, "container.id" file exists, removing it
     OK, container 39462dc1116863b3579da0ad3dd51795dac3593e528e88191cd10a64e284ada9 doesn't run
@@ -358,6 +378,7 @@ Going to build with gcc-13
 Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
 Using "/home/a13x/linux-stable/build_out" as build output directory
 Going to run 'make' on 6 CPUs
+[+] Docker container engine is chosen (default)
 Output subdirectory for this build: /home/a13x/linux-stable/build_out/experiment__arm64__gcc-13
 Output subdirectory already exists, use it (no cleaning!)
 The kconfig files "/home/a13x/linux-stable/experiment.config" and "/home/a13x/linux-stable/build_out/experiment__arm64__gcc-13/.config" differ, stop
@@ -388,6 +409,7 @@ $ python3 build_linux.py -c clang-16 -a x86_64 -s ~/linux-stable/linux-stable --
 Going to build the Linux kernel for x86_64
 Going to build with clang-16
 Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
+[+] Docker container engine is chosen (default)
 Have additional arguments for 'make': defconfig
 Going to run 'make' on 6 CPUs
 No '-k' and '-o' arguments; skip creating an output subdirectory to allow in-place build
@@ -398,8 +420,10 @@ Going to write the build log to "/home/a13x/linux-stable/linux-stable/build_log.
 Going to build the kernel in-place (without 'O=')
 Add arguments for compiling with clang: CC=clang
 Run the container: bash /home/a13x/kernel-build-containers/start_container.sh clang-16 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/linux-stable -n -- make CC=clang -j 6 defconfig
-    Hey, we gonna use sudo for running docker
-    Run docker in NON-interactive mode
+    Force to use the Docker container engine
+    Gonna run the container in NON-interactive mode
+    Hey, we gonna use sudo for running the container
+
     Starting "kernel-build-container:clang-16"
     Mount source code directory "/home/a13x/linux-stable/linux-stable" at "/src"
     Mount build output directory "/home/a13x/linux-stable/linux-stable" at "/out"
@@ -415,7 +439,7 @@ Run the container: bash /home/a13x/kernel-build-containers/start_container.sh cl
 The container returned 0
 Finish building the kernel
 Only remove the container id file:
-    Hey, we gonna use sudo for running docker
+    Hey, we gonna use sudo for running the container
     Search "container.id" file in build output directory "/home/a13x/linux-stable/linux-stable"
     OK, "container.id" file exists, removing it
     OK, container 17e85692f36973a4e641fd5052bd2f33ce7d1f9f76ea8a73893b557f395d80cc doesn't run
@@ -446,9 +470,13 @@ __Expected output, if the containers are not running:__
 
 ```console
 Current status:
------------------------------------------
- Ubuntu | Clang  | GCC    | Image ID
------------------------------------------
+[+] Docker container engine is chosen (default)
+[!] INFO: We need "sudo" for working with Docker containers
+
+Current status:
+--------------------------------------------
+ Ubuntu | Clang  | GCC    | Docker Image ID
+--------------------------------------------
  16.04  | 5      | 4.9    | -
  16.04  | 6      | 5      | -
  18.04  | 7      | 6      | -
@@ -462,26 +490,24 @@ Current status:
  24.04  | 15     | 13     | -
  24.04  | 16     | 14     | -
  24.04  | 17     | 14     | -
------------------------------------------
+--------------------------------------------
 ```
 
 __Expected output, if some containers are running:__
 
 ```console
 ...
-No container image providing Clang 15 and GCC 13
+Remove the container image 8f9a0337033d providing Clang 15 and GCC 13
+[!] WARNING: Removing the image 8f9a0337033d failed, some containers use it
 
-Remove the container image c3426ea8383d providing Clang 16 and GCC 14
-[!] WARNING: Removing the image c3426ea8383d failed, some containers use it
-
-No container image providing Clang 17 and GCC 14
+...
 
 [!] WARNING: failed to remove 1 container image(s), see the log above
 
 Current status:
------------------------------------------
- Ubuntu | Clang  | GCC    | Image ID
------------------------------------------
+--------------------------------------------
+ Ubuntu | Clang  | GCC    | Docker Image ID
+--------------------------------------------
  16.04  | 5      | 4.9    | -
  16.04  | 6      | 5      | -
  18.04  | 7      | 6      | -
@@ -492,10 +518,10 @@ Current status:
  22.04  | 12     | 11     | -
  22.04  | 13     | 12     | -
  22.04  | 14     | 12     | -
- 24.04  | 15     | 13     | -
- 24.04  | 16     | 14     | c3426ea8383d
+ 24.04  | 15     | 13     | 819f03d30e3d
+ 24.04  | 16     | 14     | -
  24.04  | 17     | 14     | -
------------------------------------------
+--------------------------------------------
 ```
 
 In that case simply stop this container and run `manage_images.py -r` again.
