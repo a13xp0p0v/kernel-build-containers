@@ -128,32 +128,18 @@ run_error_handling_tests() {
 	$DELIMITER
 	echo "Emulating that the container runtime is not installed..."
 	PATH="" /usr/bin/python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
-}
 
-handle_unknow_error(){
 	$DELIMITER
-	echo "Testing errors handling when engine returned unknow error"
-	TMPDIR=$(mktemp -d -t fake-docker.XXXXXX) || { echo "mktemp failed" >&2; exit 3; }
-	cat > "$TMPDIR/$RUNTIME" <<'EOF'
-#!/usr/bin/env bash
-#  fake-engine (docker/podman)
-#  This stub pretends to be the runtime and always fails on `ps`.
-#
-#  It writes an error message to stderr (no “permission denied”) and
-#  exits with status 1 so that the target script falls into the
-#  `sys.exit()` branch.
-#
-if [[ "$1" == "ps" ]]; then
-echo "fake error: cannot execute 'ps'" >&2
-exit 1
-else
-echo "fake runtime: unknown command '$1'" >&2
-exit 127
-fi
-EOF
-	chmod +x "$TMPDIR/$RUNTIME"
-	PATH="$TMPDIR:$PATH" /usr/bin/python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
-	rm -rf "$TMPDIR"
+	echo "Emulating an unknown error from the container runtime..."
+	# Use /usr/bin/ls as a fake container runtime to make the `$RUNTIME ps` command
+	# in manage_images.py return an error "cannot access 'ps': No such file or directory" :)
+	if [ -f ps ]; then
+		echo "Can't finish the test, please remove the ./ps file"
+		exit 1
+	fi
+	cp /usr/bin/ls /tmp/$RUNTIME
+	PATH="/tmp" /usr/bin/python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
+	rm /tmp/$RUNTIME
 }
 
 run_tests() {
@@ -175,13 +161,11 @@ run_tests
 RUNTIME="docker"
 RUNTIME_FLAG="-d"
 run_tests
-handle_unknow_error
 
 # Test Podman
 RUNTIME="podman"
 RUNTIME_FLAG="-p"
 run_tests
-handle_unknow_error
 
 $DELIMITER
 echo "All tests completed. Creating the coverage report..."
