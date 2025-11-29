@@ -23,7 +23,7 @@ class ContainerImage:
     Represents a container image for building the Linux kernel with a specified compiler
 
     Class Attributes:
-        runtime (str): docker/podman flag
+        runtime (str): container runtime name ('docker' or 'podman')
         runtime_cmd (List): commands for calling the container runtime
         quiet (bool): quiet mode for hiding the container image build log
 
@@ -36,7 +36,7 @@ class ContainerImage:
         id (str): container image ID
     """
 
-    runtime = ''
+    runtime = None
     runtime_cmd = None
     quiet = False
 
@@ -160,7 +160,7 @@ def list_images(images):
     """Show the images and their IDs"""
     print('\nCurrent status:')
     print('-' * 44)
-    print(f' {"Ubuntu":<6} | {"Clang":<6} | {"GCC":<6} | {ContainerImage.runtime.capitalize() + " Image ID"}')
+    print(f' {"Ubuntu":<6} | {"Clang":<6} | {"GCC":<6} | {ContainerImage.runtime.capitalize()} Image ID')
     print('-' * 44)
     for c in images:
         print(f' {c.ubuntu:<6} | {c.clang:<6} | {c.gcc:<6} | {c.id if c.id else "-"}')
@@ -169,6 +169,10 @@ def list_images(images):
 def main():
     """The main function for managing the images for kernel-build-containers"""
     parser = argparse.ArgumentParser(description='Manage the images for kernel-build-containers')
+    parser.add_argument('-d', '--docker', action='store_true',
+                        help='force to use the Docker container engine (default)')
+    parser.add_argument('-p', '--podman', action='store_true',
+                        help='force to use the Podman container engine instead of default Docker')
     parser.add_argument('-l', '--list', action='store_true',
                         help='show the container images and their IDs')
     parser.add_argument('-b', '--build', nargs='?', const='all', choices=supported_compilers, metavar='compiler',
@@ -179,23 +183,7 @@ def main():
     parser.add_argument('-r', '--remove', nargs='?', const='all', choices=supported_compilers, metavar='compiler',
                         help=f'remove container images providing: {" / ".join(supported_compilers)} '
                               '("all" is default, the tool will remove all images if no compiler is specified)')
-    parser.add_argument('-d', '--docker', action='store_true',
-                        help='force to use the Docker container engine (default)')
-    parser.add_argument('-p', '--podman', action='store_true',
-                        help='force to use the Podman container engine instead of default Docker')
     args = parser.parse_args()
-
-    if not any((args.list, args.build, args.remove)):
-        parser.print_help()
-        sys.exit(1)
-
-    if bool(args.list) + bool(args.build) + bool(args.remove) > 1:
-        sys.exit('[-] ERROR: Invalid combination of options')
-
-    if args.quiet:
-        if not args.build:
-            sys.exit('[-] ERROR: "--quiet" should be used only with the "--build" option')
-        ContainerImage.quiet = True
 
     if args.podman and args.docker:
         sys.exit('[-] ERROR: Multiple container engines specified')
@@ -209,6 +197,18 @@ def main():
     else:
         print(f'[+] Docker container engine is chosen (default)')
         ContainerImage.runtime = 'docker'
+
+    if not any((args.list, args.build, args.remove)):
+        parser.print_help()
+        sys.exit(1)
+
+    if bool(args.list) + bool(args.build) + bool(args.remove) > 1:
+        sys.exit('[-] ERROR: Invalid combination of options')
+
+    if args.quiet:
+        if not args.build:
+            sys.exit('[-] ERROR: "--quiet" should be used only with the "--build" option')
+        ContainerImage.quiet = True
 
     images = []
     images += [ContainerImage('5', '4.9', '16.04')]
