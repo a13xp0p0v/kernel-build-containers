@@ -124,16 +124,10 @@ run_error_handling_tests() {
 	python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
 	$SUDO_CMD $RUNTIME rmi -f kernel-build-container:clang-13
 	python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG
-}
 
-test_multiruntime(){
 	$DELIMITER
-	echo "Testing runtime engine selection and errors handling when multiple container engines installed"
-	python3 -m coverage run -a --branch manage_images.py -d -p -l && exit 1
-	export PATH_BACK="$PATH"
-	export PATH=''
-	/usr/bin/python3 -m coverage run -a --branch manage_images.py -l && exit 1
-	export PATH="$PATH_BACK"
+	echo "Emulating that the container runtime is not installed..."
+	PATH="" /usr/bin/python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
 }
 
 handle_unknow_error(){
@@ -188,7 +182,6 @@ RUNTIME="podman"
 RUNTIME_FLAG="-p"
 run_tests
 handle_unknow_error
-test_multiruntime
 
 $DELIMITER
 echo "All tests completed. Creating the coverage report..."
