@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -eux
+set -eu
 
 DELIMITER="echo -e \n##############################################"
 RUNTIME_FLAG=""
