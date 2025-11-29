@@ -89,7 +89,7 @@ def build_kernel(arch, kconfig, src, out, compiler, runtime, make_args):
                 print(f'The kconfig files "{kconfig}" and "{current_config}" are identical, proceed')
             else:
                 print(f'The kconfig files "{kconfig}" and "{current_config}" differ, stop')
-                sys.exit('[-] ERROR: kconfig files are different, check the diff and consider copying')
+                sys.exit('[-] ERROR: Kconfig files are different, check the diff and consider copying')
     else:
         print('No kconfig to copy to the output subdirectory')
 
@@ -152,12 +152,16 @@ def build_kernel(arch, kconfig, src, out, compiler, runtime, make_args):
 
 def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
-    parser.add_argument('-k', '--kconfig',
-                        help='path to kernel kconfig file (optional argument)')
+    parser.add_argument('-d', '--docker', action='store_true',
+                        help='force to use the Docker container engine (default)')
+    parser.add_argument('-p', '--podman', action='store_true',
+                        help='force to use the Podman container engine instead of default Docker')
     parser.add_argument('-a', '--arch', metavar='ARCH', choices=supported_archs, required=True,
                         help=f'build target architecture ({" / ".join(supported_archs)})')
     parser.add_argument('-c', '--compiler', metavar='COMPILER', choices=supported_compilers, required=True,
                         help=f'compiler for building ({" / ".join(supported_compilers)})')
+    parser.add_argument('-k', '--kconfig',
+                        help='path to kernel kconfig file (optional argument)')
     parser.add_argument('-s', '--src', required=True,
                         help='Linux kernel sources directory')
     parser.add_argument('-o', '--out',
@@ -170,46 +174,42 @@ def main():
                         help='for running `make` in quiet mode')
     parser.add_argument('-t', '--single-thread', action='store_true',
                         help='for running `make` in single-threaded mode (multi-threaded by default)')
-    parser.add_argument('-d', '--docker', action='store_true',
-                        help='force to use the Docker container engine (default)')
-    parser.add_argument('-p', '--podman', action='store_true',
-                        help='force to use the Podman container engine instead of default Docker')
     parser.add_argument('make_args', metavar='...', nargs=argparse.REMAINDER,
                         help='additional arguments for \'make\', can be separated by -- delimiter')
     args = parser.parse_args()
 
+    if args.podman and args.docker:
+        sys.exit('[-] ERROR: Multiple container engines specified')
+    if args.docker:
+        print('Force to use the Docker container engine')
+        runtime = 'docker'
+    elif args.podman:
+        print('Force to use the Podman container engine')
+        print(f'[!] INFO: Working with Podman images belonging to "{pwd.getpwuid(os.getuid()).pw_name}" (UID {os.getuid()})')
+        runtime = 'podman'
+    else:
+        print(f'Docker container engine is chosen (default)')
+        runtime = 'docker'
+
     print(f'Going to build the Linux kernel for {args.arch}')
+
+    print(f'Going to build with {args.compiler}')
 
     if args.kconfig:
         if not os.path.isfile(args.kconfig):
-            sys.exit(f'[-] ERROR: can\'t find the kernel config "{args.kconfig}"')
+            sys.exit(f'[-] ERROR: Can\'t find the kernel config "{args.kconfig}"')
         if not args.out:
             sys.exit('[-] ERROR: \'-k\' requires specifying the build output directory using \'-o\'')
         print(f'Using "{args.kconfig}" as kernel config')
 
-    print(f'Going to build with {args.compiler}')
-
     if not os.path.isdir(args.src):
-        sys.exit(f'[-] ERROR: can\'t find the kernel sources directory "{args.src}"')
+        sys.exit(f'[-] ERROR: Can\'t find the kernel sources directory "{args.src}"')
     print(f'Using "{args.src}" as Linux kernel sources directory')
 
     if args.out:
         if not os.path.isdir(args.out):
-            sys.exit(f'[-] ERROR: can\'t find the build output directory "{args.out}"')
+            sys.exit(f'[-] ERROR: Can\'t find the build output directory "{args.out}"')
         print(f'Using "{args.out}" as build output directory')
-
-    if args.podman and args.docker:
-        sys.exit('[-] ERROR: Multiple container engines specified')
-    if args.docker:
-        print('[+] Force to use the Docker container engine')
-        runtime = 'docker'
-    elif args.podman:
-        print('[+] Force to use the Podman container engine')
-        print(f'[!] INFO: Working with Podman images belonging to "{pwd.getpwuid(os.getuid()).pw_name}" (UID {os.getuid()})')
-        runtime = 'podman'
-    else:
-        print(f'[+] Docker container engine is chosen (default)')
-        runtime = 'docker'
 
     make_args = args.make_args[:]
     if make_args:
