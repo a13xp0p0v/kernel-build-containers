@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 print_help() {
 	echo "usage: $0 compiler src_dir out_dir [-h] [-d | -p] [-n] [-e VAR] [-v] [-- cmd with args]"
 	echo "  -h    print this help"
@@ -12,14 +14,12 @@ print_help() {
 	echo "  If cmd is empty, we will start an interactive bash in the container."
 }
 
-set -eu
-
 if [ $# -lt 3 ]; then
 	print_help
 	exit 1
 fi
 
-COMPILER=$1
+COMPILER="$1"
 SRC="$2"
 OUT="$3"
 shift 3
@@ -38,9 +38,9 @@ while [[ $# -gt 0 ]]; do
 		print_help
 		exit 0
 		;;
-	-d |--docker)
+	-d | --docker)
 		if [ "$RUNTIME" != "" ]; then
-			echo "ERROR: Multiple container engines specified" >&2
+			echo "[-] ERROR: Multiple container engines specified" >&2
 			exit 1
 		else
 			echo "Force to use the Docker container engine"
@@ -48,13 +48,13 @@ while [[ $# -gt 0 ]]; do
 		fi
 		shift
 		;;
-	-p |--podman)
+	-p | --podman)
 		if [ "$RUNTIME" != "" ]; then
-			echo "ERROR: Multiple container engines specified" >&2
+			echo "[-] ERROR: Multiple container engines specified" >&2
 			exit 1
 		else
 			echo "Force to use the Podman container engine"
-			echo "INFO: Working with Podman images belonging to \"$(id -un)\" (UID $(id -u))"
+			echo "[!] INFO: Working with Podman images belonging to \"$(id -un)\" (UID $(id -u))"
 			RUNTIME="podman"
 			RUNTIME_ARGS="--userns=keep-id"
 		fi
@@ -80,7 +80,7 @@ while [[ $# -gt 0 ]]; do
 		break
 		;;
 	*)
-		echo "ERROR: Unknown option $1"
+		echo "[-] ERROR: Unknown option $1"
 		print_help
 		exit 1
 		;;
@@ -101,13 +101,13 @@ if echo "$RUNTIME_TEST_OUTPUT" | grep -qi "permission denied"; then
 	SUDO_CMD="sudo"
 fi
 
-echo -e "\nStarting \"kernel-build-container:$COMPILER\""
+echo "Starting \"kernel-build-container:$COMPILER\""
 
 if [ ! -z "$ENV" ]; then
 	echo "Container environment arguments: $ENV"
 fi
 
-if [ ! -z $INTERACTIVE ]; then
+if [ ! -z "$INTERACTIVE" ]; then
 	echo "Gonna run the container in interactive mode"
 fi
 
