@@ -105,7 +105,9 @@ class ContainerImage:
     def find_id(self):
         """Find the ID of the container image. Return an empty string if it doesn't exist."""
         find_clang_cmd = self.runtime_cmd + ['images', self.clang_tag, '--format', '{{.ID}}']
-        out = subprocess.run(find_clang_cmd, text=True, check=True, stdout=subprocess.PIPE)
+        out = subprocess.run(find_clang_cmd, text=True, check=False, capture_output=True)
+        if out.returncode != 0:
+            sys.exit(f'[-] ERROR: {self.runtime} returned {out.returncode}:\n{out.stderr}')
         clang_id = out.stdout.strip()
         if clang_id:
             find_gcc_cmd = self.runtime_cmd + ['images', self.gcc_tag, '--format', '{{.ID}}']
