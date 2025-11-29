@@ -1,10 +1,927 @@
 Export of Github issues for [a13xp0p0v/kernel-build-containers](https://github.com/a13xp0p0v/kernel-build-containers).
 
+# [\#40 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/40) `open`: fix(Dockerfile): `llvm-strip` and `llvm-objcopy` does not exists for clang-5,6
+**Labels**: `bug`
+
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) opened issue at [2025-10-05 04:44](https://github.com/a13xp0p0v/kernel-build-containers/pull/40):
+
+hello, @a13xp0p0v !
+
+while installing ancient containers (clang-5,6) the error occured:
+```
+249.8 + update-alternatives --install /usr/bin/llvm-strip llvm-strip /usr/bin/llvm-strip-5.0 100
+249.8 update-alternatives: error: alternative path /usr/bin/llvm-strip-5.0 doesn't exist
+```
+llvm-strip-6, llvm-objcopy-5,6 doesn't exists as well, so i decided to drop these packages out
+
+what do you think about this choice?
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-10-18 21:25](https://github.com/a13xp0p0v/kernel-build-containers/pull/40#issuecomment-3418828290):
+
+@d1sgr4c3, thank you for fixing this!
+
+Could you please double-check that building all containers is successful now?
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) commented at [2025-10-21 05:12](https://github.com/a13xp0p0v/kernel-build-containers/pull/40#issuecomment-3424698492):
+
+yeah, i ran  [test_image_mgmt.sh](https://github.com/a13xp0p0v/kernel-build-containers/blob/master/test_image_mgmt.sh)
+
+all tests succeed, including building all images via `-b all`
+
+
+-------------------------------------------------------------------------------
+
+# [\#39 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/39) `open`: podman runtime support implemented
+**Labels**: `enhancement`
+
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) opened issue at [2025-07-19 08:51](https://github.com/a13xp0p0v/kernel-build-containers/pull/39):
+
+according to https://github.com/a13xp0p0v/kernel-build-containers/issues/31
+
+in this work i implemented a podman image runtime support for kernel-build-containers.
+now we can choose image runtime via `-p` or `-d` flags. moreover, this commit introduces
+a way to choose runtime image engine without specifying flag `-p` or `-d` directly. bash
+scripts written with strict flag logic.
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) commented at [2025-07-19 08:52](https://github.com/a13xp0p0v/kernel-build-containers/pull/39#issuecomment-3092181762):
+
+hello, @a13xp0p0v 
+
+please have a look at my work
+
+i also left some comments to make your review work easier
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) commented at [2025-07-19 08:59](https://github.com/a13xp0p0v/kernel-build-containers/pull/39#issuecomment-3092189589):
+
+@a13xp0p0v, please take a look at `README.md `
+
+i edited the readme with minimal changes. please take a look and tell me which of my new features should i show there?
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-07-19 15:33](https://github.com/a13xp0p0v/kernel-build-containers/pull/39#issuecomment-3092413688):
+
+Hello @d1sgr4c3!
+
+That's cool, thank you!
+
+I'll take a closer look at this pull request on some free weekend.
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) commented at [2025-07-22 14:22](https://github.com/a13xp0p0v/kernel-build-containers/pull/39#issuecomment-3102971037):
+
+cant wait for your review!
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-07-26 20:13](https://github.com/a13xp0p0v/kernel-build-containers/pull/39#issuecomment-3123183969):
+
+Hi @d1sgr4c3, I have some time to look at your work this weekend.
+
+Could you please rebase this branch onto the fresh `master` and also give me the ability to push commits into it?
+
+Thanks!
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) commented at [2025-07-27 14:16](https://github.com/a13xp0p0v/kernel-build-containers/pull/39#issuecomment-3124447596):
+
+hello, @a13xp0p0v 
+
+rebased my branch right now. also i checked this mark
+
+<img width="297" height="194" alt="image" src="https://github.com/user-attachments/assets/af43574a-bf37-4d06-bc53-bb0914540869" />
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-08-30 21:11](https://github.com/a13xp0p0v/kernel-build-containers/pull/39#issuecomment-3239543414):
+
+Hello @d1sgr4c3!
+
+I've done some work with this pull request:
+
+1. I rebased this branch onto the fresh `master`.
+2. I reordered the commits: the commits that I ask you to rework are now at the top of this branch.
+3. I simplified your new code in `manage_images.py` and `start_container.sh`. Please see my commits.
+
+Let's improve this branch further. Could you please do the following?
+
+1. Please change `build_linux.py` similarly to `manage_images.py`.
+2. Please change `finish_container.sh` similarly to `start_container.sh`.
+3. Please improve the argument order: `finish_container.sh podman/docker kill/nokill out_dir`.
+4. Please rework the top commits that modify the tests.
+5. Please fix the top commit changing the `README` according to the new usage.
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) commented at [2025-10-25 08:13](https://github.com/a13xp0p0v/kernel-build-containers/pull/39#issuecomment-3446183761):
+
+@a13xp0p0v, i tried to do all carefully, make commits atomically and simplify review itertions
+
+what i did:
+1. changes `build_linux.py` similarly to `manage_images.py`
+2. the same with `start_container.sh` by idea of `finish_container.sh`
+3. improved the argument order: `finish_container.sh podman/docker kill/nokill out_dir`
+4. rebased on top of my fix #40  (which is on top of master)
+5. reworked test absolutely
+6. slightly update the readme
+
+
+-------------------------------------------------------------------------------
+
+# [\#38 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/38) `merged`: fix: bad links for `llvm` and `lld` if `package-` installed
+**Labels**: `bug`
+
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) opened issue at [2025-07-19 06:13](https://github.com/a13xp0p0v/kernel-build-containers/pull/38):
+
+this pull request should fix #37 
+
+Co-authored-by: Willenst <willenst@gmail.com>
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-07-19 15:20](https://github.com/a13xp0p0v/kernel-build-containers/pull/38#issuecomment-3092406552):
+
+Hello @d1sgr4c3 and @Willenst,
+
+I've checked this in the `clang-16` container: the `lld-16` and `llvm-16` packages are already installed.
+<img width="960" height="252" alt="image" src="https://github.com/user-attachments/assets/0827e046-f783-4fea-a72a-0654c0be1bb4" />
+ 
+Installing these packages without specifying the needed version causes the installation of a wrong version (unfortunately):
+<img width="1410" height="359" alt="image" src="https://github.com/user-attachments/assets/47aabdb2-fcbc-41f4-9005-0c781f00dc15" />
+
+I guess the only thing we need is adding the `update-alternatives` command for the needed tools.
+
+@d1sgr4c3, please try your kernel compilation after adding this single line to the Dockerfile:
+```
+update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/lld-${CLANG_VERSION} 100; \
+```
+Does it work fine?
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) commented at [2025-07-22 14:12](https://github.com/a13xp0p0v/kernel-build-containers/pull/38#issuecomment-3102930194):
+
+@a13xp0p0v, thnaks for your reply
+
+unfortunately, there is a bunch of problems with `llvm` package -- there is more over 100 tools and we need this one too
+
+```
+  CC       /src/tools/objtool/pager.o
+  CC       /src/tools/objtool/parse-options.o
+  CC       /src/tools/objtool/run-command.o
+  MKELF   scripts/mod/elfconfig.h
+  HOSTCC  scripts/mod/modpost.o
+  HOSTCC  scripts/mod/file2alias.o
+  CC       /src/tools/objtool/sigchain.o
+  HOSTCC  scripts/mod/sumversion.o
+  CC       /src/tools/objtool/subcmd-config.o
+  LD       /src/tools/objtool/arch/x86/objtool-in.o
+  LD       /src/tools/objtool/libsubcmd-in.o
+  AR       /src/tools/objtool/libsubcmd.a
+/bin/sh: 1: llvm-ar: not found
+make[3]: *** [Makefile:62: /src/tools/objtool/libsubcmd.a] Error 127
+make[2]: *** [Makefile:66: /src/tools/objtool/libsubcmd.a] Error 2
+make[2]: *** Waiting for unfinished jobs....
+  HOSTLD  scripts/mod/modpost
+  CC      kernel/bounds.s
+  CALL    scripts/atomic/check-atomics.sh
+  CC      arch/x86/kernel/asm-offsets.s
+  LD       /src/tools/objtool/objtool-in.o
+make[1]: *** [Makefile:68: objtool] Error 2
+make: *** [Makefile:1948: tools/objtool] Error 2
+make: *** Waiting for unfinished jobs....
+  CALL    scripts/checksyscalls.sh
+d@483e1249eac8:/src$
+```
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) commented at [2025-07-22 14:18](https://github.com/a13xp0p0v/kernel-build-containers/pull/38#issuecomment-3102954408):
+
+i also rebased my branch!
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-07-26 16:06](https://github.com/a13xp0p0v/kernel-build-containers/pull/38#issuecomment-3122098852):
+
+Ok, @d1sgr4c3, thanks for the info!
+
+In that case, I think we should add `update-alternatives` for the necessary tools from the `llvm` package one by one.
+
+In fact, we should avoid using the command `apt-get install llvm` because it installs the **wrong version** of the package and unnecessarily increases the size of the container images.
+
+Could you please try building it again and add the necessary `update-alternatives` to the Dockerfile?
+
+I suppose that the kernel compilation will not require all the available binaries from the package.
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) commented at [2025-07-26 17:49](https://github.com/a13xp0p0v/kernel-build-containers/pull/38#issuecomment-3122183142):
+
+> In that case, I think we should add update-alternatives for the necessary tools from the llvm package one by one.
+
+there is 100+ utilities in `llvm` packages... 
+
+are you sure? ofc i can make that byt i thought that it will be unreadable
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-07-26 18:16](https://github.com/a13xp0p0v/kernel-build-containers/pull/38#issuecomment-3122196272):
+
+> are you sure? ofc i can make that byt i thought that it will be unreadable
+
+No, @d1sgr4c3, not all of them of course.
+
+I mean adding only those that are needed for building the Linux kernel with `make LLVM=1`.
+You may try the compilation, see the errors, and add `update-alternatives` only for the necessary ones.
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) commented at [2025-07-27 14:18](https://github.com/a13xp0p0v/kernel-build-containers/pull/38#issuecomment-3124449065):
+
+okay. as far as i know it expands as
+```
+make CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \
+  OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf \
+  HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar HOSTLD=ld.lld
+  ```
+  
+ a bit later i will complete this PR
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) commented at [2025-08-27 07:43](https://github.com/a13xp0p0v/kernel-build-containers/pull/38#issuecomment-3227154485):
+
+hello, @a13xp0p0v !
+with that fix i was able to build the linux kernel with `LLM=1` env variable
+
+i set all necessary bins with update-alternatives as you asked
+
+```diff
+diff --git a/Dockerfile b/Dockerfile
+index 5e4b38c..cfe7e14 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -41,6 +41,13 @@ RUN set -ex; \
+       update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${CLANG_VERSION} 100; \
+       update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${CLANG_VERSION} 100; \
+       update-alternatives --install /usr/bin/lld lld /usr/bin/lld-${CLANG_VERSION} 100; \
++      update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/lld-${CLANG_VERSION} 100; \
++      update-alternatives --install /usr/bin/llvm-ar llvm-ar /usr/bin/llvm-ar-${CLANG_VERSION} 100; \
++      update-alternatives --install /usr/bin/llvm-nm llvm-nm /usr/bin/llvm-nm-${CLANG_VERSION} 100; \
++      update-alternatives --install /usr/bin/llvm-strip llvm-strip /usr/bin/llvm-strip-${CLANG_VERSION} 100; \
++      update-alternatives --install /usr/bin/llvm-objcopy llvm-objcopy /usr/bin/llvm-objcopy-${CLANG_VERSION} 100; \
++      update-alternatives --install /usr/bin/llvm-objdump llvm-objdump /usr/bin/llvm-objdump-${CLANG_VERSION} 100; \
++      update-alternatives --install /usr/bin/llvm-readelf llvm-readelf /usr/bin/llvm-readelf-${CLANG_VERSION} 100; \
+     fi
+
+ ARG UNAME
+ ```
+ please, can you verify this PR again?
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-08-30 12:11](https://github.com/a13xp0p0v/kernel-build-containers/pull/38#issuecomment-3239224462):
+
+Hello @d1sgr4c3. Thanks for the improvements!
+
+I've found one error, see the fix: https://github.com/a13xp0p0v/kernel-build-containers/pull/38/commits/0c0371ce47ece52c7a42475775e4dd3ac0bb8730.
+
+And by the way I've fixed two warnings in `docker build`: https://github.com/a13xp0p0v/kernel-build-containers/pull/38/commits/8b75845edfbbd7f304d1313e8d2e00b3b603d746.
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-08-30 12:14](https://github.com/a13xp0p0v/kernel-build-containers/pull/38#issuecomment-3239226074):
+
+`make LLVM=1` for the Linux kernel sources works fine now.
+
+Merged!
+
+
+-------------------------------------------------------------------------------
+
+# [\#37 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/37) `closed`: `llvm` and `lld` wierd behavior
+**Labels**: `bug`
+
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) opened issue at [2025-07-16 04:39](https://github.com/a13xp0p0v/kernel-build-containers/issues/37):
+
+hello, @a13xp0p0v 
+thank you for the really grat tool
+
+recently i tried to build containter OS (cos) and found this
+
+```
+d@c8eb62a7a1c8:/src/exploit_env/drill$ make mrproper
+d@c8eb62a7a1c8:/src/exploit_env/drill$ cp config .config
+d@c8eb62a7a1c8:/src/exploit_env/drill$ make LLVM=1 -j16
+  SYNC    include/config/auto.conf.cmd
+  HOSTCC  scripts/basic/fixdep
+  HOSTCC  scripts/kconfig/conf.o
+  HOSTCC  scripts/kconfig/confdata.o
+  HOSTCC  scripts/kconfig/expr.o
+  LEX     scripts/kconfig/lexer.lex.c
+  YACC    scripts/kconfig/parser.tab.[ch]
+  HOSTCC  scripts/kconfig/preprocess.o
+  HOSTCC  scripts/kconfig/symbol.o
+  HOSTCC  scripts/kconfig/util.o
+  HOSTCC  scripts/kconfig/lexer.lex.o
+  HOSTCC  scripts/kconfig/parser.tab.o
+  HOSTLD  scripts/kconfig/conf
+scripts/Kconfig.include:40: linker 'ld.lld' not found
+make[2]: *** [scripts/kconfig/Makefile:71: syncconfig] Error 1
+make[1]: *** [Makefile:603: syncconfig] Error 2
+make: *** [Makefile:712: include/config/auto.conf.cmd] Error 2
+d@c8eb62a7a1c8:/src/exploit_env/drill$ sudo apt install llvm lld
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following additional packages will be installed:
+  llvm-runtime
+The following NEW packages will be installed:
+  lld llvm llvm-runtime
+0 upgraded, 3 newly installed, 0 to remove and 8 not upgraded.
+Need to get 10.1 kB of archives.
+After this operation, 137 kB of additional disk space will be used.
+Do you want to continue? [Y/n] Y
+Get:1 http://archive.ubuntu.com/ubuntu jammy/universe amd64 lld amd64 1:14.0-55~exp2 [3178 B]
+Get:2 http://archive.ubuntu.com/ubuntu jammy/universe amd64 llvm-runtime amd64 1:14.0-55~exp2 [3204 B]
+Get:3 http://archive.ubuntu.com/ubuntu jammy/universe amd64 llvm amd64 1:14.0-55~exp2 [3758 B]
+Fetched 10.1 kB in 11s (883 B/s)
+Selecting previously unselected package lld:amd64.
+(Reading database ... 32905 files and directories currently installed.)
+Preparing to unpack .../lld_1%3a14.0-55~exp2_amd64.deb ...
+Unpacking lld:amd64 (1:14.0-55~exp2) ...
+Selecting previously unselected package llvm-runtime:amd64.
+Preparing to unpack .../llvm-runtime_1%3a14.0-55~exp2_amd64.deb ...
+Unpacking llvm-runtime:amd64 (1:14.0-55~exp2) ...
+Selecting previously unselected package llvm.
+Preparing to unpack .../llvm_1%3a14.0-55~exp2_amd64.deb ...
+Unpacking llvm (1:14.0-55~exp2) ...
+Setting up lld:amd64 (1:14.0-55~exp2) ...
+Setting up llvm-runtime:amd64 (1:14.0-55~exp2) ...
+Setting up llvm (1:14.0-55~exp2) ...
+d@c8eb62a7a1c8:/src/exploit_env/drill$ make LLVM=1 -j16
+  SYNC    include/config/auto.conf.cmd
+  SYSTBL  arch/x86/include/generated/asm/syscalls_32.h
+  SYSHDR  arch/x86/include/generated/asm/unistd_32_ia32.h
+  SYSHDR  arch/x86/include/generated/asm/unistd_64_x32.h
+  SYSTBL  arch/x86/include/generated/asm/syscalls_64.h
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_32.h
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_64.h
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_x32.h
+  WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
+  WRAP    arch/x86/include/generated/uapi/asm/errno.h
+  WRAP    arch/x86/include/generated/uapi/asm/fcntl.h
+  WRAP    arch/x86/include/generated/uapi/asm/ioctl.h
+  WRAP    arch/x86/include/generated/uapi/asm/ioctls.h
+  WRAP    arch/x86/include/generated/uapi/asm/ipcbuf.h
+  WRAP    arch/x86/include/generated/uapi/asm/param.h
+  WRAP    arch/x86/include/generated/uapi/asm/poll.h
+  WRAP    arch/x86/include/generated/uapi/asm/resource.h
+  WRAP    arch/x86/include/generated/uapi/asm/socket.h
+  WRAP    arch/x86/include/generated/uapi/asm/sockios.h
+  WRAP    arch/x86/include/generated/uapi/asm/termbits.h
+  WRAP    arch/x86/include/generated/uapi/asm/termios.h
+  WRAP    arch/x86/include/generated/uapi/asm/types.h
+  HOSTCC  arch/x86/tools/relocs_32.o
+  HOSTCC  arch/x86/tools/relocs_64.o
+  HOSTCC  arch/x86/tools/relocs_common.o
+  WRAP    arch/x86/include/generated/asm/early_ioremap.h
+  [...]
+```
+i tried to build [COS](https://cos.googlesource.com/third_party/kernel/+archive/ccbab0481cec29d7f07947bcb6255f325b88513f.tar.gz) and this happened
+
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) commented at [2025-07-16 06:48](https://github.com/a13xp0p0v/kernel-build-containers/issues/37#issuecomment-3077126185):
+
+```
+Setting up clang-6.0 (1:6.0-1ubuntu2~16.04.1) ...
+Setting up clang-tools-6.0 (1:6.0-1ubuntu2~16.04.1) ...
+Setting up libffi-dev:amd64 (3.2.1-4) ...
+Setting up llvm-6.0-runtime (1:6.0-1ubuntu2~16.04.1) ...
+mount: permission denied
+update-binfmts: warning: Couldn't mount the binfmt_misc filesystem on /proc/sys/fs/binfmt_misc.
+Setting up llvm-6.0 (1:6.0-1ubuntu2~16.04.1) ...
+Setting up llvm-6.0-dev (1:6.0-1ubuntu2~16.04.1) ...
+Setting up lld-6.0 (1:6.0-1ubuntu2~16.04.1) ...
+Setting up libomp5:amd64 (3.7.0-3) ...
+Setting up libomp-dev (3.7.0-3) ...
+```
+in fact, this packages are installed... pretty strange
+
+
+-------------------------------------------------------------------------------
+
+# [\#36 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/36) `merged`: Support Building selftests
+
+#### <img src="https://avatars.githubusercontent.com/u/24351757?u=ed1f82517d3498a3dacf368b6827e76ce60a370a&v=4" width="50">[vpetrog](https://github.com/vpetrog) opened issue at [2025-07-13 22:13](https://github.com/a13xp0p0v/kernel-build-containers/pull/36):
+
+From 3d355ae78bfe8e3c777bac800ac3bc9165dfb68c Mon Sep 17 00:00:00 2001
+From: Evangelos Petrongonas <vpetrog@ieee.org>
+Date: Mon, 14 Jul 2025 00:27:21 +0200
+Subject: [PATCH 0/2] ***Support building Selftests***
+
+When working with linux, kernel headers are often required when building out of tree modules or various userspace components, or the kernel selftests.
+
+This patchset adds support building linux selftests by extending the docker containers to include the rsync utilinig, which is neccessary for installing the headers and removing the manual shell redirection of `stderr` to `stdout`, which was polluting  the `make` arguments. It is handled instead via the, already existing, `Popen` `stderr=..` argument.
+
+Evangelos Petrongonas (2):
+  Dockerfile: Add rsync to the container
+  build_linux: Remove manual shell redirection
+
+```
+ Dockerfile     | 2 +-
+ build_linux.py | 3 ---
+ 2 files changed, 1 insertion(+), 4 deletions(-)
+```
+-- 
+2.50.1
+
+
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-07-19 14:47](https://github.com/a13xp0p0v/kernel-build-containers/pull/36#issuecomment-3092389042):
+
+Hello @vpetrog, 
+
+Thanks for the excellent contribution!
+
+1) I've checked that `make headers_install` works fine now:
+    <img width="960" height="581" alt="image" src="https://github.com/user-attachments/assets/ccf564a9-151d-4955-ba7f-86eda51d8629" />
+
+2) I've tested the kernel selftests, which now can be built:
+    <img width="1920" height="782" alt="image" src="https://github.com/user-attachments/assets/ec027d7e-f587-4da0-afe0-f975bfd8e0e1" />
+
+3) And I've checked that stderr output is still collected correctly. To do that, I tried a wrong build target:
+  ```
+$ ./build_linux.py -c gcc-14 -a x86_64 -s ~/develop_local/linux-stable/linux-stable/ -o ~/develop_local/linux-stable/linux-stable/ -- wat
+[+] Going to build the Linux kernel for x86_64
+[+] Using "/home/a13x/develop_local/linux-stable/linux-stable/" as Linux kernel sources directory
+[+] Using "/home/a13x/develop_local/linux-stable/linux-stable/" as build output directory
+[+] Going to build with: gcc-14
+[+] Have additional arguments for 'make': wat
+[+] Going to run 'make' on 6 CPUs
+
+=== Building with gcc-14 ===
+Output subdirectory for this build: /home/a13x/develop_local/linux-stable/linux-stable//x86_64__gcc-14
+Output subdirectory already exists, use it (no cleaning!)
+No kconfig to copy to output subdirectory
+Going to save build log to "build_log.txt" in output subdirectory
+Run the container: bash /home/a13x/land/develop/Linux_Kernel/kernel-build-containers/start_container.sh gcc-14 /home/a13x/develop_local/linux-stable/linux-stable/ /home/a13x/develop_local/linux-stable/linux-stable//x86_64__gcc-14 -n -- make O=../out/ -j 6 wat
+    Hey, we gonna use sudo for running docker
+    Run docker in NON-interactive mode
+    Starting "kernel-build-container:gcc-14"
+    Mount source code directory "/home/a13x/develop_local/linux-stable/linux-stable/" at "/src"
+    Mount build output directory "/home/a13x/develop_local/linux-stable/linux-stable//x86_64__gcc-14" at "/out"
+    Gonna run command "make O=../out/ -j 6 wat"
+    
+    make[1]: Entering directory '/out'
+    make[2]: *** No rule to make target 'wat'.  Stop.
+    make[1]: Leaving directory '/out'
+    make[1]: *** [/src/Makefile:224: __sub-make] Error 2
+    make: *** [Makefile:224: __sub-make] Error 2
+The container returned 2
+Finish building the kernel
+Only remove the container id file:
+    Hey, we gonna use sudo for running docker
+    Search "container.id" file in build output directory "/home/a13x/develop_local/linux-stable/linux-stable//x86_64__gcc-14"
+    OK, "container.id" file exists, removing it
+    OK, container ef835e0d937d5b7fdd199bc1d56224b2dbbe24f86926c477c5a8878da9b077c5 doesn't run
+The finish_container.sh script returned 0
+See the build log: /home/a13x/develop_local/linux-stable/linux-stable//x86_64__gcc-14/build_log.txt
+
+[+] Done, see the results
+  ```
+  And then insured that the build log contains the stderr output:
+  ```
+$ cat /home/a13x/develop_local/linux-stable/linux-stable//x86_64__gcc-14/build_log.txt
+Hey, we gonna use sudo for running docker
+Run docker in NON-interactive mode
+Starting "kernel-build-container:gcc-14"
+Mount source code directory "/home/a13x/develop_local/linux-stable/linux-stable/" at "/src"
+Mount build output directory "/home/a13x/develop_local/linux-stable/linux-stable//x86_64__gcc-14" at "/out"
+Gonna run command "make O=../out/ -j 6 wat"
+
+make[1]: Entering directory '/out'
+make[2]: *** No rule to make target 'wat'.  Stop.
+make[1]: Leaving directory '/out'
+make[1]: *** [/src/Makefile:224: __sub-make] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+  ```
+
+Thank you! Merged.
+
+
+-------------------------------------------------------------------------------
+
+# [\#35 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/35) `merged`: Image managment improvements
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) opened issue at [2025-07-04 11:33](https://github.com/a13xp0p0v/kernel-build-containers/pull/35):
+
+Hi, I have done some work on improving image management. First of all I added the ability to delete single containers based on this request #32 and tried to do it somehow more compatible with podman #31. Also, I thought it would be cool to add and remove multiple images at a time and add the ability to use the `-b` and `-r` flags without arguments to work with `all` images by default: kind of user comfortability features. Covered new code with tests and updated the REAME. As a bonus, I worked a bit on code readability, waiting for your review!
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-07-08 12:42](https://github.com/a13xp0p0v/kernel-build-containers/pull/35#issuecomment-3048798218):
+
+Hello @Willenst!
+
+Thanks for the contribution!
+
+I've encountered some issues during the review. Let's improve this!
+
+1. Let's drop the last commit with the style changes. Some of the changes don't fit PEP 8 (https://peps.python.org/pep-0008/). Moreover, they increase the final diff and make review harder.
+2. Let's drop the `all` argument for `build` and `remove`. It makes the code more complicated. We can simply build/remove all images if `-b`/`-r` options go without any argument.
+3. Let's separate the changes into independent commits:
+   - Check that there is no running containers that use a given image during the image removal
+   - Drop the `all` argument from the current implementation
+   - Add an ability to remove a single image (make `-r` work similar to `-b`)
+   - Add ability to add/remove multiple images
+   - Improve the test
+   - Update the readme
+
+Looking forward to the next version! Thanks!
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) commented at [2025-07-08 13:32](https://github.com/a13xp0p0v/kernel-build-containers/pull/35#issuecomment-3048991619):
+
+Hello @a13xp0p0v!
+
+Thanks for feedback!
+
+I've force pushed, and here is new vision of implementation, closed for what you advised but with a bit of changes:
+1. I've dropped style changes
+2. `all` argument is removed but in one of the last commits
+3. Now changes looks like this:
+- Check that there is no running containers that use a given image during the image removal (included a bit of extra code for podman comparability)
+- Add an ability to remove a single image (make -r work similar to -b)
+- Add UI ability to work without `all` argument (now `-r` and `-b` works like `-r all` and `-b all`
+- Add ability to add/remove multiple images
+- Completely drop the `all` argument from the current implementation
+- Improve the test
+- Update the readme
+
+this approach is a bit easier to implement step by step.
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-07-11 11:58](https://github.com/a13xp0p0v/kernel-build-containers/pull/35#issuecomment-3062013589):
+
+Hello @Willenst, thanks for a nice prototype!
+
+I've reviewed it carefully and found out that using `nargs='*'` from argparse breaks the beauty of the code, unfortunately. It's not worth it.
+
+So I took everything except the ability to add/remove multiple images at once.
+
+I also added some fixes and improvements.
+
+I'll finish testing, check the coverage and then merge this branch.
+
+
+-------------------------------------------------------------------------------
+
+# [\#34 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/34) `closed`: Add RISC-V support
+**Labels**: `enhancement`
+
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) opened issue at [2025-03-22 15:20](https://github.com/a13xp0p0v/kernel-build-containers/issues/34):
+
+This is needed for https://github.com/a13xp0p0v/kernel-hardening-checker/pull/172
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-03-22 17:52](https://github.com/a13xp0p0v/kernel-build-containers/issues/34#issuecomment-2745385819):
+
+Done!
+
+
+-------------------------------------------------------------------------------
+
+# [\#33 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/33) `closed`: Add python and other packages that are needed for building Linux (for example, for`allmodconfig`)
+**Labels**: `enhancement`
+
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) opened issue at [2025-01-11 17:45](https://github.com/a13xp0p0v/kernel-build-containers/issues/33):
+
+Thanks to @xairy for the idea.
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-01-11 17:46](https://github.com/a13xp0p0v/kernel-build-containers/issues/33#issuecomment-2585354925):
+
+Also thanks to @gatlinnewhouse for the idea.
+
+#### <img src="https://avatars.githubusercontent.com/u/10749793?u=b7d6626a124ad705d4aa338b4215e5c2275742f7&v=4" width="50">[gatlinnewhouse](https://github.com/gatlinnewhouse) commented at [2025-01-11 17:54](https://github.com/a13xp0p0v/kernel-build-containers/issues/33#issuecomment-2585357062):
+
+My fork isn't actively maintained but I'd love to see allmodconfig added here! It helped me test enabling `-Wrestrict` by default.
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-06-15 11:48](https://github.com/a13xp0p0v/kernel-build-containers/issues/33#issuecomment-2973704025):
+
+Hello!
+
+I've installed Gawk and Python to enable building the Linux kernel with allmodconfig:
+tested successfully for `Linux 6.15.2` and `gcc-14`.
+
+For old Ubuntu containers without the `python-is-python3` package, the `python` virtual package is installed instead.
+
+Closing this issue.
+
+
+-------------------------------------------------------------------------------
+
+# [\#32 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/32) `closed`: Add ability to remove a single container
+**Labels**: `enhancement`
+
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) opened issue at [2025-01-05 11:28](https://github.com/a13xp0p0v/kernel-build-containers/issues/32):
+
+Thanks @xairy for the idea.
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-07-11 16:39](https://github.com/a13xp0p0v/kernel-build-containers/issues/32#issuecomment-3062979011):
+
+Solved in #35, thanks @Willenst.
+
+Now we can build and remove a single container image:
+```
+$ python3 manage_images.py -b gcc-12
+```
+and
+```
+python3 manage_images.py -r gcc-12
+```
+
+
+-------------------------------------------------------------------------------
+
+# [\#31 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/31) `open`: Add podman support
+**Labels**: `enhancement`
+
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) opened issue at [2025-01-02 21:11](https://github.com/a13xp0p0v/kernel-build-containers/issues/31):
+
+
+
+
+
+
+-------------------------------------------------------------------------------
+
+# [\#30 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/30) `open`: Add Clang 18 support
+**Labels**: `enhancement`
+
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) opened issue at [2025-01-02 21:10](https://github.com/a13xp0p0v/kernel-build-containers/issues/30):
+
+
+
+
+
+
+-------------------------------------------------------------------------------
+
+# [\#29 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/29) `closed`: Support building the Linux kernel in the source code directory (without `O=` option)
+**Labels**: `enhancement`
+
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) opened issue at [2025-01-02 21:04](https://github.com/a13xp0p0v/kernel-build-containers/issues/29):
+
+
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-10-17 21:38](https://github.com/a13xp0p0v/kernel-build-containers/issues/29#issuecomment-3417315993):
+
+Done!
+
+For in-place building of Linux at the root of the kernel source tree, you can either:
+ - Specify the same `-s` and `-o` path without `-k`,
+ - Or simply run the tool without `-o` and `-k` arguments.
+
+```console
+$ python3 build_linux.py -c clang-16 -a x86_64 -s ~/linux-stable/linux-stable -- defconfig
+Going to build the Linux kernel for x86_64
+Going to build with clang-16
+Using "/home/a13x/linux-stable/linux-stable" as Linux kernel sources directory
+Have additional arguments for 'make': defconfig
+Going to run 'make' on 6 CPUs
+No '-k' and '-o' arguments; skip creating an output subdirectory to allow in-place build
+Output subdirectory for this build: /home/a13x/linux-stable/linux-stable
+Output subdirectory already exists, use it (no cleaning!)
+No kconfig to copy to the output subdirectory
+Going to write the build log to "/home/a13x/linux-stable/linux-stable/build_log.txt"
+Going to build the kernel in-place (without 'O=')
+Add arguments for compiling with clang: CC=clang
+Run the container: bash /home/a13x/kernel-build-containers/start_container.sh clang-16 /home/a13x/linux-stable/linux-stable /home/a13x/linux-stable/linux-stable -n -- make CC=clang -j 6 defconfig
+    Hey, we gonna use sudo for running docker
+    Run docker in NON-interactive mode
+    Starting "kernel-build-container:clang-16"
+    Mount source code directory "/home/a13x/linux-stable/linux-stable" at "/src"
+    Mount build output directory "/home/a13x/linux-stable/linux-stable" at "/out"
+    Gonna run command "make CC=clang -j 6 defconfig"
+    
+      HOSTCC  scripts/basic/fixdep
+      HOSTCC  scripts/kconfig/conf.o
+...
+    *** Default configuration is based on 'x86_64_defconfig'
+    #
+    # configuration written to .config
+    #
+The container returned 0
+Finish building the kernel
+Only remove the container id file:
+    Hey, we gonna use sudo for running docker
+    Search "container.id" file in build output directory "/home/a13x/linux-stable/linux-stable"
+    OK, "container.id" file exists, removing it
+    OK, container 17e85692f36973a4e641fd5052bd2f33ce7d1f9f76ea8a73893b557f395d80cc doesn't run
+The finish_container.sh script returned 0
+See the build log: /home/a13x/linux-stable/linux-stable/build_log.txt
+[+] Done, see the results
+```
+
+
+-------------------------------------------------------------------------------
+
+# [\#28 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/28) `closed`: Make group checking more rigorous
+**Labels**: `bug`
+
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) opened issue at [2024-10-21 14:13](https://github.com/a13xp0p0v/kernel-build-containers/issues/28):
+
+An unlikely scenario, but still possible, is the presence of the word docker in the group name
+
+![image](https://github.com/user-attachments/assets/4750c5bc-e098-4401-ac1f-de6cdda41c44)
+
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2024-10-26 17:48](https://github.com/a13xp0p0v/kernel-build-containers/issues/28#issuecomment-2439671829):
+
+I've fixed it in https://github.com/Willenst/kernel-build-containers/commit/c93a0be3db732b38fc30c729649bc7dc88029d83
+
+Will pull it later.
+
+Thanks for finding this bug!
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-01-02 20:54](https://github.com/a13xp0p0v/kernel-build-containers/issues/28#issuecomment-2568365609):
+
+Fixed in #27 (merged into `master`).
+
+
+-------------------------------------------------------------------------------
+
+# [\#27 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/27) `merged`: Add manage_containers.py
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) opened issue at [2024-10-17 12:03](https://github.com/a13xp0p0v/kernel-build-containers/pull/27):
+
+Hello, it looks like my previous PR #22 was broken, so here is its recovery
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2024-10-26 21:47](https://github.com/a13xp0p0v/kernel-build-containers/pull/27#issuecomment-2439746272):
+
+Hello @Willenst,
+
+Thanks for your work!
+
+I've added some fixes (including one for #28) and some style improvements.
+
+Currently, I see a possible problem:
+I think `Container.check()` should make sure that there is a single container with this pair of compilers.
+That would make the code less error-prone.
+What do you think about that?
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2024-11-09 15:28](https://github.com/a13xp0p0v/kernel-build-containers/pull/27#issuecomment-2466257811):
+
+Hi @Willenst,
+
+Could you please also reorder clang and gcc in the `--list` output?
+
+I've added some fixes in `make_linux.py` and renamed it to `build_linux.py`.
+It will allow better command autocompletion.
+
+Now you can remove the obsolete shell scripts (because we have `manage_containers.py`). 
+
+And please update the whole README.
+
+Thanks for the collaboration! 👍
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) commented at [2024-11-11 09:52](https://github.com/a13xp0p0v/kernel-build-containers/pull/27#issuecomment-2467697745):
+
+Hello @a13xp0p0v.
+
+I decided to reorder clang and gcc pretty much everywhere to achieve uniformity, I hope I didn't overdo it. 
+
+Also removed “obsolete” shell scripts and updated README for them and for changes in python scripts.
+
+I also added a couple of beauty features to the README, like text and subparagraph highlights, I hope it will look better this way.
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2024-11-30 21:00](https://github.com/a13xp0p0v/kernel-build-containers/pull/27#issuecomment-2509358546):
+
+Hi @Willenst,
+
+Please see the improvements that I've pushed (I've fixed a bug in your `Reorder gcc and clang in build_linux.py` commit).
+
+It looks like the `Container.rm()` method currently may give wrong results for running containers. Please check it carefully.
+
+And please run your functional tests again.
+
+Thank you!
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) commented at [2024-12-02 13:34](https://github.com/a13xp0p0v/kernel-build-containers/pull/27#issuecomment-2511560758):
+
+Hello @a13xp0p0v!
+
+I fixed the bug with running containers in `Container.rm()`, found a way to pull them directly from the docker without any regulars or greps.
+
+I also demolished Ubuntu 23, it was recently permanently removed from the repositories. 
+
+While poking around in the docker, I came to the conclusion that I need to redo all the naming, because the code actually builds images, not containers, the container is already a directly isolated environment with an image, so I made a global change of names. I ask you to evaluate my changes, after that I can update `README.md` to the current state of the code.
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2024-12-08 21:52](https://github.com/a13xp0p0v/kernel-build-containers/pull/27#issuecomment-2526399073):
+
+Hello @Willenst,
+
+Please see my commits with the improvements.
+BTW, I've removed a lot of code :)
+
+Does it work for you?
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) commented at [2024-12-09 19:51](https://github.com/a13xp0p0v/kernel-build-containers/pull/27#issuecomment-2529279799):
+
+Hi, @a13xp0p0v !
+
+Thanks for your cool improvements, unfortunately they messed up the tests a bit, but I fixed them. I also found that it is possible to improve the coverage of the tests a bit - implemented this fix. 
+
+Next, I've done a bit of work on the textarea in the code itself, I've also added a small error message output (in case of trying to delete a working container, I hope this will be useful for novice users). 
+
+I also updated the README, I think the moment has come and I decided to revise it now.
+
+Next, I've done a bit of work on the textarea in the code itself, I've also added a small error message output (in case of trying to delete a working container, I hope this will be useful for novice users). 
+
+I also updated the README, I think the moment has come and I decided to revise it now.
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-01-02 20:49](https://github.com/a13xp0p0v/kernel-build-containers/pull/27#issuecomment-2568359966):
+
+Hi @Willenst,
+I've finished this pull request and merged the branch (you can see a bunch of commits on top). 
+Thanks for the collaboration.
+Happy New Year!
+
+
+-------------------------------------------------------------------------------
+
+# [\#26 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/26) `closed`: Troubles with enormous docker cache
+**Labels**: `bug`
+
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) opened issue at [2024-10-16 08:11](https://github.com/a13xp0p0v/kernel-build-containers/issues/26):
+
+`Build Cache     142       0         74.82GB   74.82GB`
+
+it would be nice to add a flag for clearing the cache.
+
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-01-02 20:53](https://github.com/a13xp0p0v/kernel-build-containers/issues/26#issuecomment-2568364213):
+
+I didn't manage to reproduce this issue.
+By the way, what happens if you run
+```
+sudo docker rmi $(sudo docker images -f "dangling=true" -q)
+```
+or
+```
+python3 manage_images.py -r
+```
+?
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) commented at [2025-01-09 10:46](https://github.com/a13xp0p0v/kernel-build-containers/issues/26#issuecomment-2579812848):
+
+Hi, you can check the build cache with the command:
+
+ `docker system df`
+
+The commands you mentioned delete the images but not the cache itself, the cache is basically all the data used to build the images. For example, we are building a container image based on `ubuntu 22`, after deleting the image, the `ubuntu 22` files themselves will still be stored, more info about this here:
+
+https://docs.docker.com/build/cache/
+
+You can prune the cache with the command: 
+
+`docker builder prune`
+
+The main problem - it will delete all the build cache, not just created by our scripts. In general there is a system of filtering by using timestamps and labels of the containers themselves, but for this you need to distribute labels to them. This requires a somewhat tricky approach so as not to harm people working with containers. 
+
+The main problem here is that if we conditionally change the build commands inside a Python script, change the tags, change the dockerfile, the old cache can often be preserved, I don't know the exact conditions for its preservation yet, but if we change the build processes in the future, the end user may start to have a huge cache, I think it's a kind of maliciousness :)
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-01-11 17:42](https://github.com/a13xp0p0v/kernel-build-containers/issues/26#issuecomment-2585353793):
+
+> You can prune the cache with the command:
+>
+> docker builder prune
+>
+> The main problem - it will delete all the build cache, not just created by our scripts. 
+
+I agree, we should not delete the cache without user's consent.
+
+I looked at the documentation at https://docs.docker.com/build/cache/garbage-collection/.
+The garbage is collected automatically. So I guess we should do nothing with it.
+Quoting:
+```
+Garbage Collection (GC) runs periodically and follows an ordered list of prune policies.
+
+The BuildKit daemon clears the build cache when the cache size becomes too big, or when the cache age expires.
+
+For most users, the default GC behavior is sufficient and doesn't require any intervention.
+```
+
+Thank you!
+Closing for now.
+
+
+-------------------------------------------------------------------------------
+
+# [\#25 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/25) `closed`: Dockerfile refactor
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) opened issue at [2024-10-02 13:06](https://github.com/a13xp0p0v/kernel-build-containers/pull/25):
+
+Hi, I decided to refactor the Dockerfile a bit, I think the update-alternatives part can be moved to the package installation block, that way no additional "if" checks below need to be called. It would also simplify the code structure a bit.
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2024-10-09 06:58](https://github.com/a13xp0p0v/kernel-build-containers/pull/25#issuecomment-2401490779):
+
+Hello @Willenst,
+
+I've made some refactoring of the Dockerfile.
+
+I used `set -e` to get rid of those messy `&&`.
+
+Your idea is included in 72bc9a7a4d21f3f84453d2242031cfb3b5bc039c.
+
+Thank you!
+
+
+-------------------------------------------------------------------------------
+
 # [\#24 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/24) `merged`: add xz-utils package
 **Labels**: `bug`
 
 
-#### <img src="https://avatars.githubusercontent.com/u/121037831?u=c8a707b5460502b823b0b697147e94d616c7617d&v=4" width="50">[flipthewho](https://github.com/flipthewho) opened issue at [2024-09-20 06:53](https://github.com/a13xp0p0v/kernel-build-containers/pull/24):
+#### <img src="https://avatars.githubusercontent.com/u/121037831?u=fc711d33e89e67f8ad3094527177769eba26ba18&v=4" width="50">[d1sgr4c3](https://github.com/d1sgr4c3) opened issue at [2024-09-20 06:53](https://github.com/a13xp0p0v/kernel-build-containers/pull/24):
 
 hello, @a13xp0p0v !
 i have litlle PR
@@ -31,7 +948,7 @@ Merged.
 
 # [\#23 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/23) `merged`: Add dwarves package
 
-#### <img src="https://avatars.githubusercontent.com/u/67371653?v=4" width="50">[Willenst](https://github.com/Willenst) opened issue at [2024-09-17 12:15](https://github.com/a13xp0p0v/kernel-build-containers/pull/23):
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) opened issue at [2024-09-17 12:15](https://github.com/a13xp0p0v/kernel-build-containers/pull/23):
 
 Hello, I've decided to add dwarves package to the apt-get package list in Dockerfile. I think this package must be added alongside with cpio, which is mentioned here #20, because it is required to build many kernels with debian kconfig (which is a really popular one I suppose).
 
@@ -43,15 +960,94 @@ Merged.
 
 -------------------------------------------------------------------------------
 
-# [\#22 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/22) `open`: Add manage_containers.py
+# [\#22 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/22) `closed`: Add manage_containers.py
 
-#### <img src="https://avatars.githubusercontent.com/u/67371653?v=4" width="50">[Willenst](https://github.com/Willenst) opened issue at [2024-09-13 17:07](https://github.com/a13xp0p0v/kernel-build-containers/pull/22):
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) opened issue at [2024-09-13 17:07](https://github.com/a13xp0p0v/kernel-build-containers/pull/22):
 
 Hello, I've decided to make a python script for these issues #12 #13 
 
-So, here is python script, documentation, tests, some fixes for old clang in dockerfile and make_linux.py!
+So, here is python script, documentation, tests, and some additions for old clangs support in Dockerfile and make_linux.py!
 
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2024-09-30 18:10](https://github.com/a13xp0p0v/kernel-build-containers/pull/22#issuecomment-2383858986):
 
+Hello @Willenst,
+
+Thanks for your work!
+
+Please see some notes below.
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) commented at [2024-10-02 13:13](https://github.com/a13xp0p0v/kernel-build-containers/pull/22#issuecomment-2388613956):
+
+Also rebased on this PR
+
+https://github.com/a13xp0p0v/kernel-build-containers/pull/25/files
+
+ and refactored a bit my dockerfile
+
+https://github.com/a13xp0p0v/kernel-build-containers/commit/d57f88ccdd7c0800993351b1279e653c06b42f3b
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) commented at [2024-10-09 20:18](https://github.com/a13xp0p0v/kernel-build-containers/pull/22#issuecomment-2403354810):
+
+Re-based on current PR, answered for all conversations, waiting for next review!
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2024-10-12 19:27](https://github.com/a13xp0p0v/kernel-build-containers/pull/22#issuecomment-2408668725):
+
+Hello @Willenst,
+
+Unfortunately, this branch is broken in multiple places.
+
+1) Please check it once again after the commit https://github.com/a13xp0p0v/kernel-build-containers/pull/22/commits/9b1c4b9e93ca608fd5b39379d89462bc0ad4e142
+
+There are things like this:
+```
+  File "./manage_containers.py", line 124
+    print(f'\n{'Ubuntu':<6} | {'GCC':<6} | {'Clang':<6} | {'Status':<6}')
+                ^
+SyntaxError: invalid syntax
+```
+
+It can be fixed this way:
+```
+ def list_containers(containers):
+     """Print built containers"""
+-    print(f'\n{'Ubuntu':<6} | {'GCC':<6} | {'Clang':<6} | {'Status':<6}')
++    print(f'\n{"Ubuntu":<6} | {"GCC":<6} | {"Clang":<6} | {"Status":<6}')
+```
+
+2) An empty sudo wrapper is broken (if the current user is in the `docker` group):
+```
+$ ./manage_containers.py -a gcc-10
+Adding Ubuntu-20.04 container with GCC-10 and Clang-11
+Traceback (most recent call last):
+  File "./manage_containers.py", line 183, in <module>
+    main()
+  File "./manage_containers.py", line 173, in main
+    add_containers(args.add, containers)
+  File "./manage_containers.py", line 109, in add_containers
+    c.add()
+  File "./manage_containers.py", line 61, in add
+    subprocess.run([self.sudo_wrapper, 'docker', 'build', *build_args, '.'],
+  File "/usr/lib/python3.8/subprocess.py", line 493, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/usr/lib/python3.8/subprocess.py", line 858, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.8/subprocess.py", line 1704, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+PermissionError: [Errno 13] Permission denied: ''
+```
+
+Also, could you please reorganize the commits in this branch after fixing those bugs.
+
+Thanks you so much for your work!
+
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) commented at [2024-10-14 16:38](https://github.com/a13xp0p0v/kernel-build-containers/pull/22#issuecomment-2411752213):
+
+Hello @a13xp0p0v, thanks a lot for guiding me through this PR! It seems like the reason for the first crash was old Python. I adapted the code for it and also fixed it to work properly for the `docker` group. Additionally, I added some checks into the tests! I'm waiting for your review to start squashing commits!
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2024-10-16 08:16](https://github.com/a13xp0p0v/kernel-build-containers/pull/22#issuecomment-2416058893):
+
+@Willenst, nice. I think it's time to rearrange the commits.
+Thanks!
 
 
 -------------------------------------------------------------------------------
@@ -60,7 +1056,7 @@ So, here is python script, documentation, tests, some fixes for old clang in doc
 **Labels**: `bug`
 
 
-#### <img src="https://avatars.githubusercontent.com/u/67371653?v=4" width="50">[Willenst](https://github.com/Willenst) opened issue at [2024-09-13 16:57](https://github.com/a13xp0p0v/kernel-build-containers/pull/21):
+#### <img src="https://avatars.githubusercontent.com/u/67371653?u=f5d8536b55c751c2bdb6358897d72523a01006a2&v=4" width="50">[Willenst](https://github.com/Willenst) opened issue at [2024-09-13 16:57](https://github.com/a13xp0p0v/kernel-build-containers/pull/21):
 
 Hello, I've decided that Dockerfile can be optimized by removing duplicate gcc and g++ versions. Since they are just meta packages containing the one specified version of distinct package. You can check it by searching gcc in this repo http://archive.ubuntu.com/ubuntu/dists/focal/main/binary-amd64/
 
@@ -220,7 +1216,7 @@ Srikar Dronamraju
 
 # [\#19 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/19) `closed`: Support for POWER arch builds
 
-#### <img src="https://avatars.githubusercontent.com/u/14011921?u=38f0b728c74435aeefe7c17198206fc43384ce35&v=4" width="50">[mchauras-linux](https://github.com/mchauras-linux) opened issue at [2024-09-04 09:27](https://github.com/a13xp0p0v/kernel-build-containers/pull/19):
+#### <img src="https://avatars.githubusercontent.com/u/14011921?v=4" width="50">[mkchauras](https://github.com/mkchauras) opened issue at [2024-09-04 09:27](https://github.com/a13xp0p0v/kernel-build-containers/pull/19):
 
 This patch supports build for ppc64le arch
 
@@ -232,7 +1228,7 @@ May I ask why did you close this pull request?
 
 Thanks!
 
-#### <img src="https://avatars.githubusercontent.com/u/14011921?u=38f0b728c74435aeefe7c17198206fc43384ce35&v=4" width="50">[mchauras-linux](https://github.com/mchauras-linux) commented at [2024-09-13 06:10](https://github.com/a13xp0p0v/kernel-build-containers/pull/19#issuecomment-2348110176):
+#### <img src="https://avatars.githubusercontent.com/u/14011921?v=4" width="50">[mkchauras](https://github.com/mkchauras) commented at [2024-09-13 06:10](https://github.com/a13xp0p0v/kernel-build-containers/pull/19#issuecomment-2348110176):
 
 This still doesn't support ppc arch, it only has support for ppc64le.
 If you feel this is enough I can reopen this. But it still lacks support for ppc64 and ppc
@@ -240,16 +1236,33 @@ If you feel this is enough I can reopen this. But it still lacks support for ppc
 
 -------------------------------------------------------------------------------
 
-# [\#18 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/18) `open`: Give user a choice to choose which container to build
+# [\#18 PR](https://github.com/a13xp0p0v/kernel-build-containers/pull/18) `merged`: Give user a choice to choose which container to build
 
-#### <img src="https://avatars.githubusercontent.com/u/14011921?u=38f0b728c74435aeefe7c17198206fc43384ce35&v=4" width="50">[mchauras-linux](https://github.com/mchauras-linux) opened issue at [2024-09-04 09:22](https://github.com/a13xp0p0v/kernel-build-containers/pull/18):
+#### <img src="https://avatars.githubusercontent.com/u/14011921?v=4" width="50">[mkchauras](https://github.com/mkchauras) opened issue at [2024-09-04 09:22](https://github.com/a13xp0p0v/kernel-build-containers/pull/18):
 
 Created a fucntion for every container build, user passes the argument and builds only the version user asked for.
 This saves a lot of time and space on the disk
 
 If no arguments are provided all the containers will be built. I kept it that way since I didn't wanna change the legacy behaviour.
 
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2024-09-29 14:56](https://github.com/a13xp0p0v/kernel-build-containers/pull/18#issuecomment-2381388396):
 
+Hello @mchauras-linux,
+
+Thanks for your work!
+
+I've improved your pull request a bit: 
+https://github.com/a13xp0p0v/kernel-build-containers/commit/566cbb3cfb9904069d55f69afecea7053906a2e1
+https://github.com/a13xp0p0v/kernel-build-containers/commit/8b01459311dfd2d776ecc20fcaed465e4515edcd
+https://github.com/a13xp0p0v/kernel-build-containers/commit/94f5befec69f7b097e63c3a3f27ca86775959e52
+
+Merged!
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2024-09-29 15:01](https://github.com/a13xp0p0v/kernel-build-containers/pull/18#issuecomment-2381390007):
+
+By the way, there is a pull request #22 by @Willenst, implementing `manage_containers.py`.
+
+It will provide additional functionality.
 
 
 -------------------------------------------------------------------------------
@@ -358,7 +1371,7 @@ Building the kernel sometimes requires the hexdump tool, which is a part of the 
 
 -------------------------------------------------------------------------------
 
-# [\#13 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/13) `open`: Stop/Remove all running containers before removing images
+# [\#13 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/13) `closed`: Stop/Remove all running containers before removing images
 **Labels**: `enhancement`
 
 
@@ -374,10 +1387,50 @@ Decided to create a python script `manage_containers.py`, that will substitute `
 
 It will support choosing specific containers for removing.
 
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-01-02 20:59](https://github.com/a13xp0p0v/kernel-build-containers/issues/13#issuecomment-2568370246):
+
+Implemented in #27.
+
+Quoting [README](https://github.com/a13xp0p0v/kernel-build-containers?tab=readme-ov-file#how-to-remove-the-created-container-images):
+
+__Remove all created images:__
+```
+$ python3 manage_images.py -r
+```
+
+__Expected output, if some containers are running:__
+```
+Remove the container image providing Clang 17 and GCC 14
+Error response from daemon: conflict: unable to delete 18f5a5c70571 (cannot be forced) - image is being used by running container e322f234ee1b
+[!] WARNING: Image removal failed, see the error message above
+
+[!] WARNING: failed to remove 1 container image(s), see the log above
+
+Current status:
+-----------------------------------------
+ Ubuntu | Clang  | GCC    | Image ID
+-----------------------------------------
+ 16.04  | 5      | 4.9    | -
+ 16.04  | 6      | 5      | -
+ 18.04  | 7      | 6      | -
+ 18.04  | 8      | 7      | -
+ 20.04  | 9      | 8      | -
+ 20.04  | 10     | 9      | -
+ 20.04  | 11     | 10     | -
+ 22.04  | 12     | 11     | -
+ 22.04  | 13     | 12     | -
+ 22.04  | 14     | 12     | -
+ 24.04  | 15     | 13     | -
+ 24.04  | 16     | 14     | -
+ 24.04  | 17     | 14     | 18f5a5c70571
+-----------------------------------------
+```
+In that case simply stop this container and run `manage_images.py -r` again.
+
 
 -------------------------------------------------------------------------------
 
-# [\#12 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/12) `open`: Allow the user to choose a specific version of the container image to build
+# [\#12 Issue](https://github.com/a13xp0p0v/kernel-build-containers/issues/12) `closed`: Allow the user to choose a specific version of the container image to build
 **Labels**: `enhancement`
 
 
@@ -392,6 +1445,10 @@ Looked at the design.
 Decided to create a python script `manage_containers.py`, that will substitute `build_containers.sh` and `rm_containers.sh`.
 
 It will support choosing specific containers.
+
+#### <img src="https://avatars.githubusercontent.com/u/1419667?u=de82e29061c3ef5f1c19f95528f8a82b08051fd2&v=4" width="50">[a13xp0p0v](https://github.com/a13xp0p0v) commented at [2025-01-02 20:50](https://github.com/a13xp0p0v/kernel-build-containers/issues/12#issuecomment-2568360802):
+
+Implemented in #27.
 
 
 -------------------------------------------------------------------------------
