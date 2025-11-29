@@ -27,13 +27,6 @@ if [ "$RUNTIME" != "docker" -a "$RUNTIME" != "podman" ]; then
 	exit 1
 fi
 
-RUNTIME_TEST_OUTPUT="$($RUNTIME ps 2>&1)"
-
-if echo "$RUNTIME_TEST_OUTPUT" | grep -qi "permission denied"; then
-	echo "Hey, we gonna use sudo for running the container"
-	SUDO_CMD="sudo"
-fi
-
 if [ "$ACTION" != "kill" -a "$ACTION" != "nokill" ]; then
 	echo "[-] ERROR: Wrong finishing action"
 	print_help
@@ -44,6 +37,13 @@ echo "Search \"container.id\" file in build output directory \"$OUT\""
 if [ ! -f "$CID_FILE" ]; then
 	echo "NO such file, nothing to do, exit"
 	exit 2
+fi
+
+RUNTIME_TEST_OUTPUT="$($RUNTIME ps 2>&1)"
+
+if echo "$RUNTIME_TEST_OUTPUT" | grep -qi "permission denied"; then
+	echo "Hey, we gonna use sudo for running the container"
+	SUDO_CMD="sudo"
 fi
 
 echo "OK, \"container.id\" file exists, removing it"
