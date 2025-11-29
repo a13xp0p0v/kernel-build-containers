@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -u
+
 print_help(){
 	echo "usage: $0 podman/docker kill/nokill out_dir"
 	echo "  docker/podman -- docker or podman container"
@@ -7,8 +9,6 @@ print_help(){
 	echo "  out_dir -- build output directory used by this container (with container.id file)"
 	exit 1
 }
-
-set -eu
 
 if [ $# -ne 3 ]; then
 	echo "ERROR: Invalid amount of arguments specified"
@@ -28,9 +28,7 @@ if [ "$RUNTIME" != "podman" ] && [ $RUNTIME != "docker" ]; then
 	exit 1
 fi
 
-set +e
 RUNTIME_TEST_OUTPUT="$($RUNTIME ps 2>&1)"
-set -e
 
 if echo "$RUNTIME_TEST_OUTPUT" | grep -qi "permission denied"; then
 	echo "Hey, we gonna use sudo for running the container"
