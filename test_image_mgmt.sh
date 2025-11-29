@@ -88,33 +88,34 @@ run_error_handling_tests() {
 
 	$DELIMITER
 	echo "Testing invalid arguments..."
-	python3 -m coverage run -a --branch manage_images.py -b strange-compiler && exit 1
-	python3 -m coverage run -a --branch manage_images.py -r strange-compiler && exit 1
-	python3 -m coverage run -a --branch manage_images.py -strange-option && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b strange-compiler $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -r strange-compiler $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -strange-option $RUNTIME_FLAG && exit 1
 
 	$DELIMITER
 	echo "Testing some invalid combinations..."
-	python3 -m coverage run -a --branch manage_images.py -q && exit 1
-	python3 -m coverage run -a --branch manage_images.py -q -r && exit 1
-	python3 -m coverage run -a --branch manage_images.py -q -r gcc-12 && exit 1
-	python3 -m coverage run -a --branch manage_images.py -q -l && exit 1
-	python3 -m coverage run -a --branch manage_images.py -q -l -r && exit 1
-	python3 -m coverage run -a --branch manage_images.py -q -l -r gcc-12 && exit 1
-	python3 -m coverage run -a --branch manage_images.py -l -r && exit 1
-	python3 -m coverage run -a --branch manage_images.py -l -r gcc-12 && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b -r && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -r && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b -r gcc-12 && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -r gcc-12 && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -r gcc-12 -q && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b -l && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l -q && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b -l -r && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l -r && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b -l -r gcc-12 && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l -r gcc-12 && exit 1
-	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l -r gcc-12 -q && exit 1
+	python3 -m coverage run -a --branch manage_images.py -l -d -p && exit 1
+	python3 -m coverage run -a --branch manage_images.py -q $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -q -r $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -q -r gcc-12 $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -q -l $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -q -l -r $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -q -l -r gcc-12 $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -l -r $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -l -r gcc-12 $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b -r $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -r $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b -r gcc-12 $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -r gcc-12 $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -r gcc-12 -q $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b -l $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l -q $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b -l -r $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l -r $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b -l -r gcc-12 $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l -r gcc-12 $RUNTIME_FLAG && exit 1
+	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l -r gcc-12 -q $RUNTIME_FLAG && exit 1
 
 	$DELIMITER
 	echo "Testing containers with missing GCC tags..."
