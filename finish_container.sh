@@ -7,7 +7,6 @@ print_help(){
 	echo "  docker/podman -- docker or podman container"
 	echo "  kill/nokill -- how to finish: kill the container and then clean up / only clean up"
 	echo "  out_dir -- build output directory used by this container (with container.id file)"
-	exit 1
 }
 
 if [ $# -ne 3 ]; then
