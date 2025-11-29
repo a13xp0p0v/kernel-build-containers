@@ -1,13 +1,13 @@
 #!/bin/sh
 
+set -eux
+
 DELIMITER="echo -e \n##############################################"
 RUNTIME_FLAG=""
 RUNTIME=""
 SUDO_CMD=""
 
-set -eux
-
-check_sudo(){
+check_if_sudo_needed() {
 	set +e
 	RUNTIME_TEST_OUTPUT="$($RUNTIME ps 2>&1)"
 	set -e
@@ -19,24 +19,27 @@ check_sudo(){
 	fi
 }
 
-clear_state(){
+clear_state() {
 	$DELIMITER
 	echo "Clearing the state before the test..."
 	python3 manage_images.py -r $RUNTIME_FLAG
 }
 
-basic_tests(){
+run_basic_tests() {
 	$DELIMITER
 	echo "Testing help message printing..."
 	python3 -m coverage run -a --branch manage_images.py -h
+
 	$DELIMITER
 	echo "Testing image building..."
 	python3 -m coverage run -a --branch manage_images.py -b gcc-8 $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -b clang-11 $RUNTIME_FLAG
+
 	$DELIMITER
 	echo "Testing quiet image building..."
 	python3 -m coverage run -a --branch manage_images.py -b gcc-12 -q $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -b clang-15 -q $RUNTIME_FLAG
+
 	$DELIMITER
 	echo "Testing image listing..."
 	python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG
@@ -46,20 +49,24 @@ basic_tests(){
 	python3 -m coverage run -a --branch manage_images.py -r gcc-12 $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r clang-11 $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r $RUNTIME_FLAG
+
 	$DELIMITER
 	echo "Testing building and removing all images..."
 	python3 -m coverage run -a --branch manage_images.py -b $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -b all $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r all $RUNTIME_FLAG
+
 	$DELIMITER
 	echo "Testing building an existing image..."
 	python3 -m coverage run -a --branch manage_images.py -b gcc-6 $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -b clang-7 $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r $RUNTIME_FLAG
+
 	$DELIMITER
 	echo "Testing removing a non-existing image..."
 	python3 -m coverage run -a --branch manage_images.py -r gcc-13 $RUNTIME_FLAG
+
 	$DELIMITER
 	echo "Testing image removal when containers are running..."
 	python3 -m coverage run -a --branch manage_images.py -b gcc-12 $RUNTIME_FLAG
@@ -71,17 +78,20 @@ basic_tests(){
 	python3 -m coverage run -a --branch manage_images.py -r gcc-12 $RUNTIME_FLAG
 }
 
-test_error_handling(){
+run_error_handling_tests() {
 	$DELIMITER
 	echo "Testing the error handling..."
+
 	$DELIMITER
 	echo "Testing without any options..."
 	python3 -m coverage run -a --branch manage_images.py && exit 1
+
 	$DELIMITER
 	echo "Testing invalid arguments..."
 	python3 -m coverage run -a --branch manage_images.py -b strange-compiler && exit 1
 	python3 -m coverage run -a --branch manage_images.py -r strange-compiler && exit 1
 	python3 -m coverage run -a --branch manage_images.py -strange-option && exit 1
+
 	$DELIMITER
 	echo "Testing some invalid combinations..."
 	python3 -m coverage run -a --branch manage_images.py -q && exit 1
@@ -105,6 +115,7 @@ test_error_handling(){
 	python3 -m coverage run -a --branch manage_images.py -b -l -r gcc-12 && exit 1
 	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l -r gcc-12 && exit 1
 	python3 -m coverage run -a --branch manage_images.py -b gcc-10 -l -r gcc-12 -q && exit 1
+
 	$DELIMITER
 	echo "Testing containers with missing GCC tags..."
 	python3 -m coverage run -a --branch manage_images.py -b gcc-12 $RUNTIME_FLAG
@@ -150,33 +161,31 @@ EOF
 	rm -rf "$TMPDIR"
 }
 
-finish(){
-	$DELIMITER
-	echo "All tests completed. Creating the coverage report..."
-	python3 -m coverage report
-	python3 -m coverage html
-	echo "Well done!"
+run_tests() {
+	check_if_sudo_needed
+	clear_state
+	run_basic_tests
+	run_error_handling_tests
 }
 
+echo "Let's test manage_images.py..."
 python3 -m coverage erase
 
-RUNTIME='docker'
+# Test Docker
+RUNTIME="docker"
 RUNTIME_FLAG="-d"
-check_sudo
-clear_state
-basic_tests
-test_error_handling
+run_tests
 handle_unknow_error
 
-RUNTIME='podman'
+# Test Podman
+RUNTIME="podman"
 RUNTIME_FLAG="-p"
-check_sudo
-echo $SUDO_CMD
-clear_state
-basic_tests
-test_error_handling
-
+run_tests
 handle_unknow_error
 test_multiruntime
 
-finish
+$DELIMITER
+echo "All tests completed. Creating the coverage report..."
+python3 -m coverage report
+python3 -m coverage html
+echo "Well done!"
