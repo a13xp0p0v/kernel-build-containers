@@ -172,6 +172,11 @@ run_tests() {
 echo "Let's test manage_images.py..."
 python3 -m coverage erase
 
+# Test Docker as a default container runtime (without a flag)
+RUNTIME="docker"
+RUNTIME_FLAG=""
+run_tests
+
 # Test Docker
 RUNTIME="docker"
 RUNTIME_FLAG="-d"
