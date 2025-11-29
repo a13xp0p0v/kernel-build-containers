@@ -37,7 +37,7 @@ def get_cross_compile_args(arch):
     return args_list
 
 
-def finish_building_kernel(out_dir, interrupt, runtime):
+def finish_building_kernel(runtime, out_dir, interrupt):
     print('Finish building the kernel')
     finish_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/finish_container.sh', runtime]
     if interrupt:
@@ -57,7 +57,7 @@ def finish_building_kernel(out_dir, interrupt, runtime):
     print(f'The finish_container.sh script returned {return_code}')
 
 
-def build_kernel(arch, kconfig, src, out, compiler, runtime, make_args):
+def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
     if kconfig:
         assert(out), 'Ouch, the output directory is required for building with the kconfig file'
         kconfig_name_parts = os.path.splitext(os.path.basename(kconfig))
@@ -94,7 +94,7 @@ def build_kernel(arch, kconfig, src, out, compiler, runtime, make_args):
         print('No kconfig to copy to the output subdirectory')
 
     start_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/start_container.sh',
-                                   compiler, src, out_subdir, f'--{runtime}']
+                           compiler, src, out_subdir, '--' + runtime]
 
     noninteractive = True
     if 'menuconfig' in make_args:
@@ -142,7 +142,7 @@ def build_kernel(arch, kconfig, src, out, compiler, runtime, make_args):
         except KeyboardInterrupt:
             print('[!] WARNING: Got keyboard interrupt, stopping build process...')
             interrupt = True
-    finish_building_kernel(out_subdir, interrupt, runtime)
+    finish_building_kernel(runtime, out_subdir, interrupt)
     if noninteractive:
         print(f'See the build log: {build_log}')
         build_log_fd.close()
@@ -239,7 +239,7 @@ def main():
     else:
         print('Going to run \'make\' in single-threaded mode')
 
-    build_kernel(args.arch, args.kconfig, args.src, args.out, args.compiler, runtime, make_args)
+    build_kernel(runtime, args.arch, args.kconfig, args.src, args.out, args.compiler, make_args)
 
     print('[+] Done, see the results')
 
