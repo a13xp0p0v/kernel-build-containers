@@ -29,7 +29,7 @@ CIDFILE=""
 ENV=""
 INTERACTIVE="-it"
 RUNTIME=""
-RUNTIME_ARGS=""
+RUNTIME_SPECIFIC_ARGS=""
 SUDO_CMD=""
 
 while [[ $# -gt 0 ]]; do
@@ -56,7 +56,7 @@ while [[ $# -gt 0 ]]; do
 			echo "Force to use the Podman container engine"
 			echo "[!] INFO: Working with Podman images belonging to \"$(id -un)\" (UID $(id -u))"
 			RUNTIME="podman"
-			RUNTIME_ARGS="--userns=keep-id"
+			RUNTIME_SPECIFIC_ARGS="--userns=keep-id"
 		fi
 		shift
 		;;
@@ -121,7 +121,7 @@ else
 fi
 
 # Z for setting SELinux label
-exec $SUDO_CMD $RUNTIME run $ENV $INTERACTIVE $CIDFILE $RUNTIME_ARGS --rm \
+exec $SUDO_CMD $RUNTIME run $ENV $INTERACTIVE $CIDFILE $RUNTIME_SPECIFIC_ARGS --pull=never --rm \
 	-v $SRC:/src:Z \
 	-v $OUT:/out:Z \
 	kernel-build-container:$COMPILER "$@"
