@@ -3,11 +3,15 @@
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/a13xp0p0v/kernel-build-containers?label=release)](https://github.com/a13xp0p0v/kernel-build-containers/tags)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-This project provides containers for building the Linux kernel (or other software) with many different compilers. It supports __Docker__ and __Podman__ container engines, feel free to choose.
+This project provides containers for building the Linux kernel (or other software) with many different compilers.
+
+It is a nice solution for the 🔥toolchain hell🔥 problem.
+
+This project is also very useful for testing gcc-plugins for the Linux kernel, for example. Goodbye headache!
+
+`kernel-build-containers` supports __Docker__ and __Podman__ container engines, feel free to choose.
 
 License: GPL-3.0.
-
-It's very useful for testing gcc-plugins for the Linux kernel, for example. Goodbye headache!
 
 ## Repositories
 
@@ -251,7 +255,9 @@ __Get help:__
 
 ```console
 $ python3 build_linux.py --help
-usage: build_linux.py [-h] [-d] [-p] -a ARCH -c COMPILER [-k KCONFIG] -s SRC [-o OUT] [-q] [-t] ...
+usage: build_linux.py [-h] [-d] [-p] -a ARCH -c COMPILER [-k KCONFIG] -s SRC [-o OUT] [-q]
+                      [-t]
+                      ...
 
 Build Linux kernel using kernel-build-containers
 
@@ -264,20 +270,22 @@ options:
   -p, --podman          force to use the Podman container engine instead of default Docker
   -a, --arch ARCH       build target architecture (x86_64 / i386 / arm64 / arm / riscv)
   -c, --compiler COMPILER
-                        compiler for building (clang-5 / clang-6 / clang-7 / clang-8 / clang-9 /
-                        clang-10 / clang-11 / clang-12 / clang-13 / clang-14 / clang-15 / clang-16 /
-                        clang-17 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 /
-                        gcc-12 / gcc-13 / gcc-14)
+                        compiler for building (clang-5 / clang-6 / clang-7 / clang-8 /
+                        clang-9 / clang-10 / clang-11 / clang-12 / clang-13 / clang-14 /
+                        clang-15 / clang-16 / clang-17 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 /
+                        gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14)
   -k, --kconfig KCONFIG
                         path to kernel kconfig file (optional argument)
   -s, --src SRC         Linux kernel sources directory
-  -o, --out OUT         build output directory, where the output subdirectory "kconfig__arch__compiler"
-                        is created. Without '-k', the output subdirectory name format is
-                        "arch__compiler". For in-place building of Linux at the root of the kernel
-                        source tree, you can specify the same '-s' and '-o' path without '-k' or simply
-                        run the tool without '-o' and '-k' arguments.
+  -o, --out OUT         build output directory, where the output subdirectory
+                        "kconfig__arch__compiler" is created. Without '-k', the output
+                        subdirectory name format is "arch__compiler". For in-place building
+                        of Linux at the root of the kernel source tree, you can specify the
+                        same '-s' and '-o' path without '-k' or simply run the tool without
+                        '-o' and '-k' arguments.
   -q, --quiet           for running `make` in quiet mode
-  -t, --single-thread   for running `make` in single-threaded mode (multi-threaded by default)
+  -t, --single-thread   for running `make` in single-threaded mode (multi-threaded by
+                        default)
 ```
 
 __Configure the Linux kernel with `menuconfig` in the needed container:__
