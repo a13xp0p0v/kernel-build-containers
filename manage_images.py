@@ -57,7 +57,7 @@ class ContainerImage:
             return
 
         print(f'\nBuild a container image providing Clang {self.clang} and GCC {self.gcc}')
-        build_args = ['buildx', 'build',
+        build_args = ['build',
                       '--build-arg', f'CLANG_VERSION={self.clang}',
                       '--build-arg', f'GCC_VERSION={self.gcc}',
                       '--build-arg', f'UBUNTU_VERSION={self.ubuntu}',
@@ -67,6 +67,11 @@ class ContainerImage:
                       '--build-arg', f'GID={os.getgid()}',
                       '-t', self.clang_tag,
                       '-t', self.gcc_tag]
+        try:
+            subprocess.run([self.runtime_cmd, 'buildx', 'version'], check=True, stdout=subprocess.PIPE)
+            build_args = ['buildx'] + build_args
+        except:
+            pass
         if self.quiet:
             print('[!] INFO: Quiet mode, please wait...')
             build_args += ['-q']

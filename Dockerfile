@@ -1,9 +1,7 @@
-# syntax=docker/dockerfile:1.4
 ARG UBUNTU_VERSION=default
 FROM ubuntu:${UBUNTU_VERSION} AS base
 
-RUN --mount=type=cache,target=/var/cache/apt \
-    set -ex; \
+RUN set -ex; \
     echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections; \
     apt-get update; \
     apt-get install -y -q --no-install-recommends apt-utils dialog; \
@@ -12,8 +10,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
     apt-get install -y -q --no-install-recommends python-is-python3 || apt-get install -y -q --no-install-recommends python
 
 ARG GCC_VERSION
-RUN --mount=type=cache,target=/var/cache/apt \
-    set -ex; \
+RUN set -ex; \
     if [ "$GCC_VERSION" ]; then \
       apt-get install -y -q --no-install-recommends gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev \
         gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
@@ -37,8 +34,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
     fi
 
 ARG CLANG_VERSION
-RUN --mount=type=cache,target=/var/cache/apt \
-    set -ex; \
+RUN set -ex; \
     if [ "$CLANG_VERSION" ]; then \
       if [ "$CLANG_VERSION" = "5" ] || [ "$CLANG_VERSION" = "6" ]; then \
         CLANG_VERSION="${CLANG_VERSION}.0"; \
