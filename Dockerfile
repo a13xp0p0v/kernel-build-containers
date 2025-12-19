@@ -1,24 +1,28 @@
+# syntax=docker/dockerfile:1.4
 ARG UBUNTU_VERSION=default
 FROM ubuntu:${UBUNTU_VERSION} AS base
 
-ARG GCC_VERSION
-ARG CLANG_VERSION
-RUN set -ex; \
+RUN --mount=type=cache,target=/var/cache/apt \
+    set -ex; \
     echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections; \
     apt-get update; \
-    apt-get install -y -q apt-utils dialog; \
-    apt-get install -y -q sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk rsync; \
-    apt-get install -y -q python3 python3-venv; \
-    apt-get install -y -q python-is-python3 || apt-get install -y -q python; \
+    apt-get install -y -q --no-install-recommends apt-utils dialog; \
+    apt-get install -y -q --no-install-recommends sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk rsync; \
+    apt-get install -y -q --no-install-recommends python3 python3-venv; \
+    apt-get install -y -q --no-install-recommends python-is-python3 || apt-get install -y -q --no-install-recommends python
+
+ARG GCC_VERSION
+RUN --mount=type=cache,target=/var/cache/apt \
+    set -ex; \
     if [ "$GCC_VERSION" ]; then \
-      apt-get install -y -q gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev \
+      apt-get install -y -q --no-install-recommends gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev \
         gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
         gcc-${GCC_VERSION}-arm-linux-gnueabi g++-${GCC_VERSION}-arm-linux-gnueabi; \
       if [ "$GCC_VERSION" != "4.9" ]; then \
-        apt-get install -y -q gcc-${GCC_VERSION}-plugin-dev-aarch64-linux-gnu gcc-${GCC_VERSION}-plugin-dev-arm-linux-gnueabi; \
+        apt-get install -y -q --no-install-recommends gcc-${GCC_VERSION}-plugin-dev-aarch64-linux-gnu gcc-${GCC_VERSION}-plugin-dev-arm-linux-gnueabi; \
       fi; \
       if [ "$GCC_VERSION" != "4.9" ] && [ "$GCC_VERSION" != "5" ] && [ "$GCC_VERSION" != "6" ]; then \
-        apt-get install -y -q gcc-${GCC_VERSION}-riscv64-linux-gnu g++-${GCC_VERSION}-riscv64-linux-gnu gcc-${GCC_VERSION}-plugin-dev-riscv64-linux-gnu; \
+        apt-get install -y -q --no-install-recommends gcc-${GCC_VERSION}-riscv64-linux-gnu g++-${GCC_VERSION}-riscv64-linux-gnu gcc-${GCC_VERSION}-plugin-dev-riscv64-linux-gnu; \
       fi; \
       update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCC_VERSION} 100; \
       update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${GCC_VERSION} 100; \
@@ -30,7 +34,11 @@ RUN set -ex; \
         update-alternatives --install /usr/bin/riscv64-linux-gnu-gcc riscv64-linux-gnu-gcc /usr/bin/riscv64-linux-gnu-gcc-${GCC_VERSION} 100; \
         update-alternatives --install /usr/bin/riscv64-linux-gnu-g++ riscv64-linux-gnu-g++ /usr/bin/riscv64-linux-gnu-g++-${GCC_VERSION} 100; \
       fi; \
-    fi; \
+    fi
+
+ARG CLANG_VERSION
+RUN --mount=type=cache,target=/var/cache/apt \
+    set -ex; \
     if [ "$CLANG_VERSION" ]; then \
       if [ "$CLANG_VERSION" = "5" ] || [ "$CLANG_VERSION" = "6" ]; then \
         CLANG_VERSION="${CLANG_VERSION}.0"; \

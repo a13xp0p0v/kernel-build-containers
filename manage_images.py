@@ -57,7 +57,7 @@ class ContainerImage:
             return
 
         print(f'\nBuild a container image providing Clang {self.clang} and GCC {self.gcc}')
-        build_args = ['build',
+        build_args = ['buildx', 'build',
                       '--build-arg', f'CLANG_VERSION={self.clang}',
                       '--build-arg', f'GCC_VERSION={self.gcc}',
                       '--build-arg', f'UBUNTU_VERSION={self.ubuntu}',
