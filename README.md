@@ -40,6 +40,7 @@ __Supported gcc versions:__
  - gcc-12
  - gcc-13
  - gcc-14
+ - gcc-15
 
 __Supported clang versions:__
  - clang-5
@@ -55,6 +56,10 @@ __Supported clang versions:__
  - clang-15
  - clang-16
  - clang-17
+ - clang-18
+ - clang-19
+ - clang-20 (use with caution)
+ - clang-21 (use with caution)
 
 ## How to build container images
 
@@ -71,21 +76,21 @@ options:
   -d, --docker          force to use the Docker container engine (default)
   -p, --podman          force to use the Podman container engine instead of default Docker
   -l, --list            show the container images and their IDs
-  -b, --build [compiler]
-                        build a container image providing: clang-5 / clang-6 / clang-7 /
-                        clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 /
-                        clang-14 / clang-15 / clang-16 / clang-17 / gcc-4.9 / gcc-5 / gcc-6
-                        / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14
-                        / all ("all" is default, the tool will build all images if no
-                        compiler is specified)
+  -b [compiler], --build [compiler]
+                        build a container image providing: clang-5 / clang-6 / clang-7
+                        / clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13
+                        / clang-14 / clang-15 / clang-16 / clang-17 / clang-18 / clang-19
+                        / clang-20 / clang-21 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 
+                        / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 / gcc-15
+                        / all ("all" is default, the tool will build all images if no compiler is specified)
   -q, --quiet           suppress the container image build output (for using with --build)
-  -r, --remove [compiler]
-                        remove container images providing: clang-5 / clang-6 / clang-7 /
-                        clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 /
-                        clang-14 / clang-15 / clang-16 / clang-17 / gcc-4.9 / gcc-5 / gcc-6
-                        / gcc-7 / gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14
-                        / all ("all" is default, the tool will remove all images if no
-                        compiler is specified)
+  -r [compiler], --remove [compiler]
+                        remove container images providing: clang-5 / clang-6 / clang-7
+                        / clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13
+                        / clang-14 / clang-15 / clang-16 / clang-17 / clang-18 / clang-19
+                        / clang-20 / clang-21 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 
+                        / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 / gcc-15
+                        / all ("all" is default, the tool will remove all images if no compiler is specified)
 ```
 
 __Build a single Docker container image:__
@@ -134,6 +139,10 @@ Current status:
  24.04  | 15     | 13     | 579f6aa4a38d
  24.04  | 16     | 14     | -
  24.04  | 17     | 14     | -
+ 24.04  | 18     | 14     | -
+ 25.10  | 19     | 15     | -
+ 25.10  | 20     | 15     | -
+ 25.10  | 21     | 15     | -
 --------------------------------------------
 ```
 
@@ -167,6 +176,10 @@ Current status:
  24.04  | 15     | 13     | a48106dc194e
  24.04  | 16     | 14     | 1c0aba835f6c
  24.04  | 17     | 14     | 18f5a5c70571
+ 24.04  | 18     | 14     | 3094501608ca
+ 25.10  | 19     | 15     | b92832c98d2e
+ 25.10  | 20     | 15     | 6cca70656bf3
+ 25.10  | 21     | 15     | 9b3a8c479067
 --------------------------------------------
 ```
 
@@ -175,30 +188,35 @@ The created Docker container images look like this:
 ```console
 $ sudo docker images
 REPOSITORY               TAG        IMAGE ID       CREATED          SIZE
-kernel-build-container   clang-17   18f5a5c70571   4 seconds ago    2.14GB
-kernel-build-container   gcc-14     18f5a5c70571   4 seconds ago    2.14GB
-kernel-build-container   clang-16   1c0aba835f6c   2 minutes ago    2.16GB
-kernel-build-container   clang-15   a48106dc194e   4 minutes ago    1.87GB
-kernel-build-container   gcc-13     a48106dc194e   4 minutes ago    1.87GB
-kernel-build-container   clang-14   9f78a073c0a2   6 minutes ago    1.89GB
-kernel-build-container   gcc-12     9f78a073c0a2   6 minutes ago    1.89GB
-kernel-build-container   clang-13   fd3d31b4b29b   8 minutes ago    1.97GB
-kernel-build-container   clang-12   a3edfb04cb59   10 minutes ago   1.73GB
-kernel-build-container   gcc-11     a3edfb04cb59   10 minutes ago   1.73GB
-kernel-build-container   clang-11   794661e2251e   12 minutes ago   1.62GB
-kernel-build-container   gcc-10     794661e2251e   12 minutes ago   1.62GB
-kernel-build-container   clang-10   70773f4ade91   14 minutes ago   1.39GB
-kernel-build-container   gcc-9      70773f4ade91   14 minutes ago   1.39GB
-kernel-build-container   clang-9    c1e7857ea7b9   16 minutes ago   1.56GB
-kernel-build-container   gcc-8      c1e7857ea7b9   16 minutes ago   1.56GB
-kernel-build-container   clang-8    9aba209703da   18 minutes ago   1.4GB
-kernel-build-container   gcc-7      9aba209703da   18 minutes ago   1.4GB
-kernel-build-container   clang-7    112aac42ce4c   20 minutes ago   1.5GB
-kernel-build-container   gcc-6      112aac42ce4c   20 minutes ago   1.5GB
-kernel-build-container   clang-6    9f1a2dd62fdd   21 minutes ago   1.33GB
-kernel-build-container   gcc-5      9f1a2dd62fdd   21 minutes ago   1.33GB
-kernel-build-container   clang-5    84de06274519   23 minutes ago   1.88GB
-kernel-build-container   gcc-4.9    84de06274519   23 minutes ago   1.88GB
+kernel-build-container   clang-21   dc9408fe5e57   8 seconds ago    2.55GB
+kernel-build-container   gcc-15     dc9408fe5e57   8 seconds ago    2.55GB
+kernel-build-container   clang-20   1d60452476af   29 seconds ago   2.6GB
+kernel-build-container   clang-19   02ce18c03133   52 seconds ago   2.5GB
+kernel-build-container   clang-18   7915eeb58d81   2 minutes ago    2.54GB
+kernel-build-container   gcc-14     7915eeb58d81   2 minutes ago    2.54GB
+kernel-build-container   clang-17   dc7862ae9f4d   2 minutes ago    2.49GB
+kernel-build-container   clang-16   ddc1d61f0084   3 minutes ago    2.51GB
+kernel-build-container   clang-15   05fc44fe3898   4 minutes ago    2.09GB
+kernel-build-container   gcc-13     05fc44fe3898   4 minutes ago    2.09GB
+kernel-build-container   clang-14   eff4eb8fe69c   5 minutes ago    2.11GB
+kernel-build-container   gcc-12     eff4eb8fe69c   5 minutes ago    2.11GB
+kernel-build-container   clang-13   1ddeb93f6b94   5 minutes ago    2.19GB
+kernel-build-container   clang-12   d404aceb2226   8 minutes ago    1.94GB
+kernel-build-container   gcc-11     d404aceb2226   8 minutes ago    1.94GB
+kernel-build-container   clang-11   adda00aa43ee   9 minutes ago    1.82GB
+kernel-build-container   gcc-10     adda00aa43ee   9 minutes ago    1.82GB
+kernel-build-container   clang-10   653b6928b6e2   10 minutes ago   1.57GB
+kernel-build-container   gcc-9      653b6928b6e2   10 minutes ago   1.57GB
+kernel-build-container   clang-9    b2990a8b2d7e   10 minutes ago   1.72GB
+kernel-build-container   gcc-8      b2990a8b2d7e   10 minutes ago   1.72GB
+kernel-build-container   clang-8    4be16e62d9b7   12 minutes ago   1.55GB
+kernel-build-container   gcc-7      4be16e62d9b7   12 minutes ago   1.55GB
+kernel-build-container   clang-7    c7015a9b8345   13 minutes ago   1.46GB
+kernel-build-container   gcc-6      c7015a9b8345   13 minutes ago   1.46GB
+kernel-build-container   clang-6    aadd8a8e8af1   14 minutes ago   1.35GB
+kernel-build-container   gcc-5      aadd8a8e8af1   14 minutes ago   1.35GB
+kernel-build-container   clang-5    adc0418c879a   14 minutes ago   1.84GB
+kernel-build-container   gcc-4.9    adc0418c879a   14 minutes ago   1.84GB
 ```
 
 ## How to run a container
@@ -491,6 +509,10 @@ Current status:
  24.04  | 15     | 13     | -
  24.04  | 16     | 14     | -
  24.04  | 17     | 14     | -
+ 24.04  | 18     | 14     | -
+ 25.10  | 19     | 15     | -
+ 25.10  | 20     | 15     | -
+ 25.10  | 21     | 15     | -
 --------------------------------------------
 ```
 
@@ -521,6 +543,10 @@ Current status:
  24.04  | 15     | 13     | 907c031bb9f6
  24.04  | 16     | 14     | -
  24.04  | 17     | 14     | -
+ 24.04  | 18     | 14     | -
+ 25.10  | 19     | 15     | -
+ 25.10  | 20     | 15     | -
+ 25.10  | 21     | 15     | -
 --------------------------------------------
 ```
 
