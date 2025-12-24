@@ -29,32 +29,38 @@ __Supported build targets:__
  - `riscv` (toolchain name `riscv64`)
 
 __Supported gcc versions:__
- - gcc-4.9 (doesn't support `gcc-plugins` for `arm64` and `arm`)
- - gcc-5
- - gcc-6
- - gcc-7 (`riscv` support starts from this version)
- - gcc-8
- - gcc-9
- - gcc-10
- - gcc-11
- - gcc-12
- - gcc-13
- - gcc-14
+| gcc     | i386 | x86_64 | arm | arm64 | riscv |
+| ------- | ---- | ------ | --- | ----- | ----- |
+| gcc-4.9 | ✓    | ✓      | *   | *     |       |
+| gcc-5   | ✓    | ✓      | ✓   | ✓     |       |
+| gcc-6   | ✓    | ✓      | ✓   | ✓     |       |
+| gcc-7   | ✓    | ✓      | ✓   | ✓     | ✓     |
+| gcc-8   | ✓    | ✓      | ✓   | ✓     | ✓     |
+| gcc-9   | ✓    | ✓      | ✓   | ✓     | ✓     |
+| gcc-10  | ✓    | ✓      | ✓   | ✓     | ✓     |
+| gcc-11  | ✓    | ✓      | ✓   | ✓     | ✓     |
+| gcc-12  | ✓    | ✓      | ✓   | ✓     | ✓     |
+| gcc-13  | ✓    | ✓      | ✓   | ✓     | ✓     |
+| gcc-14  | ✓    | ✓      | ✓   | ✓     | ✓     |
+
+*\*Doesn't support `gcc-plugins`*
 
 __Supported clang versions:__
- - clang-5
- - clang-6
- - clang-7
- - clang-8
- - clang-9
- - clang-10
- - clang-11
- - clang-12
- - clang-13
- - clang-14
- - clang-15
- - clang-16
- - clang-17
+| clang    | i386 | x86_64 | arm | arm64 | riscv |
+| -------- | ---- | ------ | --- | ----- | ----- |
+| clang-5  | ✓    | ✓      | ✓   | ✓     | ✓     |
+| clang-6  | ✓    | ✓      | ✓   | ✓     | ✓     |
+| clang-7  | ✓    | ✓      | ✓   | ✓     | ✓     |
+| clang-8  | ✓    | ✓      | ✓   | ✓     | ✓     |
+| clang-9  | ✓    | ✓      | ✓   | ✓     | ✓     |
+| clang-10 | ✓    | ✓      | ✓   | ✓     | ✓     |
+| clang-11 | ✓    | ✓      | ✓   | ✓     | ✓     |
+| clang-12 | ✓    | ✓      | ✓   | ✓     | ✓     |
+| clang-13 | ✓    | ✓      | ✓   | ✓     | ✓     |
+| clang-14 | ✓    | ✓      | ✓   | ✓     | ✓     |
+| clang-15 | ✓    | ✓      | ✓   | ✓     | ✓     |
+| clang-16 | ✓    | ✓      | ✓   | ✓     | ✓     |
+| clang-17 | ✓    | ✓      | ✓   | ✓     | ✓     |
 
 ## How to build container images
 
