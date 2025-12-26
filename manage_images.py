@@ -71,7 +71,8 @@ class ContainerImage:
             subprocess.run([self.runtime_cmd, 'buildx', 'version'], check=True, stdout=subprocess.PIPE)
             build_args = ['buildx'] + build_args
         except:
-            pass
+            print('[!] WARNING: buildx not available; using default builder '
+                  '(for optimized builds, see: https://docs.docker.com/go/buildx)')
         if self.quiet:
             print('[!] INFO: Quiet mode, please wait...')
             build_args += ['-q']
