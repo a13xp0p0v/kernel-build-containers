@@ -21,40 +21,36 @@ License: GPL-3.0.
 
 ## Supported features
 
-__Supported build targets:__
+__Supported kernel build targets:__
  - `x86_64`
  - `i386`
  - `arm64` (toolchain name `aarch64`)
  - `arm`
  - `riscv` (toolchain name `riscv64`)
 
-__Supported gcc versions:__
- - gcc-4.9 (doesn't support `gcc-plugins` for `arm64` and `arm`)
- - gcc-5
- - gcc-6
- - gcc-7 (`riscv` support starts from this version)
- - gcc-8
- - gcc-9
- - gcc-10
- - gcc-11
- - gcc-12
- - gcc-13
- - gcc-14
+__Supported GCC versions:__
 
-__Supported clang versions:__
- - clang-5
- - clang-6
- - clang-7
- - clang-8
- - clang-9
- - clang-10
- - clang-11
- - clang-12
- - clang-13
- - clang-14
- - clang-15
- - clang-16
- - clang-17
+|             | x86_64 | i386 | arm64 | arm | riscv |
+| ----------- | ------ | ---- | ----- | --- | ----- |
+| __gcc-4.9__ | ✓      | ✓    | *     | *   |       |
+| __gcc-5__   | ✓      | ✓    | ✓     | ✓   |       |
+| __gcc-6__   | ✓      | ✓    | ✓     | ✓   |       |
+| __gcc-7__   | ✓      | ✓    | ✓     | ✓   | ✓     |
+| __gcc-8__   | ✓      | ✓    | ✓     | ✓   | ✓     |
+| __gcc-9__   | ✓      | ✓    | ✓     | ✓   | ✓     |
+| __gcc-10__  | ✓      | ✓    | ✓     | ✓   | ✓     |
+| __gcc-11__  | ✓      | ✓    | ✓     | ✓   | ✓     |
+| __gcc-12__  | ✓      | ✓    | ✓     | ✓   | ✓     |
+| __gcc-13__  | ✓      | ✓    | ✓     | ✓   | ✓     |
+| __gcc-14__  | ✓      | ✓    | ✓     | ✓   | ✓     |
+
+*\* marks a GCC version that doesn't support `gcc-plugins`*
+
+__Supported Clang versions:__
+
+`kernel-build-containers` provides all versions of Clang from `clang-5` to `clang-17`.
+
+The Clang compiler binary and corresponding LLVM utilities typically contain all supported backends for cross compiling.
 
 ## How to build container images
 
