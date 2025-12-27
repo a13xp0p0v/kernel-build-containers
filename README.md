@@ -9,7 +9,9 @@ It is a nice solution for the 🔥toolchain hell🔥 problem.
 
 This project is also very useful for testing gcc-plugins for the Linux kernel, for example. Goodbye headache!
 
-`kernel-build-containers` supports __Docker__ and __Podman__ container engines, feel free to choose.
+`kernel-build-containers` supports multiple container engines:
+- __Docker__ (with [Buildx](https://docs.docker.com/build/concepts/overview/#install-buildx) recommended for optimal performance)
+- __Podman__ (rootless mode supported)
 
 License: GPL-3.0.
 
