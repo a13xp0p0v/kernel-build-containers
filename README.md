@@ -27,6 +27,7 @@ __Supported build targets:__
  - `arm64` (toolchain name `aarch64`)
  - `arm`
  - `riscv` (toolchain name `riscv64`)
+ - `powerpc` (three toolchains: `powerpc`, `powerpc64`, and `powerpc64le`)
 
 __Supported gcc versions:__
  - gcc-4.9 (doesn't support `gcc-plugins` for `arm64` and `arm`)
