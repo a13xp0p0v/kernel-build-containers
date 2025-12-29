@@ -13,9 +13,14 @@ RUN set -ex; \
     if [ "$GCC_VERSION" ]; then \
       apt-get install -y -q gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev \
         gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
-        gcc-${GCC_VERSION}-arm-linux-gnueabi g++-${GCC_VERSION}-arm-linux-gnueabi; \
+        gcc-${GCC_VERSION}-arm-linux-gnueabi g++-${GCC_VERSION}-arm-linux-gnueabi \
+        gcc-${GCC_VERSION}-powerpc-linux-gnu g++-${GCC_VERSION}-powerpc-linux-gnu \
+        gcc-${GCC_VERSION}-powerpc64le-linux-gnu g++-${GCC_VERSION}-powerpc64le-linux-gnu; \
       if [ "$GCC_VERSION" != "4.9" ]; then \
-        apt-get install -y -q gcc-${GCC_VERSION}-plugin-dev-aarch64-linux-gnu gcc-${GCC_VERSION}-plugin-dev-arm-linux-gnueabi; \
+        apt-get install -y -q gcc-${GCC_VERSION}-plugin-dev-aarch64-linux-gnu gcc-${GCC_VERSION}-plugin-dev-arm-linux-gnueabi \
+	gcc-${GCC_VERSION}-plugin-dev-powerpc-linux-gnu gcc-${GCC_VERSION}-plugin-dev-powerpc64le-linux-gnu \
+        gcc-${GCC_VERSION}-powerpc64-linux-gnu g++-${GCC_VERSION}-powerpc64-linux-gnu gcc-${GCC_VERSION}-plugin-dev-powerpc64-linux-gnu; \
+        update-alternatives --install /usr/bin/powerpc64-linux-gnu-gcc powerpc-linux64-gnu-gcc /usr/bin/powerpc64-linux-gnu-gcc-${GCC_VERSION} 100; \
       fi; \
       if [ "$GCC_VERSION" != "4.9" ] && [ "$GCC_VERSION" != "5" ] && [ "$GCC_VERSION" != "6" ]; then \
         apt-get install -y -q gcc-${GCC_VERSION}-riscv64-linux-gnu g++-${GCC_VERSION}-riscv64-linux-gnu gcc-${GCC_VERSION}-plugin-dev-riscv64-linux-gnu; \
@@ -26,6 +31,8 @@ RUN set -ex; \
       update-alternatives --install /usr/bin/aarch64-linux-gnu-g++ aarch64-linux-gnu-g++ /usr/bin/aarch64-linux-gnu-g++-${GCC_VERSION} 100; \
       update-alternatives --install /usr/bin/arm-linux-gnueabi-gcc arm-linux-gnueabi-gcc /usr/bin/arm-linux-gnueabi-gcc-${GCC_VERSION} 100; \
       update-alternatives --install /usr/bin/arm-linux-gnueabi-g++ arm-linux-gnueabi-g++ /usr/bin/arm-linux-gnueabi-g++-${GCC_VERSION} 100; \
+      update-alternatives --install /usr/bin/powerpc-linux-gnu-gcc powerpc-linux-gnu-gcc /usr/bin/powerpc-linux-gnu-gcc-${GCC_VERSION} 100; \
+      update-alternatives --install /usr/bin/powerpc64le-linux-gnu-gcc powerpc-linux64le-gnu-gcc /usr/bin/powerpc64le-linux-gnu-gcc-${GCC_VERSION} 100; \
       if [ "$GCC_VERSION" != "4.9" ] && [ "$GCC_VERSION" != "5" ] && [ "$GCC_VERSION" != "6" ]; then \
         update-alternatives --install /usr/bin/riscv64-linux-gnu-gcc riscv64-linux-gnu-gcc /usr/bin/riscv64-linux-gnu-gcc-${GCC_VERSION} 100; \
         update-alternatives --install /usr/bin/riscv64-linux-gnu-g++ riscv64-linux-gnu-g++ /usr/bin/riscv64-linux-gnu-g++-${GCC_VERSION} 100; \
