@@ -68,21 +68,23 @@ options:
   -d, --docker          force to use the Docker container engine (default)
   -p, --podman          force to use the Podman container engine instead of default Docker
   -l, --list            show the container images and their IDs
-  -b [compiler], --build [compiler]
-                        build a container image providing: clang-5 / clang-6 / clang-7
-                        / clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13
-                        / clang-14 / clang-15 / clang-16 / clang-17 / clang-18 / clang-19
-                        / clang-20 / clang-21 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 
-                        / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 / gcc-15
-                        / all ("all" is default, the tool will build all images if no compiler is specified)
+  -b, --build [compiler]
+                        build a container image providing: clang-5 / clang-6 / clang-7 /
+                        clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 /
+                        clang-14 / clang-15 / clang-16 / clang-17 / clang-18 / clang-19 /
+                        clang-20 / clang-21 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 /
+                        gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 / gcc-15 / all
+                        ("all" is default, the tool will build all images if no compiler is
+                        specified)
   -q, --quiet           suppress the container image build output (for using with --build)
-  -r [compiler], --remove [compiler]
-                        remove container images providing: clang-5 / clang-6 / clang-7
-                        / clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13
-                        / clang-14 / clang-15 / clang-16 / clang-17 / clang-18 / clang-19
-                        / clang-20 / clang-21 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 
-                        / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 / gcc-15
-                        / all ("all" is default, the tool will remove all images if no compiler is specified)
+  -r, --remove [compiler]
+                        remove container images providing: clang-5 / clang-6 / clang-7 /
+                        clang-8 / clang-9 / clang-10 / clang-11 / clang-12 / clang-13 /
+                        clang-14 / clang-15 / clang-16 / clang-17 / clang-18 / clang-19 /
+                        clang-20 / clang-21 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 /
+                        gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14 / gcc-15 / all
+                        ("all" is default, the tool will remove all images if no compiler is
+                        specified)
 ```
 
 __Build a single Docker container image:__
