@@ -284,8 +284,9 @@ options:
   -c, --compiler COMPILER
                         compiler for building (clang-5 / clang-6 / clang-7 / clang-8 /
                         clang-9 / clang-10 / clang-11 / clang-12 / clang-13 / clang-14 /
-                        clang-15 / clang-16 / clang-17 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 /
-                        gcc-8 / gcc-9 / gcc-10 / gcc-11 / gcc-12 / gcc-13 / gcc-14)
+                        clang-15 / clang-16 / clang-17 / clang-18 / clang-19 / clang-20 /
+                        clang-21 / gcc-4.9 / gcc-5 / gcc-6 / gcc-7 / gcc-8 / gcc-9 / gcc-10
+                        / gcc-11 / gcc-12 / gcc-13 / gcc-14 / gcc-15)
   -k, --kconfig KCONFIG
                         path to kernel kconfig file (optional argument)
   -s, --src SRC         Linux kernel sources directory
