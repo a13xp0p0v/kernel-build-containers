@@ -1,16 +1,23 @@
 #!/usr/bin/python3
 
-# pylint: disable=missing-module-docstring,missing-function-docstring
+# pylint: disable=missing-function-docstring
 
-import os
-import sys
+"""
+This tool for building the Linux kernel in containers with selected
+architecture, compiler, output directory, and optional kconfig
+
+SPDX-FileCopyrightText: Alexander Popov <alex.popov@linux.com>
+SPDX-License-Identifier: GPL-3.0-only
+"""
+
 import argparse
-import subprocess
-import shutil
 import filecmp
+import os
 import pwd
+import shutil
 import signal
-
+import subprocess
+import sys
 
 supported_archs = ['x86_64', 'i386', 'arm64', 'arm', 'riscv', 'powerpc', 'powerpc64', 'powerpc64le']
 supported_compilers = ['clang-5', 'clang-6', 'clang-7', 'clang-8',
@@ -18,7 +25,7 @@ supported_compilers = ['clang-5', 'clang-6', 'clang-7', 'clang-8',
                        'clang-13', 'clang-14', 'clang-15', 'clang-16', 'clang-17',
                        'clang-18', 'clang-19', 'clang-20', 'clang-21',
                        'gcc-4.9', 'gcc-5', 'gcc-6', 'gcc-7', 'gcc-8', 'gcc-9',
-                       'gcc-10', 'gcc-11', 'gcc-12', 'gcc-13', 'gcc-14', 'gcc-15',]
+                       'gcc-10', 'gcc-11', 'gcc-12', 'gcc-13', 'gcc-14', 'gcc-15']
 
 NAME_DELIMITER = '__'
 
@@ -70,15 +77,15 @@ def finish_building_kernel(runtime, out_dir, interrupt):
 
 def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
     if kconfig:
-        assert(out), 'Ouch, the output directory is required for building with the kconfig file'
+        assert (out), 'Ouch, the output directory is required for building with the kconfig file'
         kconfig_name_parts = os.path.splitext(os.path.basename(kconfig))
-        kconfig_name = kconfig_name_parts[0].lstrip('.') # handling the corner case: "-k .config"
+        kconfig_name = kconfig_name_parts[0].lstrip('.')  # handling the corner case: "-k .config"
         out_subdir = out + '/' + kconfig_name + NAME_DELIMITER + arch + NAME_DELIMITER + compiler
     elif not out:
         print('No \'-k\' and \'-o\' arguments; skip creating an output subdirectory to allow in-place build')
         out_subdir = src
     elif out == src:
-        print('Same \'-s\' and \'-o\' values and no \'-k\'; skip creating an output subdirectory to allow in-place build')
+        print('Same \'-s\' and \'-o\' values; no \'-k\'; skip creating an output subdirectory to allow in-place build')
         out_subdir = src
     else:
         out_subdir = out + '/' + arch + NAME_DELIMITER + compiler
@@ -95,12 +102,11 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
         if not os.path.isfile(current_config):
             print(f'No ".config", copy "{kconfig}" to "{current_config}"')
             shutil.copyfile(kconfig, current_config)
+        elif filecmp.cmp(kconfig, current_config):
+            print(f'The kconfig files "{kconfig}" and "{current_config}" are identical, proceed')
         else:
-            if filecmp.cmp(kconfig, current_config):
-                print(f'The kconfig files "{kconfig}" and "{current_config}" are identical, proceed')
-            else:
-                print(f'The kconfig files "{kconfig}" and "{current_config}" differ, stop')
-                sys.exit('[-] ERROR: Kconfig files are different, check the diff and consider copying')
+            print(f'The kconfig files "{kconfig}" and "{current_config}" differ, stop')
+            sys.exit('[-] ERROR: Kconfig files are different, check the diff and consider copying')
     else:
         print('No kconfig to copy to the output subdirectory')
 
@@ -112,10 +118,10 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
         noninteractive = False
 
     if noninteractive:
-        start_container_cmd.extend(['-n']) # start container in the non-interactive mode
+        start_container_cmd.extend(['-n'])  # start container in the non-interactive mode
         build_log = out_subdir + '/build_log.txt'
         print(f'Going to write the build log to "{build_log}"')
-        build_log_fd = open(build_log, "w", encoding='utf-8')
+        build_log_fd = open(build_log, 'w', encoding='utf-8')
         stdout_destination = subprocess.PIPE
     else:
         print('Going to run the container in the interactive mode (without build log)')
@@ -161,6 +167,7 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
 
     return return_code
 
+
 def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
     parser.add_argument('-d', '--docker', action='store_true',
@@ -195,8 +202,10 @@ def main():
         print('Force to use the Docker container engine')
         runtime = 'docker'
     elif args.podman:
+        uid = os.getuid()
+        username = pwd.getpwuid(uid).pw_name
         print('Force to use the Podman container engine')
-        print(f'[!] INFO: Working with Podman images belonging to "{pwd.getpwuid(os.getuid()).pw_name}" (UID {os.getuid()})')
+        print(f'[!] INFO: Working with Podman images belonging to "{username}" (UID {uid})')
         runtime = 'podman'
     else:
         print('Docker container engine is chosen (default)')
@@ -246,7 +255,7 @@ def main():
     if not args.single_thread:
         cpu_count = os.sysconf('SC_NPROCESSORS_ONLN')
         print(f'Going to run \'make\' on {cpu_count} CPUs')
-        make_args = ['-j', str(cpu_count)] + make_args
+        make_args = ['-j', str(cpu_count), *make_args]
     else:
         print('Going to run \'make\' in single-threaded mode')
 
