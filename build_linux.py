@@ -170,9 +170,10 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
 
 def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
-    parser.add_argument('-d', '--docker', action='store_true',
+    engine = parser.add_mutually_exclusive_group()
+    engine.add_argument('-d', '--docker', action='store_true',
                         help='force to use the Docker container engine (default)')
-    parser.add_argument('-p', '--podman', action='store_true',
+    engine.add_argument('-p', '--podman', action='store_true',
                         help='force to use the Podman container engine instead of default Docker')
     parser.add_argument('-a', '--arch', metavar='ARCH', choices=supported_archs, required=True,
                         help=f'build target architecture ({" / ".join(supported_archs)})')
@@ -196,8 +197,6 @@ def main():
                         help='additional arguments for \'make\', can be separated by -- delimiter')
     args = parser.parse_args()
 
-    if args.podman and args.docker:
-        sys.exit('[-] ERROR: Multiple container engines specified')
     if args.docker:
         print('Force to use the Docker container engine')
         runtime = 'docker'

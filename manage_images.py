@@ -186,24 +186,24 @@ def list_images(images):
 def main():
     """The main function for managing the images for kernel-build-containers"""
     parser = argparse.ArgumentParser(description='Manage the images for kernel-build-containers')
-    parser.add_argument('-d', '--docker', action='store_true',
+    engine = parser.add_mutually_exclusive_group()
+    engine.add_argument('-d', '--docker', action='store_true',
                         help='force to use the Docker container engine (default)')
-    parser.add_argument('-p', '--podman', action='store_true',
+    engine.add_argument('-p', '--podman', action='store_true',
                         help='force to use the Podman container engine instead of default Docker')
-    parser.add_argument('-l', '--list', action='store_true',
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('-l', '--list', action='store_true',
                         help='show the container images and their IDs')
-    parser.add_argument('-b', '--build', nargs='?', const='all', choices=supported_compilers, metavar='compiler',
+    mode.add_argument('-b', '--build', nargs='?', const='all', choices=supported_compilers, metavar='compiler',
                         help=f'build a container image providing: {" / ".join(supported_compilers)} '
                               '("all" is default, the tool will build all images if no compiler is specified)')
-    parser.add_argument('-q', '--quiet', action='store_true',
-                        help='suppress the container image build output (for using with --build)')
-    parser.add_argument('-r', '--remove', nargs='?', const='all', choices=supported_compilers, metavar='compiler',
+    mode.add_argument('-r', '--remove', nargs='?', const='all', choices=supported_compilers, metavar='compiler',
                         help=f'remove container images providing: {" / ".join(supported_compilers)} '
                               '("all" is default, the tool will remove all images if no compiler is specified)')
+    parser.add_argument('-q', '--quiet', action='store_true',
+                    help='suppress the container image build output (for using with --build)')
     args = parser.parse_args()
 
-    if args.podman and args.docker:
-        sys.exit('[-] ERROR: Multiple container engines specified')
     if args.docker:
         print('[+] Force to use the Docker container engine')
         ContainerImage.runtime = 'docker'
@@ -220,9 +220,6 @@ def main():
     if not any((args.list, args.build, args.remove)):
         parser.print_help()
         sys.exit(1)
-
-    if bool(args.list) + bool(args.build) + bool(args.remove) > 1:
-        sys.exit('[-] ERROR: Invalid combination of options')
 
     if args.quiet:
         if not args.build:
