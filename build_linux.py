@@ -232,19 +232,15 @@ def main():
         print(f'Using "{args.out}" as build output directory')
 
     make_args = args.make_args[:]
+    forbidden_make_vars = ('O=', 'ARCH=', 'CROSS_COMPILE=', 'CC=')
     if make_args:
         if make_args[0] == '--':
             make_args.pop(0)
         print(f'Have additional arguments for \'make\': {" ".join(make_args)}')
         for arg in make_args:
-            if arg.startswith('O='):
-                sys.exit('[-] ERROR: Don\'t specify \'O=\', we will take care of that')
-            if arg.startswith('ARCH='):
-                sys.exit('[-] ERROR: Don\'t specify \'ARCH=\', we will take care of that')
-            if arg.startswith('CROSS_COMPILE='):
-                sys.exit('[-] ERROR: Don\'t specify \'CROSS_COMPILE=\', we will take care of that')
-            if arg.startswith('CC='):
-                sys.exit('[-] ERROR: Don\'t specify \'CC=\', we will take care of that')
+            for prefix in forbidden_make_vars:
+                if arg.startswith(prefix):
+                    sys.exit(f'[-] ERROR: Don\'t specify \'{prefix}\', we will take care of that')
             if arg.startswith('-j'):
                 sys.exit('[-] ERROR: Don\'t specify \'-j\', by default we run \'make\' in parallel on all CPUs')
 
