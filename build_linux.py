@@ -75,6 +75,38 @@ def finish_building_kernel(runtime, out_dir, interrupt):
     print(f'The finish_container.sh script returned {return_code}')
 
 
+def run_build_in_container(start_container_cmd, noninteractive, build_log):
+    interrupt = False
+    build_log_fd = None
+
+    if noninteractive:
+        build_log_fd = open(build_log, 'w', encoding='utf-8')  # noqa: SIM115 # pylint: disable=R1732
+        print(f'[!] Going to write the build log to "{build_log}"')
+    else:
+        print('Going to run the container in the interactive mode (without build log)')
+
+    with subprocess.Popen(start_container_cmd, stdout=subprocess.PIPE if noninteractive else None,
+                          stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as process:
+        try:
+            if build_log_fd:
+                for line in process.stdout:
+                    print(f'    {line}', end='\r')
+                    build_log_fd.write(line)
+
+            return_code = process.wait()
+            print(f'The container\'s return code {return_code}')
+        except KeyboardInterrupt:
+            return_code = 128 + signal.SIGINT
+            print(f'[!] WARNING: Got keyboard interrupt, stopping (return code {return_code})')
+            interrupt = True
+
+    if build_log_fd:
+        print(f'See the build log: {build_log}')
+        build_log_fd.close()
+
+    return return_code, interrupt
+
+
 def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
     if kconfig:
         assert (out), 'Ouch, the output directory is required for building with the kconfig file'
@@ -113,19 +145,13 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
     start_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/start_container.sh',
                            compiler, src, out_subdir, '--' + runtime]
 
-    noninteractive = True
-    if 'menuconfig' in make_args:
-        noninteractive = False
+    noninteractive = 'menuconfig' not in make_args
 
     if noninteractive:
         start_container_cmd.extend(['-n'])  # start container in the non-interactive mode
         build_log = out_subdir + '/build_log.txt'
-        print(f'Going to write the build log to "{build_log}"')
-        build_log_fd = open(build_log, 'w', encoding='utf-8')
-        stdout_destination = subprocess.PIPE
     else:
-        print('Going to run the container in the interactive mode (without build log)')
-        stdout_destination = None
+        build_log = None
 
     start_container_cmd.extend(['--', 'make'])
 
@@ -146,24 +172,9 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
     start_container_cmd.extend(make_args)
 
     print(f'Run the container: {" ".join(start_container_cmd)}')
-    interrupt = False
-    with subprocess.Popen(start_container_cmd, stdout=stdout_destination, stderr=subprocess.STDOUT,
-                          universal_newlines=True, bufsize=1) as process:
-        try:
-            if noninteractive:
-                for line in process.stdout:
-                    print(f'    {line}', end='\r')
-                    build_log_fd.write(line)
-            return_code = process.wait()
-            print(f'The container\'s return code {return_code}')
-        except KeyboardInterrupt:
-            return_code = 128 + signal.SIGINT
-            print(f'[!] WARNING: Got keyboard interrupt, stopping (return code {return_code})')
-            interrupt = True
+    return_code, interrupt = run_build_in_container(start_container_cmd, noninteractive, build_log)
+
     finish_building_kernel(runtime, out_subdir, interrupt)
-    if noninteractive:
-        print(f'See the build log: {build_log}')
-        build_log_fd.close()
 
     return return_code
 
