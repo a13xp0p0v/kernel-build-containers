@@ -107,7 +107,7 @@ def run_build_in_container(start_container_cmd, noninteractive, build_log):
     return return_code, interrupt
 
 
-def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
+def get_out_subdir(arch, kconfig, src, out, compiler):
     if kconfig:
         assert (out), 'Ouch, the output directory is required for building with the kconfig file'
         kconfig_name_parts = os.path.splitext(os.path.basename(kconfig))
@@ -121,6 +121,12 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
         out_subdir = src
     else:
         out_subdir = out + '/' + arch + NAME_DELIMITER + compiler
+
+    return out_subdir
+
+
+def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
+    out_subdir = get_out_subdir(arch, kconfig, src, out, compiler)
 
     print(f'Output subdirectory for this build: {out_subdir}')
     if os.path.isdir(out_subdir):
