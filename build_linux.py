@@ -125,16 +125,7 @@ def get_out_subdir(arch, kconfig, src, out, compiler):
     return out_subdir
 
 
-def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
-    out_subdir = get_out_subdir(arch, kconfig, src, out, compiler)
-
-    print(f'Output subdirectory for this build: {out_subdir}')
-    if os.path.isdir(out_subdir):
-        print('Output subdirectory already exists, use it (no cleaning!)')
-    else:
-        print('Output subdirectory doesn\'t exist, create it')
-        os.mkdir(out_subdir)
-
+def prepare_kconfig(kconfig, out_subdir):
     if kconfig:
         current_config = out_subdir + '/.config'
         if not os.path.isfile(current_config):
@@ -147,6 +138,19 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
             sys.exit('[-] ERROR: Kconfig files are different, check the diff and consider copying')
     else:
         print('No kconfig to copy to the output subdirectory')
+
+
+def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
+    out_subdir = get_out_subdir(arch, kconfig, src, out, compiler)
+
+    print(f'Output subdirectory for this build: {out_subdir}')
+    if os.path.isdir(out_subdir):
+        print('Output subdirectory already exists, use it (no cleaning!)')
+    else:
+        print('Output subdirectory doesn\'t exist, create it')
+        os.mkdir(out_subdir)
+
+    prepare_kconfig(kconfig, out_subdir)
 
     start_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/start_container.sh',
                            compiler, src, out_subdir, '--' + runtime]
