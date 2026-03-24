@@ -179,6 +179,33 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
     return return_code
 
 
+def prepare_make_args(args):
+    make_args = args.make_args[:]
+    forbidden_make_vars = ('O=', 'ARCH=', 'CROSS_COMPILE=', 'CC=')
+    if make_args:
+        if make_args[0] == '--':
+            make_args.pop(0)
+        print(f'Have additional arguments for \'make\': {" ".join(make_args)}')
+        for arg in make_args:
+            for prefix in forbidden_make_vars:
+                if arg.startswith(prefix):
+                    sys.exit(f'[-] ERROR: Don\'t specify \'{prefix}\', we will take care of that')
+            if arg.startswith('-j'):
+                sys.exit('[-] ERROR: Don\'t specify \'-j\', by default we run \'make\' in parallel on all CPUs')
+
+    if args.quiet:
+        print('Going to run \'make\' in quiet mode')
+        make_args.insert(0, '-s')
+
+    if not args.single_thread:
+        cpu_count = os.sysconf('SC_NPROCESSORS_ONLN')
+        print(f'Going to run \'make\' on {cpu_count} CPUs')
+        make_args = ['-j', str(cpu_count), *make_args]
+    else:
+        print('Going to run \'make\' in single-threaded mode')
+    return make_args
+
+
 def main():
     parser = argparse.ArgumentParser(description='Build Linux kernel using kernel-build-containers')
     engine = parser.add_mutually_exclusive_group()
@@ -241,29 +268,7 @@ def main():
             sys.exit(f'[-] ERROR: Can\'t find the build output directory "{args.out}"')
         print(f'Using "{args.out}" as build output directory')
 
-    make_args = args.make_args[:]
-    forbidden_make_vars = ('O=', 'ARCH=', 'CROSS_COMPILE=', 'CC=')
-    if make_args:
-        if make_args[0] == '--':
-            make_args.pop(0)
-        print(f'Have additional arguments for \'make\': {" ".join(make_args)}')
-        for arg in make_args:
-            for prefix in forbidden_make_vars:
-                if arg.startswith(prefix):
-                    sys.exit(f'[-] ERROR: Don\'t specify \'{prefix}\', we will take care of that')
-            if arg.startswith('-j'):
-                sys.exit('[-] ERROR: Don\'t specify \'-j\', by default we run \'make\' in parallel on all CPUs')
-
-    if args.quiet:
-        print('Going to run \'make\' in quiet mode')
-        make_args.insert(0, '-s')
-
-    if not args.single_thread:
-        cpu_count = os.sysconf('SC_NPROCESSORS_ONLN')
-        print(f'Going to run \'make\' on {cpu_count} CPUs')
-        make_args = ['-j', str(cpu_count), *make_args]
-    else:
-        print('Going to run \'make\' in single-threaded mode')
+    make_args = prepare_make_args(args)
 
     return_code = build_kernel(runtime, args.arch, args.kconfig, args.src, args.out, args.compiler, make_args)
 
