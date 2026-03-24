@@ -140,8 +140,8 @@ def prepare_kconfig(kconfig, out_subdir):
         print('No kconfig to copy to the output subdirectory')
 
 
-def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
-    out_subdir = get_out_subdir(arch, kconfig, src, out, compiler)
+def build_kernel(runtime, args, make_args):
+    out_subdir = get_out_subdir(args.arch, args.kconfig, args.src, args.out, args.compiler)
 
     print(f'Output subdirectory for this build: {out_subdir}')
     if os.path.isdir(out_subdir):
@@ -150,10 +150,10 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
         print('Output subdirectory doesn\'t exist, create it')
         os.mkdir(out_subdir)
 
-    prepare_kconfig(kconfig, out_subdir)
+    prepare_kconfig(args.kconfig, out_subdir)
 
     start_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/start_container.sh',
-                           compiler, src, out_subdir, '--' + runtime]
+                           args.compiler, args.src, out_subdir, '--' + runtime]
 
     noninteractive = 'menuconfig' not in make_args
 
@@ -165,16 +165,16 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
 
     start_container_cmd.extend(['--', 'make'])
 
-    if out_subdir != src:
+    if out_subdir != args.src:
         start_container_cmd.append('O=../out/')
     else:
         print('Going to build the kernel in-place (without \'O=\')')
 
-    if compiler.startswith('clang'):
+    if args.compiler.startswith('clang'):
         print('Add arguments for compiling with clang: CC=clang')
         start_container_cmd.extend(['CC=clang'])
 
-    cross_compile_args = get_cross_compile_args(arch)
+    cross_compile_args = get_cross_compile_args(args.arch)
     if cross_compile_args:
         print(f'Add arguments for cross-compilation: {" ".join(cross_compile_args)}')
     start_container_cmd.extend(cross_compile_args)
@@ -280,7 +280,7 @@ def main():
 
     make_args = prepare_make_args(args)
 
-    return_code = build_kernel(runtime, args.arch, args.kconfig, args.src, args.out, args.compiler, make_args)
+    return_code = build_kernel(runtime, args, make_args)
 
     print('[+] Done, see the results')
     sys.exit(return_code)
