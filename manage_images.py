@@ -58,7 +58,7 @@ class ContainerImage:
     def build(self):
         """Build a container image that provides the specified compilers"""
         if self.id:
-            print(f'\nThe container image providing Clang {self.clang} and GCC {self.gcc} exists: {self.id}')
+            print(f'\n[+] The container image providing Clang {self.clang} and GCC {self.gcc} exists: {self.id}')
             return
 
         build_args = ['build',
@@ -78,9 +78,9 @@ class ContainerImage:
         else:
             print('[!] WARNING: buildx is not available; consider installing it if you use Docker')
 
-        print(f'\nBuild a container image providing Clang {self.clang} and GCC {self.gcc}')
+        print(f'\n[+] Build a container image providing Clang {self.clang} and GCC {self.gcc}')
         if self.quiet:
-            print('[!] INFO: Quiet mode, please wait...')
+            print('[!] Quiet mode, please wait...')
             build_args += ['-q']
 
         build_dir = ['.']
@@ -91,10 +91,10 @@ class ContainerImage:
     def rm(self):
         """Try to remove the container image if it exists"""
         if not self.id:
-            print(f'\nNo container image providing Clang {self.clang} and GCC {self.gcc}')
+            print(f'\n[!] No container image providing Clang {self.clang} and GCC {self.gcc}')
             return
 
-        print(f'\nRemove the container image {self.id} providing Clang {self.clang} and GCC {self.gcc}')
+        print(f'\n[+] Remove the container image {self.id} providing Clang {self.clang} and GCC {self.gcc}')
 
         # We need to get full ID of the container image,
         # since Podman fails to search containers using a short one (strange!)
@@ -141,7 +141,7 @@ class ContainerImage:
             if out.returncode == 0:
                 return [self.runtime]
             if self.runtime == 'docker' and 'permission denied' in out.stderr:
-                print('[!] INFO: We need "sudo" for working with Docker containers')
+                print('[!] We need "sudo" for working with Docker containers')
                 return ['sudo', self.runtime]
             sys.exit(f'[-] ERROR: Testing "{" ".join(cmd)}" gives unknown error:\n{out.stderr}')
         except FileNotFoundError:
@@ -174,7 +174,7 @@ def remove_images(needed_compiler, images):
 
 def list_images(images):
     """Show the images and their IDs"""
-    print('\nCurrent status:')
+    print('\n[+] Current status:')
     print('-' * 44)
     print(f' {"Ubuntu":<6} | {"Clang":<6} | {"GCC":<6} | {ContainerImage.runtime.capitalize()} Image ID')
     print('-' * 44)
@@ -211,7 +211,7 @@ def main():
         uid = os.getuid()
         username = pwd.getpwuid(uid).pw_name
         print('[+] Force to use the Podman container engine')
-        print(f'[!] INFO: Working with Podman images belonging to "{username}" (UID {uid})')
+        print(f'[!] Working with Podman images belonging to "{username}" (UID {uid})')
         ContainerImage.runtime = 'podman'
     else:
         print('[+] Docker container engine is chosen (default)')
