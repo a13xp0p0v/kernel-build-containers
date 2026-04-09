@@ -1,0 +1,85 @@
+[project]
+name = "kernel-build-containers"
+requires-python = ">= 3.10"
+dynamic = ["version"]
+description = "A tool for building the Linux kernel (or other software) with many different compilers via docker/podman containers"
+readme = "README.md"
+authors = [
+  {name = "Alexander Popov", email = "alex.popov@linux.com"}
+]
+maintainers = [
+  {name = "Alexander Popov", email = "alex.popov@linux.com"}
+]
+license = "GPL-3.0-only"
+license-files = ["LICENSE.txt"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Software Development :: Build Tools",
+    "Operating System :: POSIX :: Linux",
+    "Environment :: Console",
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+homepage = "https://github.com/a13xp0p0v/kernel-build-containers"
+repository = "https://github.com/a13xp0p0v/kernel-build-containers.git"
+bugtracker = "https://github.com/a13xp0p0v/kernel-build-containers/issues"
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.design]
+max-statements = 100
+
+[tool.pylint.similarities]
+min-similarity-lines = 8 # reasonable threshold for avoiding separate common.py file
+
+[tool.ruff.lint]
+select = [
+    "S",    # flake8-bandit
+    "B",    # flake8-bugbear
+    "A",    # flake8-builtins
+    "COM",  # flake8-commas
+    "C4",   # flake8-comprehensions
+    "CPY",  # flake8-copyright
+    "EXE",  # flake8-implicit-str-concat
+    "FIX",  # flake8-fixme
+    "INT",  # flake8-gettext
+    "ISC",  # flake8-implicit-str-concat
+    "PIE",  # flake8-pie
+    "Q",    # flake8-quotes
+    "RET",  # flake8-return
+    "SLF",  # flake8-self
+    "SIM",  # flake8-simplify (please fix issues manually)
+    "ARG",  # flake8-unused-arguments
+    "FLY",  # flynt
+    "I",    # isort
+    "N",    # pep8-naming
+    "PERF", # Perflint
+    "E",    # pycodestyle error
+    "W",    # pycodestyle warning
+    "F",    # Pyflakes
+    "PL",   # pylint
+    "UP",   # pyupgrade
+    "RUF",  # Ruff-specific rules
+]
+ignore = [
+    "E114", # we align comments
+    "E116", # ditto, we align comments
+    "Q003", # don't change outer quotes to avoid escaping inner quotes
+    "S101", # we use the assert keyword
+    "S404", # we use subprocess
+    "S603", # ditto, we use subprocess
+]
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 120
+
+[tool.ruff.lint.pylint]
+max-statements = 100
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "single"
+
+[tool.ruff.lint.flake8-copyright]
+notice-rgx = "SPDX-FileCopyrightText"

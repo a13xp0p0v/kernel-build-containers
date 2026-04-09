@@ -33,36 +33,36 @@ if [ "$ACTION" != "kill" -a "$ACTION" != "nokill" ]; then
 	exit 1
 fi
 
-echo "Search \"container.id\" file in build output directory \"$OUT\""
+echo "[!] Search \"container.id\" file in build output directory \"$OUT\""
 if [ ! -f "$CID_FILE" ]; then
-	echo "NO such file, nothing to do, exit"
+	echo "[-] ERROR: NO such file, nothing to do, exit"
 	exit 2
 fi
 
 RUNTIME_TEST_OUTPUT="$($RUNTIME ps 2>&1)"
 
 if echo "$RUNTIME_TEST_OUTPUT" | grep -qi "permission denied"; then
-	echo "Hey, we gonna use sudo for running the container"
+	echo "[!] We need \"sudo\" for working with Docker containers"
 	SUDO_CMD="sudo"
 fi
 
-echo "OK, \"container.id\" file exists, removing it"
+echo "[+] OK, \"container.id\" file exists, removing it"
 ID="$(awk 'NR==1 {print $1}' $CID_FILE)"
 $SUDO_CMD rm -f $CID_FILE
 
 if [ "$ACTION" = "kill" ]; then
-	echo "Killing the $RUNTIME container $ID"
+	echo "[+] Killing the $RUNTIME container $ID"
 	$SUDO_CMD $RUNTIME kill $ID
 	if [ $? -ne 0 ]; then
-		echo "Something goes wrong, failed to kill container $ID"
+		echo "[-] ERROR: Something goes wrong, failed to kill container $ID"
 		exit 3
 	fi
-	echo "Container $ID is killed"
+	echo "[+] Container $ID is killed"
 else
 	STATUS="$($SUDO_CMD $RUNTIME container inspect -f '{{.State.Status}}' $ID 2>&1)"
 	if [ "$STATUS" = "running" ]; then
-		echo "Something goes wrong, container $ID is running!"
+		echo "[-] ERROR: Something goes wrong, container $ID is running!"
 		exit 4
 	fi
-	echo "OK, container $ID doesn't run"
+	echo "[+] OK, container $ID doesn't run"
 fi

@@ -43,7 +43,7 @@ while [[ $# -gt 0 ]]; do
 			echo "[-] ERROR: Multiple container engines specified" >&2
 			exit 1
 		else
-			echo "Force to use the Docker container engine"
+			echo "[+] Force to use the Docker container engine"
 			RUNTIME="docker"
 		fi
 		shift
@@ -53,8 +53,8 @@ while [[ $# -gt 0 ]]; do
 			echo "[-] ERROR: Multiple container engines specified" >&2
 			exit 1
 		else
-			echo "Force to use the Podman container engine"
-			echo "[!] INFO: Working with Podman images belonging to \"$(id -un)\" (UID $(id -u))"
+			echo "[+] Force to use the Podman container engine"
+			echo "[!] Working with Podman images belonging to \"$(id -un)\" (UID $(id -u))"
 			RUNTIME="podman"
 			RUNTIME_SPECIFIC_ARGS="--userns=keep-id --net=pasta:--ipv4-only"
 		fi
@@ -63,7 +63,7 @@ while [[ $# -gt 0 ]]; do
 	-n | --non-interactive)
 		INTERACTIVE=""
 		CIDFILE="--cidfile $OUT/container.id"
-		echo "Gonna run the container in NON-interactive mode"
+		echo "[!] Gonna run the container in NON-interactive mode"
 		shift
 		;;
 	-e | --env)
@@ -88,7 +88,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ -z "$RUNTIME" ]; then
-	echo "Docker container engine is chosen (default)"
+	echo "[+] Docker container engine is chosen (default)"
 	RUNTIME="docker"
 fi
 
@@ -97,27 +97,27 @@ RUNTIME_TEST_OUTPUT="$($RUNTIME ps 2>&1)"
 set -e
 
 if echo "$RUNTIME_TEST_OUTPUT" | grep -qi "permission denied"; then
-	echo "Hey, we gonna use sudo for running the container"
+	echo "[!] We need \"sudo\" for working with Docker containers"
 	SUDO_CMD="sudo"
 fi
 
-echo "Starting \"kernel-build-container:$COMPILER\""
+echo "[+] Starting \"kernel-build-container:$COMPILER\""
 
 if [ ! -z "$ENV" ]; then
-	echo "Container environment arguments: $ENV"
+	echo "[!] Container environment arguments: $ENV"
 fi
 
 if [ ! -z "$INTERACTIVE" ]; then
-	echo "Gonna run the container in interactive mode"
+	echo "[!] Gonna run the container in interactive mode"
 fi
 
-echo "Mount source code directory \"$SRC\" at \"/src\""
-echo "Mount build output directory \"$OUT\" at \"/out\""
+echo "[!] Mount source code directory \"$SRC\" at \"/src\""
+echo "[!] Mount build output directory \"$OUT\" at \"/out\""
 
 if [ $# -gt 0 ]; then
-	echo -e "Gonna run command \"$@\"\n"
+	echo -e "[+] Gonna run command \"$@\"\n"
 else
-	echo -e "Gonna run bash\n"
+	echo -e "[+] Gonna run bash\n"
 fi
 
 # Z for setting SELinux label
