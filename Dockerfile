@@ -5,7 +5,7 @@ RUN set -ex; \
     echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections; \
     apt-get update; \
     apt-get install -y -q apt-utils dialog; \
-    apt-get install -y -q sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk rsync; \
+    apt-get install -y -q sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk rsync ccache; \
     apt-get install -y -q python3 python3-venv; \
     apt-get install -y -q python-is-python3 || apt-get install -y -q python
 
@@ -87,6 +87,8 @@ RUN set -x; \
     chown -R ${UNAME}:${GNAME} /src; \
     mkdir /out; \
     chown -R ${UNAME}:${GNAME} /out; \
+    mkdir -p /home/${UNAME}/.cache/ccache; \
+    chown -R ${UNAME}:${GNAME} /home/${UNAME}/.cache; \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 USER ${UNAME}:${GNAME}
@@ -100,5 +102,23 @@ RUN set -ex; \
     rm /src/test; \
     touch /out/test; \
     rm /out/test
+
+# Set up ccache to use the default ~/.cache/ccache directory (mounted from host)
+# The size limit will be inherited from the host's ccache configuration
+# Ubuntu's ccache package creates symlinks in /usr/lib/ccache for common compilers
+ENV PATH="/usr/lib/ccache:${PATH}"
+# Enable ccache for cross-compilers by creating symlinks if they don't exist
+RUN set -ex; \
+    for compiler in gcc g++ cc c++ aarch64-linux-gnu-gcc aarch64-linux-gnu-g++ \
+                    arm-linux-gnueabi-gcc arm-linux-gnueabi-g++ \
+                    riscv64-linux-gnu-gcc riscv64-linux-gnu-g++ \
+                    powerpc-linux-gnu-gcc powerpc-linux-gnu-g++ \
+                    powerpc64-linux-gnu-gcc powerpc64-linux-gnu-g++ \
+                    powerpc64le-linux-gnu-gcc powerpc64le-linux-gnu-g++; do \
+        if [ ! -e "/usr/lib/ccache/$compiler" ] && which "$compiler" > /dev/null 2>&1; then \
+            sudo ln -s ../../bin/ccache "/usr/lib/ccache/$compiler"; \
+        fi; \
+    done; \
+    ls -la /usr/lib/ccache/ || true
 
 CMD ["bash"]

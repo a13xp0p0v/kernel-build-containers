@@ -21,6 +21,33 @@ License: GPL-3.0.
 
 ## Supported features
 
+__ccache support:__
+
+The tool supports using ccache to speed up consecutive kernel builds by caching compilation results. ccache is automatically enabled for all builds (both native and cross-compilation) by prepending `/usr/lib/ccache` to the PATH inside containers. The host's ccache directory is mounted at the default location inside containers.
+
+Default ccache directory: `$HOME/.cache/kernel-build-containers/ccache`
+
+This can be overridden using:
+- Command-line argument: `--ccache-dir /path/to/ccache`
+- Environment variable: `CCACHE_DIR=/path/to/ccache`
+
+To configure ccache size limit for kernel-build-containers:
+```console
+$ ccache -d ~/.cache/kernel-build-containers/ccache --max-size 10G
+```
+
+The ccache configuration is automatically inherited from the host's default ccache directory (`~/.config/ccache/ccache.conf` or `~/.cache/ccache/ccache.conf`) when the kernel-build-containers ccache directory is first created. If no host configuration exists, the cache size is set to unlimited by default.
+
+To view ccache statistics:
+```console
+$ ccache -d ~/.cache/kernel-build-containers/ccache -s
+```
+
+To verify ccache is working, check for cache files after a build:
+```console
+$ ls ~/.cache/kernel-build-containers/ccache/
+```
+
 __Supported kernel build targets:__
  - `x86_64` (using the default toolchain)
  - `i386` (using the default toolchain)
@@ -243,9 +270,22 @@ Starting "kernel-build-container:gcc-12"
 Gonna run the container in interactive mode
 Mount source code directory "/home/a13x/linux-stable/linux-stable/" at "/src"
 Mount build output directory "/home/a13x/linux-stable/build_out/" at "/out"
+Mount ccache directory "/home/a13x/.cache/kernel-build-containers/ccache" at "~/.cache/ccache"
 Gonna run bash
 
 a13x@38f63939b504:~/src$
+```
+
+__Run with custom ccache directory:__
+
+```console
+$ bash start_container.sh gcc-12 ~/linux-stable/linux-stable/ ~/linux-stable/build_out/ -c /custom/ccache/path
+```
+
+Or using environment variable:
+
+```console
+$ CCACHE_DIR=/custom/ccache/path bash start_container.sh gcc-12 ~/linux-stable/linux-stable/ ~/linux-stable/build_out/
 ```
 
 __Execute a command in the container:__
@@ -270,8 +310,8 @@ __Get help:__
 
 ```console
 $ python3 build_linux.py --help
-usage: build_linux.py [-h] [-d] [-p] -a ARCH -c COMPILER [-k KCONFIG] -s SRC [-o OUT] [-q]
-                      [-t]
+usage: build_linux.py [-h] [-d] [-p] -a ARCH -c COMPILER [-k KCONFIG] -s SRC [-o OUT]
+                      [--ccache-dir CCACHE_DIR] [-q] [-t]
                       ...
 
 Build Linux kernel using kernel-build-containers
@@ -300,6 +340,9 @@ options:
                         of Linux at the root of the kernel source tree, you can specify the
                         same '-s' and '-o' path without '-k' or simply run the tool without
                         '-o' and '-k' arguments.
+  --ccache-dir CCACHE_DIR
+                        ccache directory (default: $HOME/.cache/kernel-build-containers/ccache,
+                        can also be set via CCACHE_DIR environment variable)
   -q, --quiet           for running `make` in quiet mode
   -t, --single-thread   for running `make` in single-threaded mode (multi-threaded by
                         default)

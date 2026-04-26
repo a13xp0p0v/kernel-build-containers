@@ -68,7 +68,7 @@ def finish_building_kernel(runtime, out_dir, interrupt):
     print(f'The finish_container.sh script returned {return_code}')
 
 
-def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
+def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args, ccache_dir):
     if kconfig:
         assert(out), 'Ouch, the output directory is required for building with the kconfig file'
         kconfig_name_parts = os.path.splitext(os.path.basename(kconfig))
@@ -107,6 +107,9 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
     start_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/start_container.sh',
                            compiler, src, out_subdir, '--' + runtime]
 
+    if ccache_dir:
+        start_container_cmd.extend(['-c', ccache_dir])
+
     noninteractive = True
     if 'menuconfig' in make_args:
         noninteractive = False
@@ -129,8 +132,8 @@ def build_kernel(runtime, arch, kconfig, src, out, compiler, make_args):
         print('Going to build the kernel in-place (without \'O=\')')
 
     if compiler.startswith('clang'):
-        print('Add arguments for compiling with clang: CC=clang')
-        start_container_cmd.extend(['CC=clang'])
+        print('Add arguments for compiling with clang and ccache: CC="ccache clang"')
+        start_container_cmd.extend(['CC=ccache clang'])
 
     cross_compile_args = get_cross_compile_args(arch)
     if cross_compile_args:
@@ -181,6 +184,9 @@ def main():
                              'For in-place building of Linux at the root of the kernel source tree, you can '
                              'specify the same \'-s\' and \'-o\' path without \'-k\' or simply run the tool '
                              'without \'-o\' and \'-k\' arguments.')
+    parser.add_argument('--ccache-dir',
+                        help='ccache directory (default: $HOME/.cache/kernel-build-containers/ccache, '
+                             'can also be set via CCACHE_DIR environment variable)')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='for running `make` in quiet mode')
     parser.add_argument('-t', '--single-thread', action='store_true',
@@ -250,7 +256,17 @@ def main():
     else:
         print('Going to run \'make\' in single-threaded mode')
 
-    return_code = build_kernel(runtime, args.arch, args.kconfig, args.src, args.out, args.compiler, make_args)
+    # Handle ccache directory
+    ccache_dir = args.ccache_dir
+    if not ccache_dir:
+        ccache_dir = os.environ.get('CCACHE_DIR')
+    if not ccache_dir:
+        ccache_dir = os.path.expanduser('~/.cache/kernel-build-containers/ccache')
+
+    if ccache_dir:
+        print(f'Using ccache directory: {ccache_dir}')
+
+    return_code = build_kernel(runtime, args.arch, args.kconfig, args.src, args.out, args.compiler, make_args, ccache_dir)
 
     print('[+] Done, see the results')
     sys.exit(return_code)
