@@ -153,6 +153,13 @@ def build_kernel(runtime, tool_args, make_args):
     start_container_cmd = ['bash', os.path.dirname(os.path.abspath(__file__)) + '/start_container.sh',
                            tool_args.compiler, tool_args.src, out_subdir, '--' + runtime]
 
+    if tool_args.mount_ccache:
+        print(f'Mount the ccache directory "{tool_args.mount_ccache}" and enable ccache')
+        # Deterministic timestamp for the better ccache hit rate
+        start_container_cmd.extend(['-m', tool_args.mount_ccache, '-e', 'KBUILD_BUILD_TIMESTAMP='])
+        if tool_args.ccache_max_size:
+            start_container_cmd.extend(['-M', tool_args.ccache_max_size])
+
     noninteractive = 'menuconfig' not in make_args
     if noninteractive:
         start_container_cmd.extend(['-n'])  # start container in the non-interactive mode
@@ -239,6 +246,11 @@ def main():
                              'For in-place building of Linux at the root of the kernel source tree, you can '
                              'specify the same \'-s\' and \'-o\' path without \'-k\' or simply run the tool '
                              'without \'-o\' and \'-k\' arguments.')
+    parser.add_argument('-m', '--mount-ccache', metavar='CCACHE_DIR',
+                        help='mount this ccache directory from the host into the container and enable ccache '
+                             '(ccache is disabled by default, because it makes the first build slower)')
+    parser.add_argument('-M', '--ccache-max-size', metavar='SIZE',
+                        help='set the ccache max size, e.g. 10G (0 means unlimited); requires \'-m\'')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='for running `make` in quiet mode')
     parser.add_argument('-t', '--single-thread', action='store_true',
@@ -279,6 +291,9 @@ def main():
         if not os.path.isdir(args.out):
             sys.exit(f'[-] ERROR: Can\'t find the build output directory "{args.out}"')
         print(f'Using "{args.out}" as build output directory')
+
+    if args.ccache_max_size and not args.mount_ccache:
+        sys.exit('[-] ERROR: \'-M\' requires \'-m\' (ccache is disabled without a mounted directory)')
 
     make_args = prepare_make_args(args)
 
