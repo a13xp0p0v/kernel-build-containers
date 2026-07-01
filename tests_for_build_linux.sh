@@ -23,6 +23,14 @@ declare -A EXPECTED_IMAGES=(
 	[powerpc64le]="arch/powerpc/boot/zImage"
 )
 
+FAST=0
+
+if [ "${1:-}" = "--fast" ]; then
+	FAST=1
+    # We skip kernel compilation anyway
+    ARCHS=("x86_64")
+fi
+
 fail() {
 	echo "[-] $*"
 	exit 1
@@ -79,12 +87,14 @@ run_tests() {
 				fail "Missing $CONFIG after building defconfig"
 			fi
 
-			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$ARCH" -c "$COMPILER" -s "$SRC_DIR" -o "$OUT_DIR"
-			IMAGE="$OUT_DIR/${ARCH}__$COMPILER/${EXPECTED_IMAGES[$ARCH]}"
-			if [ -f "$IMAGE" ]; then
-				echo "[+] Kernel image is generated: $IMAGE"
-			else
-				fail "Missing $IMAGE after building the kernel"
+			if [ "$FAST" -eq 0 ]; then
+				python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$ARCH" -c "$COMPILER" -s "$SRC_DIR" -o "$OUT_DIR"
+				IMAGE="$OUT_DIR/${ARCH}__$COMPILER/${EXPECTED_IMAGES[$ARCH]}"
+				if [ -f "$IMAGE" ]; then
+					echo "[+] Kernel image is generated: $IMAGE"
+				else
+					fail "Missing $IMAGE after building the kernel"
+				fi
 			fi
 
 			# Provide additional arguments for 'make' without the -- delimiter
