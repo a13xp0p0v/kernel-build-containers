@@ -145,17 +145,17 @@ run_error_handling_tests() {
 test_with_stopped_docker_service() {
 	echo -e "$DELIMITER"
 	echo "Test the tool with disabled Docker service"
-	$SUDO_CMD systemctl --no-pager status --lines=0 docker.service
-	$SUDO_CMD systemctl --no-pager status --lines=0 docker.socket
-	$SUDO_CMD systemctl stop docker.service
-	$SUDO_CMD systemctl stop docker.socket
-	$SUDO_CMD systemctl --no-pager status --lines=0 docker.service && exit 1
-	$SUDO_CMD systemctl --no-pager status --lines=0 docker.socket && exit 1
+	sudo systemctl --no-pager status --lines=0 docker.service
+	sudo systemctl --no-pager status --lines=0 docker.socket
+	sudo systemctl stop docker.service
+	sudo systemctl stop docker.socket
+	sudo systemctl --no-pager status --lines=0 docker.service && exit 1
+	sudo systemctl --no-pager status --lines=0 docker.socket && exit 1
 	python3 -m coverage run -a --branch manage_images.py -l -d && exit 1
-	$SUDO_CMD systemctl start docker.service
-	$SUDO_CMD systemctl start docker.socket
-	$SUDO_CMD systemctl --no-pager status --lines=0 docker.service
-	$SUDO_CMD systemctl --no-pager status --lines=0 docker.socket
+	sudo systemctl start docker.service
+	sudo systemctl start docker.socket
+	sudo systemctl --no-pager status --lines=0 docker.service
+	sudo systemctl --no-pager status --lines=0 docker.socket
 }
 
 run_tests() {
