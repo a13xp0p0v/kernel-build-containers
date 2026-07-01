@@ -1,0 +1,62 @@
+name: functional test
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  functional_test:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        python-version: ['3.14']
+
+    steps:
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Get the source code
+      uses: actions/checkout@v4
+
+    - name: Install test dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install --yes expect podman
+        python3 -m pip install coverage
+
+    - name: Use the test Dockerfile
+      run: cp tests/CI_Dockerfile Dockerfile
+
+    - name: Test image management
+      run: ./tests/tests_for_manage_images.sh
+
+    - name: Restore the test Dockerfile
+      run: git checkout -- Dockerfile
+
+    # The container must be built for the runner:1001:1001 user; otherwise, tests will crash.
+    - name: Download pre-built containers for testing
+      run: |
+        image=ghcr.io/willenst/kernel-build-container-runner-1001:gcc-13
+
+        docker pull "$image"
+        docker tag "$image" kernel-build-container:clang-15
+        docker tag "$image" kernel-build-container:gcc-13
+
+        podman pull "docker-daemon:$image"
+        podman tag "$image" kernel-build-container:clang-15
+        podman tag "$image" kernel-build-container:gcc-13
+
+    - name: Test kernel building
+      run: ./tests/tests_for_build_linux.sh --fast
