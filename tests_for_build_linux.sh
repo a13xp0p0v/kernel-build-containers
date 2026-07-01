@@ -140,9 +140,9 @@ run_tests() {
 	cp "$OUT_DIR/${ARCHS[0]}__${COMPILERS[0]}/.config" "$PWD/testcfg"
 	# Test that build_linux.py fails if "-k" is used without "-o"
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -k "$PWD/testcfg" && exit 1
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg"
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg" -- defconfig
 	# Test that build_linux.py proceeds if the kernel config is similar to one in OUT_DIR
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg"
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg" -- defconfig
 	# Test that build_linux.py fails if the kernel config differs from one in OUT_DIR
 	echo "# CONFIG_EXAMPLE_FOOBAR is not set" >>"$PWD/testcfg"
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg" && exit 1
