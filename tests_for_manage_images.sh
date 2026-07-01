@@ -53,8 +53,8 @@ run_basic_tests() {
 	echo -e "$DELIMITER"
 	echo "Testing building and removing all images..."
 	python3 -m coverage run -a --branch manage_images.py -b $RUNTIME_FLAG
-	python3 -m coverage run -a --branch manage_images.py -r $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -b all $RUNTIME_FLAG
+	python3 -m coverage run -a --branch manage_images.py -r $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r all $RUNTIME_FLAG
 
 	echo -e "$DELIMITER"
@@ -165,6 +165,17 @@ run_tests() {
 	run_error_handling_tests
 }
 
+run_fast_tests() {
+	check_if_sudo_needed
+	clear_state
+
+	echo -e "$DELIMITER"
+	echo "Testing build, list, and removal..."
+	python3 -m coverage run -a --branch manage_images.py -b gcc-8 $RUNTIME_FLAG
+	python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG
+	python3 -m coverage run -a --branch manage_images.py -r gcc-8 $RUNTIME_FLAG
+}
+
 echo "Let's test manage_images.py..."
 python3 -m coverage erase
 
@@ -178,7 +189,8 @@ test_with_stopped_docker_service
 # Test Docker
 RUNTIME="docker"
 RUNTIME_FLAG="-d"
-run_tests
+# We already have tested docker, just verify the flag itself
+run_fast_tests
 
 # Test Podman
 RUNTIME="podman"
