@@ -51,7 +51,7 @@ prepare_tests() {
 	fi
 
 	if [ ! -f "$SRC_TARBALL" ]; then
-		wget "$KERNEL" -O "$SRC_TARBALL"
+		wget --retry-connrefused --waitretry=10 --timeout=60 --tries=5 "$KERNEL" -O "$SRC_TARBALL"
 	fi
 
 	CHECKSUM=$(sha256sum "$SRC_TARBALL" | awk '{print $1}')
