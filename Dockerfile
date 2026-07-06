@@ -71,8 +71,7 @@ RUN set -ex; \
       update-alternatives --install /usr/bin/llvm-nm llvm-nm /usr/bin/llvm-nm-${CLANG_VERSION} 100; \
       update-alternatives --install /usr/bin/llvm-objdump llvm-objdump /usr/bin/llvm-objdump-${CLANG_VERSION} 100; \
       update-alternatives --install /usr/bin/llvm-readelf llvm-readelf /usr/bin/llvm-readelf-${CLANG_VERSION} 100; \
-    fi; \
-    rm -rf /var/lib/apt/lists/*
+    fi
 
 ARG UNAME
 ARG UID
@@ -95,7 +94,8 @@ RUN set -ex; \
     apt-get update; \
     apt-get install -y -q ccache; \
     mkdir -p /home/${UNAME}/.cache/ccache; \
-    chown -R ${UNAME}:${GNAME} /home/${UNAME}/.cache
+    chown -R ${UNAME}:${GNAME} /home/${UNAME}/.cache; \
+    rm -rf /var/lib/apt/lists/*
 
 USER ${UNAME}:${GNAME}
 WORKDIR /src
