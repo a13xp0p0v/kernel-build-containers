@@ -26,9 +26,9 @@ declare -A EXPECTED_IMAGES=(
 FAST=0
 
 if [ "${1:-}" = "--fast" ]; then
+	# In the fast mode, we test only x86_64 and skip building kernel images
 	FAST=1
-    # We skip kernel compilation anyway
-    ARCHS=("x86_64")
+	ARCHS=("x86_64")
 fi
 
 fail() {
