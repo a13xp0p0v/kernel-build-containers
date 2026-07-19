@@ -170,7 +170,7 @@ run_fast_tests() {
 	clear_state
 
 	echo -e "$DELIMITER"
-	echo "Testing build, list, and removal..."
+	echo "Testing image building, listing, and removal..."
 	python3 -m coverage run -a --branch manage_images.py -b gcc-8 $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r gcc-8 $RUNTIME_FLAG
@@ -189,7 +189,7 @@ test_with_stopped_docker_service
 # Test Docker
 RUNTIME="docker"
 RUNTIME_FLAG="-d"
-# We already have tested docker, just verify the flag itself
+# We have already tested Docker, now just verify the flag itself
 run_fast_tests
 
 # Test Podman
