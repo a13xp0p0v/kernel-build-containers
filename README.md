@@ -562,12 +562,56 @@ In that case simply stop this container and run `manage_images.py -r` again.
 
 ## Notes for developers
 
-If you change `manage_images.py` or `build_linux.py`, please run the tests:
+If you change `manage_images.py` or `build_linux.py`, please run the tests. All test scripts and test-only files are located in the `tests/` directory.
+
+> [!NOTE]
+> The full test suite and warmed container caches may require a large amount of disk space. The cache warmup helper expects about 100 GiB of free space by default and refuses to run if there is not enough room. Freeing disk space before running the container tests is usually better than forcing the script through and discovering the problem halfway into the build.
+
+### Testing `manage_images.py`
 
 ```console
-$ bash tests_for_manage_images.sh
-$ bash tests_for_build_linux.sh
+$ bash tests/tests_for_manage_images.sh
 ```
+
+These tests build and remove container images, so repeated runs can be slow. Before running them, it is strongly recommended to prepare the Docker and Podman build cache:
+
+```console
+$ bash tests/speedrun_for_manage_images.sh
+```
+
+For Podman, the helper keeps tagged intermediate build layers so that later `manage_images.py -r` runs do not remove the local layer cache. Docker keeps its builder cache separately, so the helper builds all images once and removes the final images afterwards.
+
+The Podman cache created by the helper must be removed with:
+
+```console
+$ bash tests/speedrun_for_manage_images.sh --clean
+```
+
+### Testing `build_linux.py`
+
+```console
+$ bash tests/tests_for_build_linux.sh
+```
+
+To save time, or when using a low-performance machine, you can skip the actual kernel build step:
+
+```console
+$ bash tests/tests_for_build_linux.sh --fast
+```
+
+This still exercises the test flow, but avoids the most expensive build step.
+
+### Cleaning up container state
+
+Working with containers, especially when editing Dockerfiles, can consume a large amount of disk space. If you do not need local containers, volumes, caches, or images from other projects, you can remove unused container state with:
+
+```console
+$ podman system prune --all --volumes
+$ sudo docker system prune --all --volumes
+```
+
+> [!WARNING]
+> These cleanup commands remove all unused containers, volumes, caches, and images, including locally built images from other projects. Use them only if you are sure you do not need those images anymore.
 
 The code coverage will be stored in `htmlcov/index.html`.
 
