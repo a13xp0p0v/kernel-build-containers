@@ -101,7 +101,7 @@ def run_container(start_container_cmd, build_log):
     stdout_destination = None
 
     if build_log:
-        build_log_fd = open(build_log, 'w', encoding='utf-8')  # noqa: SIM115 # pylint: disable=R1732
+        build_log_fd = open(build_log, 'w', encoding='utf-8')  # ruff:ignore[open-file-with-context-handler] # pylint: disable=R1732
         stdout_destination = subprocess.PIPE
 
     print(f'Run the container: {" ".join(start_container_cmd)}')
