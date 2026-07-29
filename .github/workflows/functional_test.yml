@@ -37,7 +37,7 @@ jobs:
         python3 -m pip install coverage
 
     - name: Use the test Dockerfile
-      run: cp tests/Dockerfile Dockerfile
+      run: cp tests/CI_Dockerfile Dockerfile
 
     - name: Test image management
       run: ./tests/tests_for_manage_images.sh
