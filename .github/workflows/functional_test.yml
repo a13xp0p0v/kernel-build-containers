@@ -50,19 +50,6 @@ jobs:
         git restore Dockerfile
         git status
 
-    # The container must be built for the runner:1001:1001 user; otherwise, tests will crash.
-    - name: Download pre-built containers for testing
-      run: |
-        image=ghcr.io/willenst/kernel-build-container-runner-1001:gcc-13
-
-        docker pull "$image"
-        docker tag "$image" kernel-build-container:clang-15
-        docker tag "$image" kernel-build-container:gcc-13
-
-        podman pull "docker-daemon:$image"
-        podman tag "$image" kernel-build-container:clang-15
-        podman tag "$image" kernel-build-container:gcc-13
-
     - name: Test the kernel building
       run: |
         bash tests/tests_for_build_linux.sh --fast
