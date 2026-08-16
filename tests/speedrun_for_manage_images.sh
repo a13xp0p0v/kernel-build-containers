@@ -34,21 +34,17 @@ if [ $# -eq 1 ]; then
 	exit 0
 fi
 
-MIN_SPACE_GB=100    # Approximate size of all containers combined
-required_kb=$((MIN_SPACE_GB * 1024 * 1024))
+REQUIRED_SPACE_GiB=100 # Approximate size of all kernel-build-containers artifacts
+REQUIRED_SPACE_KiB=$((REQUIRED_SPACE_GiB * 1024 * 1024))
+PODMAN_STORAGE_PATH=$(podman info --format '{{.Store.GraphRoot}}')
+AVAILABLE_SPACE_KiB=$(df -Pk "$PODMAN_STORAGE_PATH" | awk 'NR==2 {print $4}')
+AVAILABLE_SPACE_GiB=$((AVAILABLE_SPACE_KiB / 1024 / 1024))
 
-for storage in / "$HOME"; do
-    free_kb=$(df -Pk "$storage" | awk 'END { print $4 }')
-    free_gb=$((free_kb / 1024 / 1024))
-
-    if ((free_kb < required_kb)); then
-        echo "ERROR!"
-        echo "Insufficient free space on the filesystem containing '$storage' directory"
-        echo "Available: ${free_gb} GiB; required: $MIN_SPACE_GB GiB"
-        echo "Cache warmup will not be started!"
-        exit 1
-    fi
-done
+if [ "$REQUIRED_SPACE_KiB" -gt "$AVAILABLE_SPACE_KiB" ]; then
+	echo "Not enough space at the FS containing $PODMAN_STORAGE_PATH"
+	echo "$0 needs at least $REQUIRED_SPACE_GiB GiB (but we have only $AVAILABLE_SPACE_GiB GiB)"
+	exit 1
+fi
 
 echo "Warming Docker cache..."
 python3 manage_images.py -d -b all
