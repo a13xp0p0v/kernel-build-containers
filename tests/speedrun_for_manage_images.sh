@@ -3,7 +3,7 @@
 # This script provides speedrun for `tests_for_manage_images.sh`:
 # it populates the Docker and Podman caches, which makes `manage_images.py` faster.
 
-set -e
+set -eu
 
 # Go to the root directory of the project
 cd "$(dirname "$(dirname "$(readlink -fm "$0")")")"
