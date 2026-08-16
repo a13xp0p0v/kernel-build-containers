@@ -127,7 +127,8 @@ run_error_handling_tests() {
 
 	echo -e "$DELIMITER"
 	echo "Emulating that the container runtime is not installed..."
-	PATH="" /usr/bin/python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
+	PATH_TO_PYTHON3="$(which python3)"
+	PATH="" $PATH_TO_PYTHON3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
 
 	echo -e "$DELIMITER"
 	echo "Emulating an unknown error from the container runtime..."
@@ -138,7 +139,7 @@ run_error_handling_tests() {
 		exit 1
 	fi
 	cp /usr/bin/ls /tmp/$RUNTIME
-	PATH="/tmp" /usr/bin/python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
+	PATH="/tmp" $PATH_TO_PYTHON3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
 	rm /tmp/$RUNTIME
 }
 
