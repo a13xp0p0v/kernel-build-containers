@@ -46,24 +46,24 @@ if [ "$REQUIRED_SPACE_KiB" -gt "$AVAILABLE_SPACE_KiB" ]; then
 	exit 1
 fi
 
-echo "Warming Docker cache..."
+echo "Populate the Docker cache..."
+
 python3 manage_images.py -d -b all
 python3 manage_images.py -d -r all
 
-echo "Warming Podman cache..."
+echo "Populate the Podman cache..."
 
 python3 manage_images.py -p -b all
 
-for id in $(podman image ls -aq \
-    --filter "label=kernel-build-cache"); do
-    podman tag "$id" "kernel-build-cache:$id"
+# Now let's add tags to the intermediate image layers to make Podman preserve them.
+# Otherwise Podman removes these layers when we run `python3 manage_images.py -p -r all`.
+# Thanks to @Willenst for the idea.
+for id in $(podman image ls -aq --filter "label=kernel-build-cache"); do
+	podman tag "$id" "kernel-build-cache:$id"
 done
 
 python3 manage_images.py -p -r all
 
-
-echo "Cache baked."
-echo
-echo "WARNING: the warmed Podman caches can use substantial disk space."
-echo "To remove the cache layers created by this script, run:"
-echo "  $0 --clean"
+echo "Docker and Podman caches are populated. Go and run tests_for_manage_images.sh!"
+echo -e "\nWARNING: the intermediate image layers in Podman occupy a lot of space."
+echo "After finishing the tests, run \"$0 --clean\""
