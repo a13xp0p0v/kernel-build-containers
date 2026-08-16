@@ -130,8 +130,8 @@ class ContainerImage:
             if not gcc_id:
                 sys.exit(f'[-] ERROR: Invalid image "{self.clang_tag}" '
                           'without the corresponding GCC tag, please remove it manually')
-            return clang_id.split()[0]  # a fix for the Podman issue (duplicated results),
-                                        # see https://github.com/containers/podman/issues/25725
+            # Avoid duplicated results from Podman, see https://github.com/containers/podman/issues/25725
+            return clang_id.split()[0]
         return clang_id
 
     def identify_runtime_cmd(self):
