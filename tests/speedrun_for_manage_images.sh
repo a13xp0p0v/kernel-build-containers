@@ -41,6 +41,8 @@ done
 if $clean; then
     echo "Removing Podman cache..."
 
+# Go to the root directory of the project
+cd "$(dirname "$(dirname "$(readlink -fm "$0")")")"
     podman image prune \
         --all \
         --force \
