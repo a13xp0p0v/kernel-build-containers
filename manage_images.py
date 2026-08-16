@@ -73,6 +73,9 @@ class ContainerImage:
                       '-t', self.clang_tag,
                       '-t', self.gcc_tag]
 
+        if self.runtime == 'podman':
+            build_args += ['--layers', '--layer-label', 'kernel-build-cache']
+
         out = subprocess.run([*self.runtime_cmd, 'buildx', 'version'], text=True, check=False, capture_output=True)
         if out.returncode == 0:
             build_args = ['buildx', *build_args]
