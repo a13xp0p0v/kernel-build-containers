@@ -30,20 +30,25 @@ jobs:
     - name: Get the source code
       uses: actions/checkout@v4
 
-    - name: Install test dependencies
+    - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install --yes expect podman
         python3 -m pip install coverage
 
-    - name: Use the test Dockerfile
-      run: cp tests/CI_Dockerfile Dockerfile
+    - name: Use a tiny Dockerfile for faster image management tests
+      run: |
+        cp tests/CI_Dockerfile Dockerfile
 
-    - name: Test image management
-      run: ./tests/tests_for_manage_images.sh
+    - name: Test the image management
+      run: |
+        bash tests/tests_for_manage_images.sh
 
-    - name: Restore the test Dockerfile
-      run: git checkout -- Dockerfile
+    - name: Restore the original Dockerfile
+      run: |
+        git status
+        git restore Dockerfile
+        git status
 
     # The container must be built for the runner:1001:1001 user; otherwise, tests will crash.
     - name: Download pre-built containers for testing
@@ -58,5 +63,6 @@ jobs:
         podman tag "$image" kernel-build-container:clang-15
         podman tag "$image" kernel-build-container:gcc-13
 
-    - name: Test kernel building
-      run: ./tests/tests_for_build_linux.sh --fast
+    - name: Test the kernel building
+      run: |
+        bash tests/tests_for_build_linux.sh --fast
