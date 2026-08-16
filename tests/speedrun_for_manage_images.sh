@@ -1,96 +1,69 @@
 #!/bin/bash
-# This is a speedrun booster for manage_images.py: it pre-populates Docker
-# and Podman build caches to make tests_for_manage_images.sh much faster.
-#
-# Idea:
-#
-# The normal image manager removes final images with `rmi`. For Podman this
-# would remove untagged intermediate layers, so subsequent builds lose their
-# local layer cache. The image manager labels intermediate Podman layers during
-# the build. This script adds tags to those layers before removing the final
-# images, leaving only the reusable cache layers.
-#
-# Docker keeps its builder cache independently, so its part simply builds all
-# images once and removes the final images afterwards.
 
-set -e
+# This script provides speedrun for `tests_for_manage_images.sh`:
+# it populates the Docker and Podman caches, which makes `manage_images.py` faster.
 
-MIN_SPACE_GB=100    # Approximate size of all containers combined
-clean=false
-
-usage() {
-    echo "Usage: $0 [--clean]"
-    echo
-    echo "  --clean  remove Podman cache layers"
-}
-
-for arg in "$@"; do
-    case "$arg" in
-        --clean) clean=true ;;
-        -h|--help)
-            usage
-            exit 0
-            ;;
-        *)
-            usage
-            exit 1
-            ;;
-    esac
-done
-
-if $clean; then
-    echo "Removing Podman cache..."
+set -eu
 
 # Go to the root directory of the project
 cd "$(dirname "$(dirname "$(readlink -fm "$0")")")"
-    podman image prune \
-        --all \
-        --force \
-        --filter "label=kernel-build-cache"
 
-    exit 0
+print_help() {
+	echo "usage:"
+	echo "  $0          populate Docker and Podman caches (speedrun for tests_for_manage_images.sh)"
+	echo "  $0 --clean  remove Docker and Podman artifacts associated with kernel-build-containers"
+}
+
+if [ $# -gt 1 ]; then
+	print_help
+	exit 1
 fi
 
-# Existing images could be left without layers, ask to remove them first
-if [[ -n $(podman images -q kernel-build-container) ]]; then
-    echo "Podman already has kernel-build-container images"
-    echo "Remove them with: python3 manage_images.py -p -r all"
-    exit 1
+if [ $# -eq 1 ]; then
+	if [ "$1" != "--clean" ]; then
+		print_help
+		exit 1
+	fi
+
+	echo -e "Remove Docker and Podman artifacts associated with kernel-build-containers:\n"
+	python3 manage_images.py -d -r all
+	python3 manage_images.py -p -r all
+	podman image prune --all --force --filter "label=kernel-build-cache"
+	echo -e "\nDone! We recommend you to check \"docker/podman system df -v\""
+
+	exit 0
 fi
 
-required_kb=$((MIN_SPACE_GB * 1024 * 1024))
+REQUIRED_SPACE_GiB=100 # Approximate size of all kernel-build-containers artifacts
+REQUIRED_SPACE_KiB=$((REQUIRED_SPACE_GiB * 1024 * 1024))
+PODMAN_STORAGE_PATH=$(podman info --format '{{.Store.GraphRoot}}')
+AVAILABLE_SPACE_KiB=$(df -Pk "$PODMAN_STORAGE_PATH" | awk 'NR==2 {print $4}')
+AVAILABLE_SPACE_GiB=$((AVAILABLE_SPACE_KiB / 1024 / 1024))
 
-for storage in / "$HOME"; do
-    free_kb=$(df -Pk "$storage" | awk 'END { print $4 }')
-    free_gb=$((free_kb / 1024 / 1024))
+if [ "$REQUIRED_SPACE_KiB" -gt "$AVAILABLE_SPACE_KiB" ]; then
+	echo "Not enough space at the FS containing $PODMAN_STORAGE_PATH"
+	echo "$0 needs at least $REQUIRED_SPACE_GiB GiB (but we have only $AVAILABLE_SPACE_GiB GiB)"
+	exit 1
+fi
 
-    if ((free_kb < required_kb)); then
-        echo "ERROR!"
-        echo "Insufficient free space on the filesystem containing '$storage' directory"
-        echo "Available: ${free_gb} GiB; required: $MIN_SPACE_GB GiB"
-        echo "Cache warmup will not be started!"
-        exit 1
-    fi
-done
+echo "Populate the Docker cache..."
 
-echo "Warming Docker cache..."
 python3 manage_images.py -d -b all
 python3 manage_images.py -d -r all
 
-echo "Warming Podman cache..."
+echo "Populate the Podman cache..."
 
 python3 manage_images.py -p -b all
 
-for id in $(podman image ls -aq \
-    --filter "label=kernel-build-cache"); do
-    podman tag "$id" "kernel-build-cache:$id"
+# Now let's add tags to the intermediate image layers to make Podman preserve them.
+# Otherwise Podman removes these layers when we run `python3 manage_images.py -p -r all`.
+# Thanks to @Willenst for the idea.
+for id in $(podman image ls -aq --filter "label=kernel-build-cache"); do
+	podman tag "$id" "kernel-build-cache:$id"
 done
 
 python3 manage_images.py -p -r all
 
-
-echo "Cache baked."
-echo
-echo "WARNING: the warmed Podman caches can use substantial disk space."
-echo "To remove the cache layers created by this script, run:"
-echo "  $0 --clean"
+echo "Docker and Podman caches are populated. Go and run tests_for_manage_images.sh!"
+echo -e "\nWARNING: the intermediate image layers in Podman occupy a lot of space."
+echo "After finishing the tests, run \"$0 --clean\""
