@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
+
 set -eu
+
+# Go to the root directory of the project
+cd "$(dirname "$(dirname "$(readlink -fm "$0")")")"
 
 DELIMITER="\n##############################################"
 

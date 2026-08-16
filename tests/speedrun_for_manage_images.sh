@@ -15,6 +15,9 @@
 
 set -e
 
+# Go to the root directory of the project
+cd "$(dirname "$(dirname "$(readlink -fm "$0")")")"
+
 MIN_SPACE_GB=100    # Approximate size of all containers combined
 clean=false
 
