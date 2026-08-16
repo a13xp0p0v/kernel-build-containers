@@ -1,4 +1,4 @@
-name: functional test
+name: tests for build_linux
 
 permissions:
   contents: read
@@ -10,7 +10,7 @@ on:
     branches: [ master ]
 
 jobs:
-  functional_test:
+  tests_for_build_linux:
 
     runs-on: ubuntu-latest
 
@@ -35,20 +35,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install --yes expect podman
         python3 -m pip install coverage
-
-    - name: Use a tiny Dockerfile for faster image management tests
-      run: |
-        cp tests/CI_Dockerfile Dockerfile
-
-    - name: Test the image management
-      run: |
-        bash tests/tests_for_manage_images.sh
-
-    - name: Restore the original Dockerfile
-      run: |
-        git status
-        git restore Dockerfile
-        git status
 
     - name: Test the kernel building
       run: |
