@@ -9,37 +9,31 @@ set -eu
 cd "$(dirname "$(dirname "$(readlink -fm "$0")")")"
 
 MIN_SPACE_GB=100    # Approximate size of all containers combined
-clean=false
 
-usage() {
-    echo "Usage: $0 [--clean]"
-    echo
-    echo "  --clean  remove Podman cache layers"
+print_help() {
+	echo "usage:"
+	echo "  $0          populate Docker and Podman caches (speedrun for tests_for_manage_images.sh)"
+	echo "  $0 --clean  remove Docker and Podman artifacts associated with kernel-build-containers"
 }
 
-for arg in "$@"; do
-    case "$arg" in
-        --clean) clean=true ;;
-        -h|--help)
-            usage
-            exit 0
-            ;;
-        *)
-            usage
-            exit 1
-            ;;
-    esac
-done
+if [ $# -gt 1 ]; then
+	print_help
+	exit 1
+fi
 
-if $clean; then
-    echo "Removing Podman cache..."
+if [ $# -eq 1 ]; then
+	if [ "$1" != "--clean" ]; then
+		print_help
+		exit 1
+	fi
 
-    podman image prune \
-        --all \
-        --force \
-        --filter "label=kernel-build-cache"
+	echo -e "Remove Docker and Podman artifacts associated with kernel-build-containers:\n"
+	python3 manage_images.py -d -r all
+	python3 manage_images.py -p -r all
+	podman image prune --all --force --filter "label=kernel-build-cache"
+	echo -e "\nDone! We recommend you to check \"docker/podman system df -v\""
 
-    exit 0
+	exit 0
 fi
 
 # Existing images could be left without layers, ask to remove them first
