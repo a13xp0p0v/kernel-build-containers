@@ -1,17 +1,7 @@
 #!/bin/bash
-# This is a speedrun booster for manage_images.py: it pre-populates Docker
-# and Podman build caches to make tests_for_manage_images.sh much faster.
-#
-# Idea:
-#
-# The normal image manager removes final images with `rmi`. For Podman this
-# would remove untagged intermediate layers, so subsequent builds lose their
-# local layer cache. The image manager labels intermediate Podman layers during
-# the build. This script adds tags to those layers before removing the final
-# images, leaving only the reusable cache layers.
-#
-# Docker keeps its builder cache independently, so its part simply builds all
-# images once and removes the final images afterwards.
+
+# This script provides speedrun for `tests_for_manage_images.sh`:
+# it populates the Docker and Podman caches, which makes `manage_images.py` faster.
 
 set -e
 
