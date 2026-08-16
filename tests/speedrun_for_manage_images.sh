@@ -8,8 +8,6 @@ set -eu
 # Go to the root directory of the project
 cd "$(dirname "$(dirname "$(readlink -fm "$0")")")"
 
-MIN_SPACE_GB=100    # Approximate size of all containers combined
-
 print_help() {
 	echo "usage:"
 	echo "  $0          populate Docker and Podman caches (speedrun for tests_for_manage_images.sh)"
@@ -36,13 +34,7 @@ if [ $# -eq 1 ]; then
 	exit 0
 fi
 
-# Existing images could be left without layers, ask to remove them first
-if [[ -n $(podman images -q kernel-build-container) ]]; then
-    echo "Podman already has kernel-build-container images"
-    echo "Remove them with: python3 manage_images.py -p -r all"
-    exit 1
-fi
-
+MIN_SPACE_GB=100    # Approximate size of all containers combined
 required_kb=$((MIN_SPACE_GB * 1024 * 1024))
 
 for storage in / "$HOME"; do
