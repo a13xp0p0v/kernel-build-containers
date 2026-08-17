@@ -43,9 +43,3 @@ jobs:
     - name: Test the image management
       run: |
         bash tests/tests_for_manage_images.sh
-
-    - name: Restore the original Dockerfile
-      run: |
-        git status
-        git restore Dockerfile
-        git status
