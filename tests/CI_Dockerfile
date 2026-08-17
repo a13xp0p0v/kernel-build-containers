@@ -6,12 +6,8 @@ ARG UBUNTU_VERSION
 ARG UID
 ARG GID
 
-# Different build args are needed for different image IDs
-RUN printf '%s\n' \
-		"clang=${CLANG_VERSION}" \
-		"gcc=${GCC_VERSION}" \
-		"ubuntu=${UBUNTU_VERSION}" \
-		> /build-id
+# Create a special file to make container images different
+RUN echo "clang=${CLANG_VERSION} gcc=${GCC_VERSION} ubuntu=${UBUNTU_VERSION}" > /image_id
 
 USER ${UID}:${GID}
 WORKDIR /src
