@@ -29,21 +29,9 @@ if [ $# -eq 1 ]; then
 	python3 manage_images.py -d -r all
 	python3 manage_images.py -p -r all
 	podman image prune --all --force --filter "label=kernel-build-cache"
-	echo -e "\nDone! We recommend you to check \"docker/podman system df -v\""
+	echo -e "\nDone! We recommend to check \"docker/podman system df -v\" and use \"prune\" (be careful)"
 
 	exit 0
-fi
-
-REQUIRED_SPACE_GiB=100 # Approximate size of all kernel-build-containers artifacts
-REQUIRED_SPACE_KiB=$((REQUIRED_SPACE_GiB * 1024 * 1024))
-PODMAN_STORAGE_PATH=$(podman info --format '{{.Store.GraphRoot}}')
-AVAILABLE_SPACE_KiB=$(df -Pk "$PODMAN_STORAGE_PATH" | awk 'NR==2 {print $4}')
-AVAILABLE_SPACE_GiB=$((AVAILABLE_SPACE_KiB / 1024 / 1024))
-
-if [ "$REQUIRED_SPACE_KiB" -gt "$AVAILABLE_SPACE_KiB" ]; then
-	echo "Not enough space at the FS containing $PODMAN_STORAGE_PATH"
-	echo "$0 needs at least $REQUIRED_SPACE_GiB GiB (but we have only $AVAILABLE_SPACE_GiB GiB)"
-	exit 1
 fi
 
 echo "Populate the Docker cache..."

@@ -575,7 +575,7 @@ This script tests creating and removing `kernel-build-containers` images in Dock
 The code coverage of this test is stored in `htmlcov/index.html`.
 
 > [!NOTE]
-> Running `tests_for_manage_images.sh` requires at least 100 GiB of free disk space on your system.
+> Running `tests_for_manage_images.sh` requires around 100 GiB of free disk space for storing Docker and Podman artifacts.
 
 Building all the container images during this test is quite slow. But you can make it faster if you populate the cache in Docker and Podman before running `tests_for_manage_images.sh`:
 
