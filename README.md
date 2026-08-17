@@ -562,13 +562,53 @@ In that case simply stop this container and run `manage_images.py -r` again.
 
 ## Notes for developers
 
-If you change `manage_images.py` or `build_linux.py`, please run the tests:
+If you change the code of `kernel-build-containers`, please run the tests (see the `./tests/` directory).
+
+### Testing `manage_images.py`
 
 ```console
-$ bash tests_for_manage_images.sh
-$ bash tests_for_build_linux.sh
+$ bash tests/tests_for_manage_images.sh
 ```
 
-The code coverage will be stored in `htmlcov/index.html`.
+This script tests creating and removing `kernel-build-containers` images in Docker and Podman using `manage_images.py`.
 
-Have fun!
+The code coverage of this test is stored in `htmlcov/index.html`.
+
+> [!NOTE]
+> Running `tests_for_manage_images.sh` requires around 100 GiB of free disk space for storing Docker and Podman artifacts.
+
+Building all the container images during this test is quite slow. But you can make it faster if you populate the cache in Docker and Podman before running `tests_for_manage_images.sh`:
+
+```console
+$ bash tests/speedrun_for_manage_images.sh
+```
+
+This script builds and removes all `kernel-build-containers` images in Docker to populate its build cache, which makes further building fast.
+
+However, this trick doesn't work for Podman, because the Podman runtime unfortunately removes the intermediate image layers on image deletion. That's why `speedrun_for_manage_images.sh` creates special tags for the `kernel-build-containers` image layers to preserve them and make further building fast as well.
+
+To remove the `kernel-build-containers` artifacts created by `speedrun_for_manage_images.sh` and `tests_for_manage_images.sh`, run this command:
+
+```console
+$ bash tests/speedrun_for_manage_images.sh --clean
+```
+
+You can also check `docker system df -v` and `podman system df -v` to see what else to clean on your system using the `prune` command (be careful).
+
+### Testing `build_linux.py`
+
+Full test for building the Linux kernel:
+
+```console
+$ bash tests/tests_for_build_linux.sh
+```
+
+Fast mode: test only `x86_64` and skip building kernel images (has less code coverage):
+
+```console
+$ bash tests/tests_for_build_linux.sh --fast
+```
+
+The code coverage of this test is stored in `htmlcov/index.html`.
+
+## Have fun!

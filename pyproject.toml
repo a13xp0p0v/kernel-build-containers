@@ -64,12 +64,10 @@ select = [
     "RUF",  # Ruff-specific rules
 ]
 ignore = [
-    "E114", # we align comments
-    "E116", # ditto, we align comments
-    "Q003", # don't change outer quotes to avoid escaping inner quotes
-    "S101", # we use the assert keyword
-    "S404", # we use subprocess
-    "S603", # ditto, we use subprocess
+    "avoidable-escaped-quote", # don't change outer quotes to avoid escaping inner quotes
+    "assert", # we use the assert keyword
+    "suspicious-subprocess-import", # we use subprocess
+    "subprocess-without-shell-equals-true", # ditto, we use subprocess
 ]
 
 [tool.ruff.lint.pycodestyle]

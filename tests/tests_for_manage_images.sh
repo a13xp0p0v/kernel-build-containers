@@ -2,6 +2,9 @@
 
 set -eu
 
+# Go to the root directory of the project
+cd "$(dirname "$(dirname "$(readlink -fm "$0")")")"
+
 DELIMITER="\n##############################################"
 RUNTIME_FLAG=""
 RUNTIME=""
@@ -53,8 +56,8 @@ run_basic_tests() {
 	echo -e "$DELIMITER"
 	echo "Testing building and removing all images..."
 	python3 -m coverage run -a --branch manage_images.py -b $RUNTIME_FLAG
-	python3 -m coverage run -a --branch manage_images.py -r $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -b all $RUNTIME_FLAG
+	python3 -m coverage run -a --branch manage_images.py -r $RUNTIME_FLAG
 	python3 -m coverage run -a --branch manage_images.py -r all $RUNTIME_FLAG
 
 	echo -e "$DELIMITER"
@@ -127,7 +130,8 @@ run_error_handling_tests() {
 
 	echo -e "$DELIMITER"
 	echo "Emulating that the container runtime is not installed..."
-	PATH="" /usr/bin/python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
+	PATH_TO_PYTHON3="$(which python3)"
+	PATH="" $PATH_TO_PYTHON3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
 
 	echo -e "$DELIMITER"
 	echo "Emulating an unknown error from the container runtime..."
@@ -138,24 +142,24 @@ run_error_handling_tests() {
 		exit 1
 	fi
 	cp /usr/bin/ls /tmp/$RUNTIME
-	PATH="/tmp" /usr/bin/python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
+	PATH="/tmp" $PATH_TO_PYTHON3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG && exit 1
 	rm /tmp/$RUNTIME
 }
 
 test_with_stopped_docker_service() {
 	echo -e "$DELIMITER"
 	echo "Test the tool with disabled Docker service"
-	$SUDO_CMD systemctl --no-pager status --lines=0 docker.service
-	$SUDO_CMD systemctl --no-pager status --lines=0 docker.socket
-	$SUDO_CMD systemctl stop docker.service
-	$SUDO_CMD systemctl stop docker.socket
-	$SUDO_CMD systemctl --no-pager status --lines=0 docker.service && exit 1
-	$SUDO_CMD systemctl --no-pager status --lines=0 docker.socket && exit 1
+	sudo systemctl --no-pager status --lines=0 docker.service
+	sudo systemctl --no-pager status --lines=0 docker.socket
+	sudo systemctl stop docker.service
+	sudo systemctl stop docker.socket
+	sudo systemctl --no-pager status --lines=0 docker.service && exit 1
+	sudo systemctl --no-pager status --lines=0 docker.socket && exit 1
 	python3 -m coverage run -a --branch manage_images.py -l -d && exit 1
-	$SUDO_CMD systemctl start docker.service
-	$SUDO_CMD systemctl start docker.socket
-	$SUDO_CMD systemctl --no-pager status --lines=0 docker.service
-	$SUDO_CMD systemctl --no-pager status --lines=0 docker.socket
+	sudo systemctl start docker.service
+	sudo systemctl start docker.socket
+	sudo systemctl --no-pager status --lines=0 docker.service
+	sudo systemctl --no-pager status --lines=0 docker.socket
 }
 
 run_tests() {
@@ -163,6 +167,17 @@ run_tests() {
 	clear_state
 	run_basic_tests
 	run_error_handling_tests
+}
+
+run_fast_tests() {
+	check_if_sudo_needed
+	clear_state
+
+	echo -e "$DELIMITER"
+	echo "Testing image building, listing, and removal..."
+	python3 -m coverage run -a --branch manage_images.py -b gcc-8 $RUNTIME_FLAG
+	python3 -m coverage run -a --branch manage_images.py -l $RUNTIME_FLAG
+	python3 -m coverage run -a --branch manage_images.py -r gcc-8 $RUNTIME_FLAG
 }
 
 echo "Let's test manage_images.py..."
@@ -178,7 +193,8 @@ test_with_stopped_docker_service
 # Test Docker
 RUNTIME="docker"
 RUNTIME_FLAG="-d"
-run_tests
+# We have already tested Docker, now just verify the flag itself
+run_fast_tests
 
 # Test Podman
 RUNTIME="podman"

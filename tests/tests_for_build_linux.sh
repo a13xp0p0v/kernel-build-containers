@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
+
 set -eu
+
+# Go to the root directory of the project
+cd "$(dirname "$(dirname "$(readlink -fm "$0")")")"
 
 DELIMITER="\n##############################################"
 
@@ -23,6 +27,14 @@ declare -A EXPECTED_IMAGES=(
 	[powerpc64le]="arch/powerpc/boot/zImage"
 )
 
+FAST=0
+
+if [ "${1:-}" = "--fast" ]; then
+	# In the fast mode, we test only x86_64 and skip building kernel images
+	FAST=1
+	ARCHS=("x86_64")
+fi
+
 fail() {
 	echo "[-] $*"
 	exit 1
@@ -43,7 +55,7 @@ prepare_tests() {
 	fi
 
 	if [ ! -f "$SRC_TARBALL" ]; then
-		wget "$KERNEL" -O "$SRC_TARBALL"
+		wget --retry-connrefused --waitretry=10 --timeout=60 --tries=5 "$KERNEL" -O "$SRC_TARBALL"
 	fi
 
 	CHECKSUM=$(sha256sum "$SRC_TARBALL" | awk '{print $1}')
@@ -79,12 +91,14 @@ run_tests() {
 				fail "Missing $CONFIG after building defconfig"
 			fi
 
-			python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$ARCH" -c "$COMPILER" -s "$SRC_DIR" -o "$OUT_DIR"
-			IMAGE="$OUT_DIR/${ARCH}__$COMPILER/${EXPECTED_IMAGES[$ARCH]}"
-			if [ -f "$IMAGE" ]; then
-				echo "[+] Kernel image is generated: $IMAGE"
-			else
-				fail "Missing $IMAGE after building the kernel"
+			if [ "$FAST" -eq 0 ]; then
+				python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "$ARCH" -c "$COMPILER" -s "$SRC_DIR" -o "$OUT_DIR"
+				IMAGE="$OUT_DIR/${ARCH}__$COMPILER/${EXPECTED_IMAGES[$ARCH]}"
+				if [ -f "$IMAGE" ]; then
+					echo "[+] Kernel image is generated: $IMAGE"
+				else
+					fail "Missing $IMAGE after building the kernel"
+				fi
 			fi
 
 			# Provide additional arguments for 'make' without the -- delimiter
@@ -130,9 +144,9 @@ run_tests() {
 	cp "$OUT_DIR/${ARCHS[0]}__${COMPILERS[0]}/.config" "$PWD/testcfg"
 	# Test that build_linux.py fails if "-k" is used without "-o"
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -k "$PWD/testcfg" && exit 1
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg"
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg" -- defconfig
 	# Test that build_linux.py proceeds if the kernel config is similar to one in OUT_DIR
-	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg"
+	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg" -- defconfig
 	# Test that build_linux.py fails if the kernel config differs from one in OUT_DIR
 	echo "# CONFIG_EXAMPLE_FOOBAR is not set" >>"$PWD/testcfg"
 	python3 -m coverage run -a --branch build_linux.py $RUNTIME_FLAG -a "${ARCHS[0]}" -c "${COMPILERS[0]}" -s "$SRC_DIR" -o "$OUT_DIR" -k "$PWD/testcfg" && exit 1
