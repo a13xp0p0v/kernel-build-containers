@@ -562,10 +562,7 @@ In that case simply stop this container and run `manage_images.py -r` again.
 
 ## Notes for developers
 
-If you change `manage_images.py` or `build_linux.py`, please run the tests. All test scripts and test-only files are located in the `tests/` directory.
-
-> [!NOTE]
-> The full test suite and warmed container caches may require a large amount of disk space. The cache warmup helper expects about 100 GiB of free space by default and refuses to run if there is not enough room. Freeing disk space before running the container tests is usually better than forcing the script through and discovering the problem halfway into the build.
+If you change the code of `kernel-build-containers`, please run the tests (see the `./tests/` directory).
 
 ### Testing `manage_images.py`
 
@@ -573,46 +570,45 @@ If you change `manage_images.py` or `build_linux.py`, please run the tests. All 
 $ bash tests/tests_for_manage_images.sh
 ```
 
-These tests build and remove container images, so repeated runs can be slow. Before running them, it is strongly recommended to prepare the Docker and Podman build cache:
+This script tests creating and removing `kernel-build-containers` images in Docker and Podman using `manage_images.py`.
+
+The code coverage of this test is stored in `htmlcov/index.html`.
+
+> [!NOTE]
+> Running `tests_for_manage_images.sh` requires at least 100 GiB of free disk space on your system.
+
+Building all the container images during this test is quite slow. But you can make it faster if you populate the cache in Docker and Podman before running `tests_for_manage_images.sh`:
 
 ```console
 $ bash tests/speedrun_for_manage_images.sh
 ```
 
-For Podman, the helper keeps tagged intermediate build layers so that later `manage_images.py -r` runs do not remove the local layer cache. Docker keeps its builder cache separately, so the helper builds all images once and removes the final images afterwards.
+This script builds and removes all `kernel-build-containers` images in Docker to populate its build cache, which makes further building fast.
 
-The Podman cache created by the helper must be removed with:
+However, this trick doesn't work for Podman, because the Podman runtime unfortunately removes the intermediate image layers on image deletion. That's why `speedrun_for_manage_images.sh` creates special tags for the `kernel-build-containers` image layers to preserve them and make further building fast as well.
+
+To remove the `kernel-build-containers` artifacts created by `speedrun_for_manage_images.sh` and `tests_for_manage_images.sh`, run this command:
 
 ```console
 $ bash tests/speedrun_for_manage_images.sh --clean
 ```
 
+You can also check `docker system df -v` and `podman system df -v` to see what else to clean on your system using the `prune` command (be careful).
+
 ### Testing `build_linux.py`
+
+Full test for building the Linux kernel:
 
 ```console
 $ bash tests/tests_for_build_linux.sh
 ```
 
-To save time, or when using a low-performance machine, you can skip the actual kernel build step:
+Fast mode: test only `x86_64` and skip building kernel images (has less code coverage):
 
 ```console
 $ bash tests/tests_for_build_linux.sh --fast
 ```
 
-This still exercises the test flow, but avoids the most expensive build step.
+The code coverage of this test is stored in `htmlcov/index.html`.
 
-### Cleaning up container state
-
-Working with containers, especially when editing Dockerfiles, can consume a large amount of disk space. If you do not need local containers, volumes, caches, or images from other projects, you can remove unused container state with:
-
-```console
-$ podman system prune --all --volumes
-$ sudo docker system prune --all --volumes
-```
-
-> [!WARNING]
-> These cleanup commands remove all unused containers, volumes, caches, and images, including locally built images from other projects. Use them only if you are sure you do not need those images anymore.
-
-The code coverage will be stored in `htmlcov/index.html`.
-
-Have fun!
+## Have fun!
