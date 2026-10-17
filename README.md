@@ -26,33 +26,46 @@ License: GPL-3.0.
 
 ## Supported features
 
+__Supported container host architectures:__
+ - `x86_64` (`amd64`)
+ - `aarch64` (`arm64`)
+ - `ppc64le` (`ppc64el`)
+
+The containers are built for the architecture of the host. The cross-toolchains are installed
+for all the kernel build targets except the native one, so the native architecture is built
+using the default toolchain.
+
 __Supported kernel build targets:__
- - `x86_64` (using the default toolchain)
+ - `x86_64` (using the default toolchain on an `x86_64` host, the `x86_64` toolchain otherwise)
  - `i386` (using the default toolchain)
- - `arm64` (using the `aarch64` toolchain)
+ - `arm64` (using the default toolchain on an `aarch64` host, the `aarch64` toolchain otherwise)
  - `arm` (using the `arm` toolchain)
  - `riscv` (using the `riscv64` toolchain)
- - `powerpc` (using one of three toolchains: `powerpc`, `powerpc64`, or `powerpc64le`)
+ - `powerpc`, `powerpc64`, `powerpc64le` (using the `powerpc64le` toolchain, which builds all three variants; `powerpc64le` on a `ppc64le` host uses the default toolchain)
 
 __Supported GCC versions:__
 
-|             | x86_64/i386 | aarch64 | arm | riscv64 | powerpc | powerpc64 | powerpc64le |
-| ----------- | ----------- | ------- | --- | ------- | ------- | --------- | ----------- |
-| __gcc-4.9__ | ✓           | *       | *   |         | *       |           | *           |
-| __gcc-5__   | ✓           | ✓       | ✓   |         | ✓       | ✓         | ✓           |
-| __gcc-6__   | ✓           | ✓       | ✓   |         | ✓       | ✓         | ✓           |
-| __gcc-7__   | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
-| __gcc-8__   | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
-| __gcc-9__   | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
-| __gcc-10__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
-| __gcc-11__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
-| __gcc-12__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
-| __gcc-13__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
-| __gcc-14__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
-| __gcc-15__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
-| __gcc-16__  | ✓           | ✓       | ✓   | ✓       | ✓       | ✓         | ✓           |
+|             | x86_64/i386 | aarch64 | arm | riscv64 | powerpc64le |
+| ----------- | ----------- | ------- | --- | ------- | ----------- |
+| __gcc-4.9__ | ✓           | *       | *   |         | *           |
+| __gcc-5__   | ✓           | ✓       | ✓   |         | ✓           |
+| __gcc-6__   | ✓           | ✓       | ✓   |         | ✓           |
+| __gcc-7__   | ✓           | ✓       | ✓   | ✓       | ✓           |
+| __gcc-8__   | ✓           | ✓       | ✓   | ✓       | ✓           |
+| __gcc-9__   | ✓           | ✓       | ✓   | ✓       | ✓           |
+| __gcc-10__  | ✓           | ✓       | ✓   | ✓       | ✓           |
+| __gcc-11__  | ✓           | ✓       | ✓   | ✓       | ✓           |
+| __gcc-12__  | ✓           | ✓       | ✓   | ✓       | ✓           |
+| __gcc-13__  | ✓           | ✓       | ✓   | ✓       | ✓           |
+| __gcc-14__  | ✓           | ✓       | ✓   | ✓       | ✓           |
+| __gcc-15__  | ✓           | ✓       | ✓   | ✓       | ✓           |
+| __gcc-16__  | ✓           | ✓       | ✓   | ✓       | ✓           |
 
 *\* marks a GCC version that doesn't support `gcc-plugins`*
+
+On `aarch64` and `ppc64le` hosts only GCC 7 and newer images are built (and the Clang versions
+paired with them), because the cross-toolchains for the other architectures are not available
+there for older GCC versions. `manage_images.py` filters the image list accordingly.
 
 The containers also provide the corresponding versions of `g++`.
 

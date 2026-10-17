@@ -13,6 +13,7 @@ SPDX-License-Identifier: GPL-3.0-only
 import argparse
 import filecmp
 import os
+import platform
 import pwd
 import shutil
 import signal
@@ -72,7 +73,13 @@ def prepare_kconfig(kconfig, out_subdir):
 
 def get_cross_compile_args(arch):
     args_list = []
-    if arch == 'i386':
+    native_arch = {'x86_64': 'x86_64', 'aarch64': 'arm64', 'ppc64le': 'powerpc64le'}.get(platform.machine())
+    if arch == native_arch:
+        return args_list
+    if arch == 'x86_64':
+        args_list.append('ARCH=x86_64')
+        args_list.append('CROSS_COMPILE=x86_64-linux-gnu-')
+    elif arch == 'i386':
         args_list.append('ARCH=i386')
     elif arch == 'arm64':
         args_list.append('ARCH=arm64')
@@ -83,13 +90,8 @@ def get_cross_compile_args(arch):
     elif arch == 'riscv':
         args_list.append('ARCH=riscv')
         args_list.append('CROSS_COMPILE=riscv64-linux-gnu-')
-    elif arch == 'powerpc':
-        args_list.append('ARCH=powerpc')
-        args_list.append('CROSS_COMPILE=powerpc-linux-gnu-')
-    elif arch == 'powerpc64':
-        args_list.append('ARCH=powerpc')
-        args_list.append('CROSS_COMPILE=powerpc64-linux-gnu-')
-    elif arch == 'powerpc64le':
+    elif arch in {'powerpc', 'powerpc64', 'powerpc64le'}:
+        # The powerpc64le toolchain builds all the powerpc variants
         args_list.append('ARCH=powerpc')
         args_list.append('CROSS_COMPILE=powerpc64le-linux-gnu-')
     return args_list

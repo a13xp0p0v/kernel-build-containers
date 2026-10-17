@@ -11,9 +11,12 @@ SPDX-License-Identifier: GPL-3.0-only
 import argparse
 import grp
 import os
+import platform
 import pwd
 import subprocess
 import sys
+
+NON_X86_MIN_GCC = 7
 
 supported_compilers = ['clang-5', 'clang-6', 'clang-7', 'clang-8',
                        'clang-9', 'clang-10', 'clang-11', 'clang-12',
@@ -249,6 +252,10 @@ def main():
     images += [ContainerImage('20', '15', '26.04')]
     images += [ContainerImage('21', '16', '26.04')]
     images += [ContainerImage('22', '16', '26.04')]
+
+    if platform.machine() in {'aarch64', 'ppc64le'}:
+        # The cross-toolchains for the other architectures are not available on these hosts before GCC 7
+        images = [c for c in images if float(c.gcc) >= NON_X86_MIN_GCC]
 
     if args.list:
         list_images(images)

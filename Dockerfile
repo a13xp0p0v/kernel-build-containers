@@ -1,6 +1,17 @@
 ARG UBUNTU_VERSION=default
 FROM ubuntu:${UBUNTU_VERSION} AS base
 
+RUN apt-get \
+    -o Acquire::https::Verify-Peer=false \
+    -o Acquire::https::Verify-Host=false \
+    update ;\
+    apt-get \
+    -o Acquire::https::Verify-Peer=false \
+    -o Acquire::https::Verify-Host=false \
+    install -y --no-install-recommends ca-certificates;\
+    update-ca-certificates ;\
+    rm -rf /var/lib/apt/lists/*
+
 RUN set -ex; \
     echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections; \
     apt-get update; \
@@ -12,37 +23,48 @@ RUN set -ex; \
 ARG GCC_VERSION
 RUN set -ex; \
     if [ "$GCC_VERSION" ]; then \
+      ARCH=$(dpkg --print-architecture); \
       apt-get update; \
       apt-get install -y -q gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev \
-        gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
-        gcc-${GCC_VERSION}-arm-linux-gnueabi g++-${GCC_VERSION}-arm-linux-gnueabi \
-        gcc-${GCC_VERSION}-powerpc-linux-gnu g++-${GCC_VERSION}-powerpc-linux-gnu \
-        gcc-${GCC_VERSION}-powerpc64le-linux-gnu g++-${GCC_VERSION}-powerpc64le-linux-gnu; \
+        gcc-${GCC_VERSION}-arm-linux-gnueabi g++-${GCC_VERSION}-arm-linux-gnueabi; \
+      if [ "$ARCH" != "ppc64el" ]; then \
+        apt-get install -y -q gcc-${GCC_VERSION}-powerpc64le-linux-gnu g++-${GCC_VERSION}-powerpc64le-linux-gnu; \
+      fi; \
+      if [ "$ARCH" != "arm64" ]; then \
+        apt-get install -y -q gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu; \
+      fi; \
+      if [ "$ARCH" != "amd64" ]; then \
+        apt-get install -y -q gcc-${GCC_VERSION}-x86-64-linux-gnu g++-${GCC_VERSION}-x86-64-linux-gnu; \
+      fi; \
       if [ "$GCC_VERSION" != "4.9" ]; then \
-        apt-get install -y -q gcc-${GCC_VERSION}-powerpc64-linux-gnu g++-${GCC_VERSION}-powerpc64-linux-gnu; \
-        apt-get install -y -q gcc-${GCC_VERSION}-plugin-dev-aarch64-linux-gnu \
-          gcc-${GCC_VERSION}-plugin-dev-arm-linux-gnueabi \
-          gcc-${GCC_VERSION}-plugin-dev-powerpc-linux-gnu \
-          gcc-${GCC_VERSION}-plugin-dev-powerpc64le-linux-gnu \
-          gcc-${GCC_VERSION}-plugin-dev-powerpc64-linux-gnu; \
+        apt-get install -y -q gcc-${GCC_VERSION}-plugin-dev-arm-linux-gnueabi; \
+        if [ "$ARCH" != "ppc64el" ]; then \
+          apt-get install -y -q gcc-${GCC_VERSION}-plugin-dev-powerpc64le-linux-gnu; \
+        fi; \
+        if [ "$ARCH" != "arm64" ]; then \
+          apt-get install -y -q gcc-${GCC_VERSION}-plugin-dev-aarch64-linux-gnu; \
+        fi; \
+        if [ "$ARCH" != "amd64" ]; then \
+          apt-get install -y -q gcc-${GCC_VERSION}-plugin-dev-x86-64-linux-gnu; \
+        fi; \
       fi; \
       if [ "$GCC_VERSION" != "4.9" ] && [ "$GCC_VERSION" != "5" ] && [ "$GCC_VERSION" != "6" ]; then \
         apt-get install -y -q gcc-${GCC_VERSION}-riscv64-linux-gnu g++-${GCC_VERSION}-riscv64-linux-gnu gcc-${GCC_VERSION}-plugin-dev-riscv64-linux-gnu; \
       fi; \
       update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCC_VERSION} 100; \
       update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${GCC_VERSION} 100; \
-      update-alternatives --install /usr/bin/aarch64-linux-gnu-gcc aarch64-linux-gnu-gcc /usr/bin/aarch64-linux-gnu-gcc-${GCC_VERSION} 100; \
-      update-alternatives --install /usr/bin/aarch64-linux-gnu-g++ aarch64-linux-gnu-g++ /usr/bin/aarch64-linux-gnu-g++-${GCC_VERSION} 100; \
+      if [ "$ARCH" != "arm64" ]; then \
+        update-alternatives --install /usr/bin/aarch64-linux-gnu-gcc aarch64-linux-gnu-gcc /usr/bin/aarch64-linux-gnu-gcc-${GCC_VERSION} 100; \
+        update-alternatives --install /usr/bin/aarch64-linux-gnu-g++ aarch64-linux-gnu-g++ /usr/bin/aarch64-linux-gnu-g++-${GCC_VERSION} 100; \
+      fi; \
+      if [ "$ARCH" != "amd64" ]; then \
+        update-alternatives --install /usr/bin/x86_64-linux-gnu-gcc x86_64-linux-gnu-gcc /usr/bin/x86_64-linux-gnu-gcc-${GCC_VERSION} 100; \
+        update-alternatives --install /usr/bin/x86_64-linux-gnu-g++ x86_64-linux-gnu-g++ /usr/bin/x86_64-linux-gnu-g++-${GCC_VERSION} 100; \
+      fi; \
       update-alternatives --install /usr/bin/arm-linux-gnueabi-gcc arm-linux-gnueabi-gcc /usr/bin/arm-linux-gnueabi-gcc-${GCC_VERSION} 100; \
       update-alternatives --install /usr/bin/arm-linux-gnueabi-g++ arm-linux-gnueabi-g++ /usr/bin/arm-linux-gnueabi-g++-${GCC_VERSION} 100; \
-      update-alternatives --install /usr/bin/powerpc-linux-gnu-gcc powerpc-linux-gnu-gcc /usr/bin/powerpc-linux-gnu-gcc-${GCC_VERSION} 100; \
-      update-alternatives --install /usr/bin/powerpc-linux-gnu-g++ powerpc-linux-gnu-g++ /usr/bin/powerpc-linux-gnu-g++-${GCC_VERSION} 100; \
       update-alternatives --install /usr/bin/powerpc64le-linux-gnu-gcc powerpc64le-linux-gnu-gcc /usr/bin/powerpc64le-linux-gnu-gcc-${GCC_VERSION} 100; \
       update-alternatives --install /usr/bin/powerpc64le-linux-gnu-g++ powerpc64le-linux-gnu-g++ /usr/bin/powerpc64le-linux-gnu-g++-${GCC_VERSION} 100; \
-      if [ "$GCC_VERSION" != "4.9" ]; then \
-        update-alternatives --install /usr/bin/powerpc64-linux-gnu-gcc powerpc64-linux-gnu-gcc /usr/bin/powerpc64-linux-gnu-gcc-${GCC_VERSION} 100; \
-        update-alternatives --install /usr/bin/powerpc64-linux-gnu-g++ powerpc64-linux-gnu-g++ /usr/bin/powerpc64-linux-gnu-g++-${GCC_VERSION} 100; \
-      fi; \
       if [ "$GCC_VERSION" != "4.9" ] && [ "$GCC_VERSION" != "5" ] && [ "$GCC_VERSION" != "6" ]; then \
         update-alternatives --install /usr/bin/riscv64-linux-gnu-gcc riscv64-linux-gnu-gcc /usr/bin/riscv64-linux-gnu-gcc-${GCC_VERSION} 100; \
         update-alternatives --install /usr/bin/riscv64-linux-gnu-g++ riscv64-linux-gnu-g++ /usr/bin/riscv64-linux-gnu-g++-${GCC_VERSION} 100; \
@@ -57,7 +79,7 @@ RUN set -ex; \
         CLANG_VERSION="${CLANG_VERSION}.0"; \
         apt-get install -y -q clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-6.0; \
       else \
-        apt-get install -y -q clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-${CLANG_VERSION}; \
+        apt-get install -y -q clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-${CLANG_VERSION} llvm-${CLANG_VERSION}; \
       fi; \
       if [ "$CLANG_VERSION" != "5.0" ] && [ "$CLANG_VERSION" != "6.0" ]; then \
         update-alternatives --install /usr/bin/llvm-strip llvm-strip /usr/bin/llvm-strip-${CLANG_VERSION} 100; \
