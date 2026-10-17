@@ -26,6 +26,17 @@ License: GPL-3.0.
 
 ## Supported features
 
+__ccache support:__
+
+`ccache` is installed in the container images, but it is **disabled by default**
+(it makes the first build slower). To enable it, mount a `ccache` directory from the host
+using the `-m` / `--mount-ccache` argument of `build_linux.py` or `start_container.sh`.
+The directory is mounted to `~/.cache/ccache` in the container, and `/usr/lib/ccache`
+is put at the beginning of `PATH`. The `ccache` configuration is defined by the container image.
+The `ccache` max size can be set for a container run with `-M` / `--ccache-max-size`
+(for example, `-M 20G`, or `-M 0` for the unlimited size, which suits CI). It requires `-m`.
+`build_linux.py` also sets `KBUILD_BUILD_TIMESTAMP=''` for a better cache hit rate.
+
 __Supported kernel build targets:__
  - `x86_64` (using the default toolchain)
  - `i386` (using the default toolchain)
@@ -232,13 +243,15 @@ __Get help:__
 
 ```console
 $ bash start_container.sh
-usage: start_container.sh compiler src_dir out_dir [-h] [-d | -p] [-n] [-e VAR] [-v] [-- cmd with args]
+usage: start_container.sh compiler src_dir out_dir [-h] [-d | -p] [-n] [-e VAR] [-v] [-m CCACHE_DIR] [-M SIZE] [-- cmd with args]
   -h    print this help
   -d    force to use the Docker container engine (default)
   -p    force to use the Podman container engine instead of default Docker
   -n    launch container in non-interactive mode
   -e    add environment variable in the container (may be used multiple times)
   -v    enable debug output
+  -m    mount the ccache directory from the host and enable ccache in the container
+  -M    set the ccache max size, e.g. 10G (0 means unlimited); requires -m
 
   If cmd is empty, we will start an interactive bash in the container.
 ```
@@ -256,6 +269,12 @@ Mount build output directory "/home/a13x/linux-stable/build_out/" at "/out"
 Gonna run bash
 
 a13x@1f9c2baec240:/src$
+```
+
+__Run with `ccache` enabled:__
+
+```console
+$ bash start_container.sh gcc-12 ~/linux-stable/linux-stable/ ~/linux-stable/build_out/ -m ~/.cache/kbc-ccache
 ```
 
 __Execute a command in the container:__
@@ -280,8 +299,8 @@ __Get help:__
 
 ```console
 $ python3 build_linux.py --help
-usage: build_linux.py [-h] [-d | -p] -a ARCH -c COMPILER [-k KCONFIG] -s SRC [-o OUT] [-q]
-                      [-t]
+usage: build_linux.py [-h] [-d | -p] -a ARCH -c COMPILER [-k KCONFIG] -s SRC [-o OUT]
+                      [-m CCACHE_DIR] [-M SIZE] [-q] [-t]
                       ...
 
 Build Linux kernel using kernel-build-containers
@@ -311,6 +330,12 @@ options:
                         of Linux at the root of the kernel source tree, you can specify the
                         same '-s' and '-o' path without '-k' or simply run the tool without
                         '-o' and '-k' arguments.
+  -m, --mount-ccache CCACHE_DIR
+                        mount this ccache directory from the host into the container and
+                        enable ccache (ccache is disabled by default, because it makes the
+                        first build slower)
+  -M, --ccache-max-size SIZE
+                        set the ccache max size, e.g. 10G (0 means unlimited); requires '-m'
   -q, --quiet           for running `make` in quiet mode
   -t, --single-thread   for running `make` in single-threaded mode (multi-threaded by
                         default)
